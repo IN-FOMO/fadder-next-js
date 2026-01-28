@@ -1,0 +1,756 @@
+.page {
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 88px 80px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  color: #0f0f0f;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.title {
+  margin: 0;
+  font-size: 32px;
+  line-height: 36px;
+  font-weight: 700;
+  color: #0f0f0f;
+  width: 354px;
+  white-space: nowrap;
+}
+
+.titleBadge {
+  align-self: flex-end;
+}
+
+.pageBody {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.mediaColumn {
+  width: 700px;
+  flex: 0 0 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mainImageWrap {
+  position: relative;
+  width: 100%;
+  height: 460px;
+  border-radius: 16px;
+  overflow: visible;
+}
+
+.mainImage {
+  width: 100%;
+  height: 460px;
+  object-fit: fill;
+  border-radius: 16px;
+}
+
+.mediaNav {
+  position: absolute;
+  top: 204px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: none;
+  background: rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  cursor: pointer;
+}
+
+.mediaNavLeft {
+  left: -224px;
+}
+
+.mediaNavRight {
+  right: -4px;
+}
+
+.thumbGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.thumbImage {
+  width: 100%;
+  height: 72px;
+  object-fit: fill;
+  border-radius: 16px;
+  border: 2px solid transparent;
+}
+
+.thumbActive {
+  border-color: #0f0f0f;
+}
+
+.specsColumn {
+  flex: 0 0 600px;
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.actionsColumn {
+  flex: 0 0 428px;
+  width: 428px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bidCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.bidHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bidTitle {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.bidControls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bidAmount {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
+}
+
+.bidControlButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.bidValue {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.bidHint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  color: #7b7b7b;
+}
+
+.bidButton {
+  width: 100%;
+  background: #ffaf0e;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 32px;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.auctionCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.auctionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 172px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f6f8;
+  width: 100%;
+}
+
+.auctionRow:last-child {
+  border-bottom: none;
+}
+
+.auctionBadge {
+  background: #0e5db8;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+}
+
+.currentBid {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #00b333;
+}
+
+.specsCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.specsGrid {
+  display: flex;
+  flex-direction: column;
+}
+
+.specRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 172px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f6f8;
+}
+
+.specRow:last-child {
+  border-bottom: none;
+}
+
+.specLabel {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #7b7b7b;
+}
+
+.specValue {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #0f0f0f;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.specValueMuted {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #7b7b7b;
+}
+
+.copyIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.leftCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.cardHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.cardText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #7b7b7b;
+  white-space: pre-line;
+}
+
+.cardTextDark {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #0f0f0f;
+}
+
+.primaryButton {
+  align-self: stretch;
+  background: #ffaf0e;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 32px;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.alertStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alertInput {
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: #f5f6f8;
+  padding: 16px 24px;
+  font-size: 16px;
+  line-height: 20px;
+  color: #7b7b7b;
+}
+
+.alertInput::placeholder {
+  color: #7b7b7b;
+}
+
+.frequencyRow {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.frequencyLabel {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #0f0f0f;
+}
+
+.frequencyOptions {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  width: 212px;
+}
+
+.radioItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 20px;
+  color: #0f0f0f;
+}
+
+.radioChecked,
+.radioUnchecked {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioChecked {
+  border-color: #24a0ed;
+}
+
+.radioChecked::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #24a0ed;
+}
+
+.alertButton {
+  align-self: stretch;
+  background: #f5f6f8;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.legalText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #f30004;
+  white-space: pre-line;
+}
+
+.legalNote {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #0f0f0f;
+}
+
+.calculatorCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.calculatorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.noticeIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 2px solid #0f0f0f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.calculatorList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.calculatorRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f5f6f8;
+  padding: 12px 16px;
+}
+
+.calculatorTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.calculatorNote {
+  margin: 0;
+  padding: 0 16px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  color: #0f0f0f;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.shareButton {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  cursor: pointer;
+}
+
+.askManagerButton {
+  flex: 1;
+  background: #ffffff;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 48px;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.timeCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.timeRow {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeLabel {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.timeValue {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #e61f26;
+}
+
+.calendarButton {
+  width: 278px;
+  background: #f5f6f8;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.faqSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.faqCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faqHeaderRow {
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+}
+
+.faqItem {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-bottom: 1px solid #f5f6f8;
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqQuestionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.faqQuestion {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.faqAnswer {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #7b7b7b;
+}
+
+.fastBuyCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.fastBuyHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fastBuyPrice {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #2571ff;
+}
+
+.fastBuyButton {
+  width: 100%;
+  background: #f5f6f8;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 32px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.similarSection {
+  display: flex;
+  flex-direction: column;
+  gap: 74px;
+}
+
+.similarHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.similarTitle {
+  margin: 0;
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.viewAllButton {
+  border: none;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.similarScroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.similarScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.similarCard {
+  width: 288px;
+}

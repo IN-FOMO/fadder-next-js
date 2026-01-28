@@ -50,12 +50,23 @@
   position: relative;
 }
 
+.filtersCardCollapsed {
+  height: 52px;
+  padding: 16px;
+  gap: 0;
+  overflow: hidden;
+}
+
 .filtersHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 130px;
   width: 245px;
+}
+
+.filtersHeaderCollapsed {
+  gap: 182px;
 }
 
 .filtersHeader h2 {
@@ -79,6 +90,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  width: 100%;
 }
 
 .filterOption {
@@ -91,6 +103,7 @@
   padding: 0;
   cursor: pointer;
   text-align: left;
+  width: 100%;
 }
 
 .filterOptionTight {
@@ -121,6 +134,21 @@
   height: 52px;
 }
 
+.filtersCollapseButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 38px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 .filterIcon {
   width: 74px;
   height: 20px;
@@ -143,17 +171,19 @@
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
+  line-height: 20px;
 }
 
 .filterSearch {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: #f5f6f8;
   border-radius: 14px;
-  padding: 8px 12px;
+  padding: 12px;
   font-size: 16px;
   color: #7b7b7b;
+  min-height: 44px;
 }
 
 .filterSearch input {
@@ -162,7 +192,8 @@
   outline: none;
   width: 100%;
   font-size: 16px;
-  color: #0f0f0f;
+  line-height: 20px;
+  color: #7b7b7b;
 }
 
 .filterSearch input::placeholder {
@@ -172,7 +203,7 @@
 .filterItems {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 .filterItem {
@@ -181,11 +212,13 @@
   justify-content: space-between;
   gap: 8px;
   font-size: 14px;
+  font-weight: 400;
   border: none;
   background: transparent;
   padding: 0;
   cursor: pointer;
   text-align: left;
+  width: 100%;
 }
 
 .filterItemLeft {
@@ -197,12 +230,13 @@
 .filterCount {
   color: #0f0f0f;
   font-size: 14px;
+  font-weight: 400;
 }
 
 .filterSubSection {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 .auctionRow {
@@ -338,8 +372,11 @@
   background: #ffffff;
   font-size: 16px;
   font-weight: 600;
+  line-height: 20px;
   border: none;
   cursor: pointer;
+  width: 100%;
+  gap: 130px;
 }
 
 .filterCollapsedGroup {
@@ -348,23 +385,44 @@
   gap: 12px;
 }
 
-.filterExpanded {
+.filterCollapsedGroupOpen {
   background: #ffffff;
   border-radius: 16px;
   padding: 16px;
+  gap: 16px;
+  width: 100%;
+}
+
+.filterCollapsedGroupFixed {
+  height: 476px;
+  overflow: hidden;
+}
+
+.filterCollapsedOpen {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  gap: 142px;
+}
+
+.filterExpanded {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
 }
 
 .filterExpandedSearch,
 .filterExpandedInput {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: #f5f6f8;
   border-radius: 14px;
-  padding: 8px 12px;
+  padding: 12px;
+  min-height: 44px;
 }
 
 .filterExpandedSearch input,
@@ -374,21 +432,26 @@
   outline: none;
   width: 100%;
   font-size: 16px;
-  color: #0f0f0f;
+  line-height: 20px;
+  color: #7b7b7b;
 }
 
 .filterExpandedZipRow {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .filterExpandedDistance {
   background: #f5f6f8;
   border-radius: 14px;
-  padding: 8px 12px;
+  padding: 10px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 16px;
-  color: #0f0f0f;
+  line-height: 20px;
+  color: #7b7b7b;
   white-space: nowrap;
 }
 
@@ -400,7 +463,31 @@
 .filterExpandedList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
+  width: 100%;
+}
+
+.filterExpandedScrollable {
+  flex: 1;
+  min-height: 0;
+}
+
+.filterExpandedListScrollable {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.zipSearchButton {
+  align-self: flex-start;
+  background: #ffaf0e;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
 }
 
 .filterExpandedItem {
@@ -413,6 +500,9 @@
   padding: 0;
   cursor: pointer;
   text-align: left;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .results {
@@ -507,6 +597,10 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
+  margin-top: 8px;
+}
+
+.paginationWrap {
   margin-top: 8px;
 }
 

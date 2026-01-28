@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Breadcrumbs } from "./Breadcrumbs";
+import { PageHeader } from "./PageHeader";
 import styles from "./simple-page.module.css";
 
 type SimplePageProps = {
@@ -9,8 +11,8 @@ type SimplePageProps = {
 export function SimplePage({ title, description }: SimplePageProps) {
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>{title}</h1>
-      <p className={styles.text}>{description}</p>
+      <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: title }]} />
+      <PageHeader title={title} subtitle={description} />
       <Link className={styles.link} href="/">
         Back to home
       </Link>

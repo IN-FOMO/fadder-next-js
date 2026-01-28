@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { Breadcrumbs } from "../_components/Breadcrumbs";
+import { Pagination } from "../_components/Pagination";
 import { VehicleCard, type VehicleCardData } from "../_components/VehicleCard";
 import styles from "./search.module.css";
 
@@ -252,7 +254,7 @@ const expandableFilters = [
   },
   {
     title: "Search near ZIP code",
-    inputPlaceholder: "Enter ZIP code",
+    inputPlaceholder: "Zip code",
   },
   {
     title: "Sale date",
@@ -260,7 +262,15 @@ const expandableFilters = [
   },
 ];
 
+const defaultCollapsedState = Object.fromEntries(
+  collapsedFilters.map((item) => [
+    item,
+    item === "Vehicle type" || item === "Make" || item === "Search near ZIP code",
+  ]),
+) as Record<string, boolean>;
+
 export default function SearchPage() {
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const [quickState, setQuickState] = useState(
     () =>
       Object.fromEntries(quickFilters.map((item) => [item.label, item.checked])) as Record<
@@ -285,13 +295,7 @@ export default function SearchPage() {
     Sold: false,
     Upcoming: false,
   });
-  const [collapsedState, setCollapsedState] = useState(
-    () =>
-      Object.fromEntries(collapsedFilters.map((item) => [item, false])) as Record<
-        string,
-        boolean
-      >,
-  );
+  const [collapsedState, setCollapsedState] = useState(() => defaultCollapsedState);
   const [expandedState, setExpandedState] = useState(
     () =>
       Object.fromEntries(
@@ -331,12 +335,7 @@ export default function SearchPage() {
       ) as Record<string, boolean>,
     );
     setLotStatusState({ Active: true, Sold: false, Upcoming: false });
-    setCollapsedState(
-      Object.fromEntries(collapsedFilters.map((item) => [item, false])) as Record<
-        string,
-        boolean
-      >,
-    );
+    setCollapsedState(defaultCollapsedState);
     setExpandedState(
       Object.fromEntries(
         expandableFilters.map((section) => [
@@ -364,72 +363,97 @@ export default function SearchPage() {
 
   return (
     <main className={styles.page}>
-      <div className={styles.breadcrumbs}>
-        <span>Home page</span>
-        <Image src="/figma/icons/icon-arrow-right.svg" alt="" width={24} height={24} />
-        <span>Vehicle Finder</span>
-        <Image src="/figma/icons/icon-arrow-right.svg" alt="" width={24} height={24} />
-        <span className={styles.breadcrumbActive}>Search Results</span>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: "Home page", href: "/" },
+          { label: "Vehicle Finder", href: "/search" },
+          { label: "Search Results" },
+        ]}
+      />
       <h1 className={styles.title}>Repairable, Salvage and Wrecked Car Auctions</h1>
       <div className={styles.layout}>
         <aside className={styles.filters}>
-          <div className={styles.filtersCard}>
-            <div className={styles.filtersHeader}>
+          <div
+            className={`${styles.filtersCard} ${
+              filtersCollapsed ? styles.filtersCardCollapsed : ""
+            }`}
+          >
+            <div
+              className={`${styles.filtersHeader} ${
+                filtersCollapsed ? styles.filtersHeaderCollapsed : ""
+              }`}
+            >
               <h2>Search filters</h2>
               <button type="button" className={styles.resetButton} onClick={resetAll}>
                 Reset All
               </button>
             </div>
-            <div className={styles.filterList}>
-              {quickFilters.map((item) => {
-                const isChecked = quickState[item.label];
-                return (
-                  <button
-                    key={item.label}
-                    type="button"
-                    className={`${styles.filterOption} ${
-                      item.label === "Vehicles Only"
-                        ? styles.filterOptionTight
-                        : styles.filterOptionWide
-                    }`}
-                    onClick={() =>
-                      setQuickState((prev) => ({ ...prev, [item.label]: !prev[item.label] }))
-                    }
-                  >
-                    <span
-                      className={`${styles.filterLabel} ${
-                        item.label === "Vehicles Only" ? styles.filterLabelTight : ""
+            <button
+              type="button"
+              className={styles.filtersCollapseButton}
+              aria-label={filtersCollapsed ? "Expand filters" : "Collapse filters"}
+              onClick={() => setFiltersCollapsed((prev) => !prev)}
+            >
+              <Image
+                src="/figma/icons/filters-arrow-container.svg"
+                alt=""
+                width={38}
+                height={52}
+              />
+            </button>
+            {filtersCollapsed ? null : (
+              <div className={styles.filterList}>
+                {quickFilters.map((item) => {
+                  const isChecked = quickState[item.label];
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      className={`${styles.filterOption} ${
+                        item.label === "Vehicles Only"
+                          ? styles.filterOptionTight
+                          : styles.filterOptionWide
                       }`}
-                    >
-                      {item.label === "Vehicles Only" ? (
-                        <Image
-                          src="/figma/images/filter-vehicles-only-235a92.png"
-                          alt=""
-                          width={74}
-                          height={20}
-                          className={styles.filterIcon}
-                        />
-                      ) : null}
-                      <span>{item.label}</span>
-                    </span>
-                    <Image
-                      src={
-                        isChecked
-                          ? "/figma/icons/icon-checkbox-checked.svg"
-                          : "/figma/icons/icon-checkbox.svg"
+                      onClick={() =>
+                        setQuickState((prev) => ({ ...prev, [item.label]: !prev[item.label] }))
                       }
-                      alt=""
-                      width={24}
-                      height={24}
-                    />
-                  </button>
-                );
-              })}
-            </div>
+                    >
+                      <span
+                        className={`${styles.filterLabel} ${
+                          item.label === "Vehicles Only" ? styles.filterLabelTight : ""
+                        }`}
+                      >
+                        {item.label === "Vehicles Only" ? (
+                          <Image
+                            src="/figma/images/filter-vehicles-only-235a92.png"
+                            alt=""
+                            width={74}
+                            height={20}
+                            className={styles.filterIcon}
+                          />
+                        ) : null}
+                        <span>{item.label}</span>
+                      </span>
+                      <Image
+                        src={
+                          isChecked
+                            ? "/figma/icons/icon-checkbox-checked.svg"
+                            : "/figma/icons/icon-checkbox.svg"
+                        }
+                        alt=""
+                        width={24}
+                        height={24}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          <div className={styles.filterSection}>
+          {filtersCollapsed ? null : (
+            <>
+              <div className={styles.filterSection}>
             <div className={styles.filterSectionHeader}>
               <span>Auction type</span>
               <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
@@ -528,13 +552,6 @@ export default function SearchPage() {
                 </button>
               ))}
             </div>
-            <Image
-              src="/figma/icons/filters-arrow-container.svg"
-              alt=""
-              width={38}
-              height={52}
-              className={styles.filtersArrow}
-            />
           </div>
 
           <div className={styles.filterSection}>
@@ -718,165 +735,196 @@ export default function SearchPage() {
                   item.label.toLowerCase().includes(damageSearchValue.toLowerCase()),
                 )
                 .map((item) => {
-                const isChecked = conditionState[item.label];
-                return (
-                  <button
-                    key={item.label}
-                    type="button"
-                    className={styles.filterItem}
-                    onClick={() =>
-                      setConditionState((prev) => ({
-                        ...prev,
-                        [item.label]: !prev[item.label],
-                      }))
-                    }
-                  >
-                    <span className={styles.filterItemLeft}>
-                      <Image
-                        src={
-                          isChecked
-                            ? "/figma/icons/icon-checkbox-checked.svg"
-                            : "/figma/icons/icon-checkbox.svg"
-                        }
-                        alt=""
-                        width={24}
-                        height={24}
-                      />
-                      <span>{item.label}</span>
-                    </span>
-                    <span className={styles.filterCount}>{item.count}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {collapsedFilters.map((title) => {
-            const isOpen = collapsedState[title];
-            const section = expandableFilters.find((item) => item.title === title);
-            const sectionState = expandedState[title];
-            return (
-              <div key={title} className={styles.filterCollapsedGroup}>
-                <button
-                  type="button"
-                  className={styles.filterCollapsed}
-                  onClick={() =>
-                    setCollapsedState((prev) => ({ ...prev, [title]: !prev[title] }))
-                  }
-                >
-                  <span>{title}</span>
-                  <Image
-                    src={isOpen ? "/figma/icons/icon-minus.svg" : "/figma/icons/icon-plus.svg"}
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
-                </button>
-                {isOpen && section ? (
-                  <div className={styles.filterExpanded}>
-                    {title === "Search near ZIP code" ? (
-                      <div className={styles.filterExpandedZipRow}>
-                        <label className={styles.filterExpandedInput}>
-                          <input
-                            placeholder="Zip code"
-                            value={sectionState?.input ?? ""}
-                            onChange={(event) =>
-                              setExpandedState((prev) => ({
-                                ...prev,
-                                [title]: { ...prev[title], input: event.target.value },
-                              }))
-                            }
-                          />
-                        </label>
-                        <div className={styles.filterExpandedDistance}>50 mi</div>
-                      </div>
-                    ) : null}
-                    {section.searchPlaceholder ? (
-                      <label className={styles.filterExpandedSearch}>
-                        <input
-                          placeholder={section.searchPlaceholder}
-                          value={sectionState?.search ?? ""}
-                          onChange={(event) =>
-                            setExpandedState((prev) => ({
-                              ...prev,
-                              [title]: { ...prev[title], search: event.target.value },
-                            }))
-                          }
-                        />
+                  const isChecked = conditionState[item.label];
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      className={styles.filterItem}
+                      onClick={() =>
+                        setConditionState((prev) => ({
+                          ...prev,
+                          [item.label]: !prev[item.label],
+                        }))
+                      }
+                    >
+                      <span className={styles.filterItemLeft}>
                         <Image
-                          src="/figma/icons/icon-search-rounded.svg"
+                          src={
+                            isChecked
+                              ? "/figma/icons/icon-checkbox-checked.svg"
+                              : "/figma/icons/icon-checkbox.svg"
+                          }
                           alt=""
                           width={24}
                           height={24}
                         />
-                      </label>
-                    ) : null}
-                    {section.inputPlaceholder && title !== "Search near ZIP code" ? (
-                      <label className={styles.filterExpandedInput}>
-                        <input
-                          placeholder={section.inputPlaceholder}
-                          value={sectionState?.input ?? ""}
-                          onChange={(event) =>
-                            setExpandedState((prev) => ({
-                              ...prev,
-                              [title]: { ...prev[title], input: event.target.value },
-                            }))
-                          }
-                        />
-                      </label>
-                    ) : null}
-                    {section.items ? (
-                      <div className={styles.filterExpandedList}>
-                        {(sectionState?.items ?? [])
-                          .filter((item) =>
-                            section.searchPlaceholder
-                              ? item.label
-                                  .toLowerCase()
-                                  .includes((sectionState?.search ?? "").toLowerCase())
-                              : true,
-                          )
-                          .map((item) => (
-                          <button
-                            key={item.label}
-                            type="button"
-                            className={styles.filterExpandedItem}
-                            onClick={() =>
-                              setExpandedState((prev) => ({
-                                ...prev,
-                                [title]: {
-                                  ...prev[title],
-                                  items: prev[title].items.map((current) =>
-                                    current.label === item.label
-                                      ? { ...current, checked: !current.checked }
-                                      : current,
-                                  ),
-                                },
-                              }))
-                            }
-                          >
-                            <span className={styles.filterItemLeft}>
-                              <Image
-                                src={
-                                  item.checked
-                                    ? "/figma/icons/icon-checkbox-checked.svg"
-                                    : "/figma/icons/icon-checkbox.svg"
+                        <span>{item.label}</span>
+                      </span>
+                      <span className={styles.filterCount}>{item.count}</span>
+                    </button>
+                  );
+                })}
+            </div>
+          </div>
+
+              {collapsedFilters.map((title) => {
+                const isOpen = collapsedState[title];
+                const section = expandableFilters.find((item) => item.title === title);
+                const sectionState = expandedState[title];
+                const isScrollable = title === "Vehicle type" || title === "Make";
+                return (
+                  <div
+                    key={title}
+                    className={`${styles.filterCollapsedGroup} ${
+                      isOpen ? styles.filterCollapsedGroupOpen : ""
+                    } ${isOpen && isScrollable ? styles.filterCollapsedGroupFixed : ""}`}
+                  >
+                    <button
+                      type="button"
+                      className={`${styles.filterCollapsed} ${
+                        isOpen ? styles.filterCollapsedOpen : ""
+                      }`}
+                      onClick={() =>
+                        setCollapsedState((prev) => ({ ...prev, [title]: !prev[title] }))
+                      }
+                    >
+                      <span>{title}</span>
+                      <Image
+                        src={isOpen ? "/figma/icons/icon-minus.svg" : "/figma/icons/icon-plus.svg"}
+                        alt=""
+                        width={24}
+                        height={24}
+                      />
+                    </button>
+                    {isOpen && section ? (
+                      <div
+                        className={`${styles.filterExpanded} ${
+                          isScrollable ? styles.filterExpandedScrollable : ""
+                        }`}
+                      >
+                        {title === "Search near ZIP code" ? (
+                          <div className={styles.filterExpandedZipRow}>
+                            <label className={styles.filterExpandedInput}>
+                              <input
+                                placeholder="Zip code"
+                                value={sectionState?.input ?? ""}
+                                onChange={(event) =>
+                                  setExpandedState((prev) => ({
+                                    ...prev,
+                                    [title]: { ...prev[title], input: event.target.value },
+                                  }))
                                 }
+                              />
+                            </label>
+                            <div className={styles.filterExpandedDistance}>
+                              <span>50 mi</span>
+                              <Image
+                                src="/figma/icons/icon-arrow-down.svg"
                                 alt=""
                                 width={24}
                                 height={24}
                               />
-                              <span>{item.label}</span>
-                            </span>
-                            <span className={styles.filterCount}>{item.count}</span>
+                            </div>
+                          </div>
+                        ) : null}
+                        {title === "Search near ZIP code" ? (
+                          <button type="button" className={styles.zipSearchButton}>
+                            Search
                           </button>
-                        ))}
+                        ) : null}
+                        {section.searchPlaceholder ? (
+                          <label className={styles.filterExpandedSearch}>
+                            <input
+                              placeholder={section.searchPlaceholder}
+                              value={sectionState?.search ?? ""}
+                              onChange={(event) =>
+                                setExpandedState((prev) => ({
+                                  ...prev,
+                                  [title]: { ...prev[title], search: event.target.value },
+                                }))
+                              }
+                            />
+                            <Image
+                              src="/figma/icons/icon-search-rounded.svg"
+                              alt=""
+                              width={24}
+                              height={24}
+                            />
+                          </label>
+                        ) : null}
+                        {section.inputPlaceholder && title !== "Search near ZIP code" ? (
+                          <label className={styles.filterExpandedInput}>
+                            <input
+                              placeholder={section.inputPlaceholder}
+                              value={sectionState?.input ?? ""}
+                              onChange={(event) =>
+                                setExpandedState((prev) => ({
+                                  ...prev,
+                                  [title]: { ...prev[title], input: event.target.value },
+                                }))
+                              }
+                            />
+                          </label>
+                        ) : null}
+                        {section.items ? (
+                          <div
+                            className={`${styles.filterExpandedList} ${
+                              isScrollable ? styles.filterExpandedListScrollable : ""
+                            }`}
+                          >
+                            {(sectionState?.items ?? [])
+                              .filter((item) =>
+                                section.searchPlaceholder
+                                  ? item.label
+                                      .toLowerCase()
+                                      .includes((sectionState?.search ?? "").toLowerCase())
+                                  : true,
+                              )
+                              .map((item) => (
+                                <button
+                                  key={item.label}
+                                  type="button"
+                                  className={styles.filterExpandedItem}
+                                  onClick={() =>
+                                    setExpandedState((prev) => ({
+                                      ...prev,
+                                      [title]: {
+                                        ...prev[title],
+                                        items: prev[title].items.map((current) =>
+                                          current.label === item.label
+                                            ? { ...current, checked: !current.checked }
+                                            : current,
+                                        ),
+                                      },
+                                    }))
+                                  }
+                                >
+                                  <span className={styles.filterItemLeft}>
+                                    <Image
+                                      src={
+                                        item.checked
+                                          ? "/figma/icons/icon-checkbox-checked.svg"
+                                          : "/figma/icons/icon-checkbox.svg"
+                                      }
+                                      alt=""
+                                      width={24}
+                                      height={24}
+                                    />
+                                    <span>{item.label}</span>
+                                  </span>
+                                  <span className={styles.filterCount}>{item.count}</span>
+                                </button>
+                              ))}
+                          </div>
+                        ) : null}
                       </div>
                     ) : null}
                   </div>
-                ) : null}
-              </div>
-            );
-          })}
+                );
+              })}
+            </>
+          )}
         </aside>
 
         <section className={styles.results}>
@@ -924,23 +972,8 @@ export default function SearchPage() {
             ))}
           </div>
 
-          <div className={styles.pagination}>
-            <button type="button" className={styles.pageNav}>
-              <Image src="/figma/icons/icon-arrow-left.svg" alt="" width={24} height={24} />
-              <span>Prev</span>
-            </button>
-            <div className={styles.pageNumbers}>
-              <span className={styles.pageNumber}>1</span>
-              <span className={`${styles.pageNumber} ${styles.pageNumberActive}`}>2</span>
-              <span className={styles.pageNumber}>3</span>
-              <span className={styles.pageNumber}>4</span>
-              <span className={styles.pageNumber}>5</span>
-              <span className={styles.pageNumber}>6</span>
-            </div>
-            <button type="button" className={styles.pageNav}>
-              <span>Next</span>
-              <Image src="/figma/icons/icon-arrow-right.svg" alt="" width={24} height={24} />
-            </button>
+          <div className={styles.paginationWrap}>
+            <Pagination pages={[1, 2, 3, 5, "...", 125, 126, 127]} current={2} />
           </div>
 
           <p className={styles.resultsDescription}>

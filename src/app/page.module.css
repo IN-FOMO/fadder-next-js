@@ -319,6 +319,13 @@
   scroll-snap-align: start;
 }
 
+.vehicleCardLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
 .vehicleImage {
   position: relative;
   height: 236px;

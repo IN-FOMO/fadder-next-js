@@ -1,0 +1,31 @@
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.crumbGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+  color: #7b7b7b;
+  text-decoration: none;
+}
+
+.crumbActive {
+  color: #0f0f0f;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}

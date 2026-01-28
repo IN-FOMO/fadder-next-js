@@ -1,0 +1,301 @@
+.page {
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 88px 80px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: #0f0f0f;
+}
+
+.content {
+  width: 1760px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 74px;
+}
+
+.noticeCard {
+  width: 100%;
+  background: #daeaFF;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.noticeTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #2571ff;
+}
+
+.noticeText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #2571ff;
+}
+
+.cardsGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.infoCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardItem {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #0f0f0f;
+  white-space: pre-line;
+}
+
+.serviceTable {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 170px 1fr;
+  gap: 0;
+}
+
+.tableCell {
+  padding: 16px;
+  border: 1px solid #cccccc;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #0f0f0f;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+}
+
+.tableHeader {
+  background: #cccccc;
+  font-weight: 700;
+}
+
+.tableHeaderLeft {
+  border-radius: 16px 0 0 0;
+}
+
+.tableHeaderCenter {
+  text-align: center;
+  border-left: none;
+}
+
+.tableHeaderRight {
+  border-radius: 0 16px 0 0;
+  border-left: none;
+}
+
+.tableRow {
+  display: contents;
+}
+
+.tableCellLeft {
+  border-top: none;
+}
+
+.tableCellCenter {
+  text-align: center;
+  border-top: none;
+  border-left: none;
+  justify-content: center;
+}
+
+.tableCellRight {
+  border-top: none;
+  border-left: none;
+}
+
+.tableCellLeftRadius {
+  border-radius: 0 0 0 16px;
+}
+
+.tableCellRightRadius {
+  border-radius: 0 0 16px 0;
+}
+
+.privacyCard {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.privacyText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #0f0f0f;
+  white-space: pre-line;
+}
+
+.contactSection {
+  width: 1319px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 536px;
+  gap: 30px;
+  backdrop-filter: blur(380px);
+  -webkit-backdrop-filter: blur(380px);
+}
+
+.contactContent {
+  display: flex;
+  flex-direction: column;
+  gap: 41px;
+  padding: 40px;
+  justify-content: space-between;
+}
+
+.contactHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contactTitle {
+  margin: 0;
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.contactSubtitle {
+  margin: 0;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #0f0f0f;
+  opacity: 0.8;
+  white-space: pre-line;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.input,
+.inputWide {
+  height: 40px;
+  border: none;
+  border-radius: 14px;
+  background: #f5f6f8;
+  padding: 16px 24px;
+  font-size: 12px;
+  line-height: 14px;
+  color: #7b7b7b;
+}
+
+.input::placeholder,
+.inputWide::placeholder {
+  color: #7b7b7b;
+}
+
+.textArea {
+  border: none;
+  border-radius: 14px;
+  background: #f5f6f8;
+  padding: 16px 24px;
+  font-size: 12px;
+  line-height: 14px;
+  color: #7b7b7b;
+  height: 120px;
+  resize: none;
+}
+
+.textArea::placeholder {
+  color: #7b7b7b;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 16px;
+}
+
+.primaryButton {
+  background: #ffaf0e;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 24px;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600;
+  color: #0f0f0f;
+  cursor: pointer;
+  height: 40px;
+  flex: 1;
+}
+
+.secondaryButton {
+  background: #ffffff;
+  border: 2px solid #ffaf0e;
+  border-radius: 14px;
+  padding: 12px 24px;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600;
+  color: #0f0f0f;
+  cursor: pointer;
+  height: 40px;
+  flex: 1;
+}
+
+.contactImage {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.contactImg {
+  width: 100%;
+  height: 536px;
+  object-fit: cover;
+}
