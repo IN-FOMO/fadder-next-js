@@ -1,0 +1,166 @@
+.header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 80px;
+  gap: 150px;
+  background: #ffffff;
+  flex-wrap: nowrap;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logoImage {
+  width: 134px;
+  height: 40px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  font-size: 16px;
+  font-weight: 700;
+  flex-wrap: nowrap;
+}
+
+.navItem {
+  white-space: nowrap;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.navItem:hover,
+.navItem:active {
+  opacity: 0.8;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+.iconOnlyButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.iconOnlyButton:hover,
+.iconOnlyButton:active {
+  opacity: 0.8;
+}
+
+.langButton,
+.iconButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f6f8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.langButton:hover,
+.langButton:active,
+.iconButton:hover,
+.iconButton:active {
+  background: #f5f6f8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.accountButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f6f8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.accountButton:hover,
+.accountButton:active {
+  background: #f5f6f8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.accountAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+}
+
+.mobileActions {
+  display: none;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobileMenu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: #f5f6f8;
+}
+
+.mobileMenu:hover,
+.mobileMenu:active {
+  background: #f5f6f8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 1679px) {
+  .header {
+    padding: 16px 60px;
+  }
+}
+
+@media (max-width: 1279px) {
+  .nav,
+  .headerActions {
+    display: none;
+  }
+
+  .mobileActions {
+    display: flex;
+  }
+
+  .header {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 699px) {
+  .header {
+    padding: 8px 16px;
+  }
+
+  .logoImage {
+    width: 42px;
+    height: 40px;
+  }
+}

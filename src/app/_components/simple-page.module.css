@@ -1,0 +1,26 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 64px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.text {
+  font-size: 16px;
+  color: #7b7b7b;
+  margin: 0;
+}
+
+.link {
+  color: #0f0f0f;
+  text-decoration: none;
+  font-weight: 700;
+}
