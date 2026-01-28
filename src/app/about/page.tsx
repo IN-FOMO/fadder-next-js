@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
+import { ContactSection } from "../_components/ContactSection";
 import { PageHeader } from "../_components/PageHeader";
 import styles from "./about.module.css";
 
@@ -93,7 +93,10 @@ export default function AboutPage() {
         <div className={styles.timeline}>
           {timeline.map((item) => (
             <div key={item.year} className={styles.timelineItem}>
-              <div className={styles.timelineYear}>{item.year}</div>
+              <div className={styles.timelineMarker}>
+                <div className={styles.timelineYear}>{item.year}</div>
+                <span className={styles.timelineLine} aria-hidden="true" />
+              </div>
               <div className={styles.timelineCard}>
                 <h3 className={styles.cardTitle}>{item.title}</h3>
                 <p className={styles.cardText}>{item.description}</p>
@@ -102,46 +105,7 @@ export default function AboutPage() {
           ))}
         </div>
 
-        <section className={styles.contactSection}>
-          <div className={styles.contactContent}>
-            <div className={styles.contactHeader}>
-              <h3 className={styles.contactTitle}>Have Questions? We're Here to Help!</h3>
-              <p className={styles.contactSubtitle}>
-                Our expert team is ready to assist you with any questions about our auctions,
-                bidding process, or vehicle inspections.
-                {"\n"}
-                {"\n"}
-                Get in touch today!
-              </p>
-            </div>
-            <div className={styles.contactForm}>
-              <div className={styles.inputRow}>
-                <input className={styles.input} placeholder="Last Name" />
-                <input className={styles.input} placeholder="First Name" />
-              </div>
-              <input className={styles.inputWide} placeholder="Email" />
-              <input className={styles.inputWide} placeholder="Phone Number" />
-              <textarea className={styles.textArea} placeholder="Message" />
-              <div className={styles.buttonRow}>
-                <button type="button" className={styles.primaryButton}>
-                  Send Message
-                </button>
-                <button type="button" className={styles.secondaryButton}>
-                  Ask to chat
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className={styles.contactImage}>
-            <Image
-              src="/figma/images/terms-contact.png"
-              alt=""
-              width={832}
-              height={536}
-              className={styles.contactImg}
-            />
-          </div>
-        </section>
+        <ContactSection />
       </section>
     </main>
   );
