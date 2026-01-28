@@ -16,11 +16,12 @@ export type VehicleCardData = {
 
 type VehicleCardProps = {
   card: VehicleCardData;
+  className?: string;
 };
 
-export function VehicleCard({ card }: VehicleCardProps) {
+export function VehicleCard({ card, className }: VehicleCardProps) {
   return (
-    <article className={styles.vehicleCard}>
+    <article className={`${styles.vehicleCard} ${className ?? ""}`}>
       <div className={styles.vehicleImage}>
         <Image
           src={card.image}
