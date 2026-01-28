@@ -4,9 +4,10 @@ import { HeroSection } from "./_components/HeroSection";
 import { HowItWorksSection, type HowStep } from "./_components/HowItWorksSection";
 import { PopularMakesSection, type MakeItem } from "./_components/PopularMakesSection";
 import { VehicleSlider } from "./_components/VehicleSlider";
+import type { VehicleCardData } from "./_components/VehicleCard";
 import styles from "./page.module.css";
 
-const vehicleCards = [
+const vehicleCards: VehicleCardData[] = [
   {
     title: "1981 Chevrolet Corvette",
     image: "/figma/images/vehicle-1.png",
