@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { VehicleCard, type VehicleCardData } from "../_components/VehicleCard";
 import styles from "./vehicle.module.css";
@@ -35,28 +38,57 @@ const calculatorRows = [
 ];
 
 const faqItems = [
-  { question: "Where do the cars come from?", open: false },
   {
-    question: "Can I check the condition of the car before buying?",
+    question: "Are the vehicles new or used?",
     answer:
-      "Yes, you can review detailed inspection reports, photos, and history. For some vehicles, we also provide independent third-party inspections.",
-    open: true,
+      "Most vehicles on the platform are new or nearly new from official dealers and verified partners. Some listings may be used—mileage and condition are always clearly stated.",
   },
   {
-    question: "What documents do I receive with the car?",
+    question: "What payment methods are available?",
     answer:
-      "You will receive the vehicle title, purchase invoice, and customs documents (if applicable). All paperwork is prepared to register the car in your country.",
-    open: true,
+      "We support modern international payment options, including bank transfers and crypto payments, so you can choose the most convenient and secure method.",
   },
   {
-    question: "How can I participate in the auction?",
+    question: "Can I pay in USD or EUR?",
     answer:
-      "Simply register on our website, place a refundable deposit, and you’ll be able to bid on cars immediately.",
+      "Yes. We accept payments in USD and EUR. The final currency depends on the seller, contract terms, and deal structure.",
+  },
+  {
+    question: "Can I pay on behalf of a company?",
+    answer:
+      "Yes. Vehicles can be purchased by individuals or legal entities. All necessary invoices and commercial documents are issued accordingly.",
+  },
+  {
+    question: "How long does delivery take?",
+    answer:
+      "Delivery time depends on your location, destination country, and transport method. Estimated timelines are provided before payment.",
+  },
+  {
+    question: "Which delivery options are available?",
+    answer:
+      "Vehicles ship from major logistics hubs and ports in China. Depending on your region, delivery can be organized by sea, rail, or road transport.",
+  },
+  {
+    question: "Can I track the vehicle during delivery?",
+    answer:
+      "Yes. You will receive regular status updates and tracking information to follow the delivery step by step.",
+  },
+  {
+    question: "Do you deliver to my country?",
+    answer:
+      "We deliver to most European countries, CIS regions, and selected global markets. Contact our team to confirm delivery to your country.",
+  },
+  {
+    question: "Who is responsible for the vehicle during delivery?",
+    answer:
+      "Your vehicle is insured during transport. Liability, coverage, and delivery terms are confirmed before shipment, and our team provides full support.",
+  },
+  {
+    question: "How safe is the platform?",
+    answer:
+      "Fadder works only with vetted sellers and reliable partners. Every deal runs through secure processes to ensure transparency and buyer protection.",
     open: true,
   },
-  { question: "How much time do I have to pay after winning?", open: false },
-  { question: "How long does delivery take?", open: false },
-  { question: "Are there any additional fees?", open: false },
 ];
 
 const similarCards: VehicleCardData[] = [
@@ -99,6 +131,14 @@ const similarCards: VehicleCardData[] = [
 ];
 
 export default function VehiclePage() {
+  const [openState, setOpenState] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    faqItems.forEach((item) => {
+      initial[item.question] = item.open ?? false;
+    });
+    return initial;
+  });
+
   return (
     <main className={styles.page}>
       <Breadcrumbs
@@ -340,7 +380,7 @@ export default function VehiclePage() {
         </div>
       </section>
 
-      <section className={styles.faqSection}>
+        <section className={styles.faqSection}>
         <div className={styles.faqCard}>
           <div className={styles.faqHeaderRow}>
             <h3 className={styles.cardTitle}>FAQ</h3>
@@ -349,18 +389,40 @@ export default function VehiclePage() {
             {faqItems.map((item) => (
               <div
                 key={item.question}
-                className={`${styles.faqItem} ${item.open ? styles.faqItemOpen : ""}`}
+                  className={`${styles.faqItem} ${
+                    openState[item.question] ? styles.faqItemOpen : ""
+                  }`}
               >
-                <div className={styles.faqQuestionRow}>
-                  <span className={styles.faqQuestion}>{item.question}</span>
-                  <Image
-                    src={item.open ? "/figma/icons/icon-minus.svg" : "/figma/icons/icon-plus.svg"}
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
-                </div>
-                {item.open ? <p className={styles.faqAnswer}>{item.answer}</p> : null}
+                  <button
+                    type="button"
+                    className={styles.faqQuestionRow}
+                    aria-expanded={openState[item.question]}
+                    onClick={() =>
+                      setOpenState((prev) => ({
+                        ...prev,
+                        [item.question]: !prev[item.question],
+                      }))
+                    }
+                  >
+                    <span className={styles.faqQuestion}>{item.question}</span>
+                    <Image
+                      src={
+                        openState[item.question]
+                          ? "/figma/icons/icon-minus.svg"
+                          : "/figma/icons/icon-plus.svg"
+                      }
+                      alt=""
+                      width={24}
+                      height={24}
+                    />
+                  </button>
+                  <div
+                    className={`${styles.faqAnswerWrap} ${
+                      openState[item.question] ? styles.faqAnswerOpen : ""
+                    }`}
+                  >
+                    <p className={styles.faqAnswer}>{item.answer}</p>
+                  </div>
               </div>
             ))}
           </div>

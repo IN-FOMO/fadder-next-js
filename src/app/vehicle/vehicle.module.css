@@ -646,10 +646,16 @@
 }
 
 .faqQuestionRow {
+  background: transparent;
+  border: none;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 }
 
 .faqQuestion {
@@ -665,6 +671,19 @@
   line-height: 20px;
   font-weight: 400;
   color: #7b7b7b;
+}
+
+.faqAnswerWrap {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 220ms ease, opacity 220ms ease;
+  opacity: 0;
+  will-change: max-height, opacity;
+}
+
+.faqAnswerOpen {
+  max-height: 320px;
+  opacity: 1;
 }
 
 .fastBuyCard {

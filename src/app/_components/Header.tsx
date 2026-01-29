@@ -3,6 +3,7 @@ import Link from "next/link";
 import styles from "./header.module.css";
 
 const navLinks = [
+  { label: "Marketplace", href: "/marketplace" },
   { label: "Delivery", href: "/delivery" },
   { label: "Terms", href: "/terms" },
   { label: "Help", href: "/help" },

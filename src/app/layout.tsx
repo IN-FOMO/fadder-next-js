@@ -51,7 +51,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${lato.variable} antialiased`}>
+      <body className={`${lato.variable} antialiased`} suppressHydrationWarning>
         <script
           type="application/ld+json"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: schema.org markup
