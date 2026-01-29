@@ -1,8 +1,5 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Button } from "../../_components/Button";
 import { DashboardSidebar } from "../../_components/DashboardSidebar";
 
@@ -12,7 +9,7 @@ const historyTabs = [
   { label: "Lost", value: "lost" },
   { label: "Buy Now", value: "buy-now" },
   { label: "Shipping", value: "shipping" },
-];
+] as const;
 
 type HistoryBid = {
   title: string;
@@ -249,42 +246,12 @@ const shippingCards: ShippingCard[] = [
     image: "/figma/images/vehicle-1.png",
     progressWidth: 358,
     steps: [
-      {
-        label: "Vehicle Picked Up",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-1.svg",
-        size: 48,
-      },
-      {
-        label: "At Departure Terminal",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-2.svg",
-        size: 48,
-      },
-      {
-        label: "International Transit",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-3.svg",
-        size: 56,
-      },
-      {
-        label: "EU Hub",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-4.svg",
-        size: 48,
-      },
-      {
-        label: "Final Delivery",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-5.svg",
-        size: 48,
-      },
-      {
-        label: "Delivered",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-6.svg",
-        size: 48,
-      },
+      { label: "Vehicle Picked Up", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-1.svg", size: 48 },
+      { label: "At Departure Terminal", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-2.svg", size: 48 },
+      { label: "International Transit", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-3.svg", size: 56 },
+      { label: "EU Hub", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-4.svg", size: 48 },
+      { label: "Final Delivery", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-5.svg", size: 48 },
+      { label: "Delivered", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-6.svg", size: 48 },
     ],
   },
   {
@@ -296,49 +263,28 @@ const shippingCards: ShippingCard[] = [
     image: "/figma/images/vehicle-2.png",
     progressWidth: 1112,
     steps: [
-      {
-        label: "Vehicle Picked Up",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-1.svg",
-        size: 48,
-      },
-      {
-        label: "At Departure Terminal",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-2.svg",
-        size: 48,
-      },
-      {
-        label: "International Transit",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-3.svg",
-        size: 56,
-      },
-      {
-        label: "EU Hub",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-4.svg",
-        size: 48,
-      },
-      {
-        label: "Final Delivery",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-5.svg",
-        size: 48,
-      },
-      {
-        label: "Delivered",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-6.svg",
-        size: 48,
-      },
+      { label: "Vehicle Picked Up", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-1.svg", size: 48 },
+      { label: "At Departure Terminal", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-2.svg", size: 48 },
+      { label: "International Transit", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-3.svg", size: 56 },
+      { label: "EU Hub", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-4.svg", size: 48 },
+      { label: "Final Delivery", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-5.svg", size: 48 },
+      { label: "Delivered", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-6.svg", size: 48 },
     ],
   },
 ];
-export default function DashboardHistoryPage() {
-  const searchParams = useSearchParams();
-  const activeParam = searchParams.get("tab") ?? "active";
+
+type DashboardHistoryPageProps = {
+  searchParams?: Promise<{
+    tab?: string | string[];
+  }>;
+};
+
+export default async function DashboardHistoryPage({ searchParams }: DashboardHistoryPageProps) {
+  const sp = searchParams ? await searchParams : undefined;
+  const rawTab = Array.isArray(sp?.tab) ? sp?.tab[0] : sp?.tab;
+  const activeParam = rawTab ?? "active";
   const activeTab = historyTabs.some((tab) => tab.value === activeParam) ? activeParam : "active";
+
   const toneClasses = {
     success: "bg-success",
     info: "bg-[#2571FF]",
@@ -348,7 +294,7 @@ export default function DashboardHistoryPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
       <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 max-tablet:px-8 max-narrow:px-4">
-        <div className="flex flex-col gap-4 lg:flex-row lg:gap-0">
+        <div className="flex flex-col gap-4 lg:flex-row">
           <DashboardSidebar />
 
           <div className="flex-1 min-w-0 flex flex-col gap-12 lg:w-[1144px]">
@@ -457,21 +403,15 @@ export default function DashboardHistoryPage() {
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-[14px] leading-[16px] text-muted">Payment</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.paymentStatus}
-                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.paymentStatus}</span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-[14px] leading-[16px] text-muted">Shipping</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.shippingStatus}
-                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.shippingStatus}</span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-[14px] leading-[16px] text-muted">Purchase Date</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.purchaseDate}
-                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.purchaseDate}</span>
                       </div>
                       <Button
                         variant="secondary"
@@ -571,15 +511,11 @@ export default function DashboardHistoryPage() {
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-[14px] leading-[16px] text-muted">Purchase Price</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.purchasePrice}
-                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.purchasePrice}</span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-[14px] leading-[16px] text-muted">Purchase Date</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.purchaseDate}
-                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.purchaseDate}</span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-[14px] leading-[16px] text-muted">Processing</span>
@@ -646,15 +582,11 @@ export default function DashboardHistoryPage() {
                           </div>
                           <div className="flex flex-col gap-2">
                             <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">Tracking Number</span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
-                              {card.trackingNumber}
-                            </span>
+                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">{card.trackingNumber}</span>
                           </div>
                           <div className="flex flex-col gap-2">
                             <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">Estimated Delivery</span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
-                              {card.estimatedDelivery}
-                            </span>
+                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">{card.estimatedDelivery}</span>
                           </div>
                         </div>
                       </div>
