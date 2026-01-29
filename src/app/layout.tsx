@@ -32,7 +32,7 @@ export default function RootLayout({
         "@type": "Organization",
         name: "Fadder",
         description: "Auto auction marketplace for buying and shipping vehicles.",
-        email: "support@yourwebsite.com",
+        email: "info@fadder.com",
         address: {
           "@type": "PostalAddress",
           streetAddress: "123 Auto Avenue",

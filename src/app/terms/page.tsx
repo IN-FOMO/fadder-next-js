@@ -1,7 +1,6 @@
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { ContactSection } from "../_components/ContactSection";
 import { PageHeader } from "../_components/PageHeader";
-import styles from "./terms.module.css";
 
 const termsSections = [
   {
@@ -101,31 +100,30 @@ const privacyText =
 
 export default function TermsPage() {
   return (
-    <main className={styles.page}>
+    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
       <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Terms" }]} />
       <PageHeader
         title="Terms & Conditions"
         subtitle="Please read our terms and conditions carefully before using our services"
       />
 
-      <section className={styles.content}>
-        <div className={styles.noticeCard}>
-          <h3 className={styles.noticeTitle}>Important Notice</h3>
-          <p className={styles.noticeText}>
-            These Terms and Conditions form a legally binding agreement between you (the
-            Client) and Fadder. By using our website and services, you confirm that you have
-            read, understood, and agreed to these Terms. Please review them carefully before
-            placing any order.
+      <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-[74px]">
+        <div className="w-full bg-info-bg rounded-[14px] p-4 flex flex-col gap-3">
+          <h3 className="m-0 text-xl leading-6 font-bold text-info">Important Notice</h3>
+          <p className="m-0 text-base leading-5 font-normal text-info">
+            These Terms and Conditions form a legally binding agreement between you (the Client) and
+            Fadder. By using our website and services, you confirm that you have read, understood,
+            and agreed to these Terms. Please review them carefully before placing any order.
           </p>
         </div>
 
-        <div className={styles.cardsGrid}>
+        <div className="w-full grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
           {termsSections.map((section) => (
-            <article key={section.title} className={styles.infoCard}>
-              <h3 className={styles.cardTitle}>{section.title}</h3>
-              <div className={styles.cardList}>
+            <article key={section.title} className="bg-white rounded-lg p-4 flex flex-col gap-6">
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{section.title}</h3>
+              <div className="flex flex-col gap-2">
                 {section.items.map((item) => (
-                  <p key={item} className={styles.cardItem}>
+                  <p key={item} className="m-0 text-base leading-5 font-normal text-foreground whitespace-pre-line">
                     {item}
                   </p>
                 ))}
@@ -134,31 +132,31 @@ export default function TermsPage() {
           ))}
         </div>
 
-        <div className={styles.serviceTable}>
-          <div className={`${styles.tableCell} ${styles.tableHeader} ${styles.tableHeaderLeft}`}>
+        <div className="w-full grid grid-cols-[1fr_170px_1fr] gap-0 max-narrow:grid-cols-1">
+          <div className="p-4 border border-border min-h-[52px] flex items-center font-bold bg-table-header rounded-tl-lg">
             Service
           </div>
-          <div className={`${styles.tableCell} ${styles.tableHeader} ${styles.tableHeaderCenter}`}>
+          <div className="p-4 border border-l-0 border-border min-h-[52px] flex items-center justify-center font-bold bg-table-header">
             Timeline
           </div>
-          <div className={`${styles.tableCell} ${styles.tableHeader} ${styles.tableHeaderRight}`}>
+          <div className="p-4 border border-l-0 border-border min-h-[52px] flex items-center font-bold bg-table-header rounded-tr-lg">
             Terms
           </div>
           {serviceRows.map((row, index) => (
-            <div key={`${row.service}-${index}`} className={styles.tableRow}>
+            <div key={`${row.service}-${index}`} className="contents">
               <div
-                className={`${styles.tableCell} ${styles.tableCellLeft} ${
-                  index === serviceRows.length - 1 ? styles.tableCellLeftRadius : ""
+                className={`p-4 border border-t-0 border-border min-h-[52px] flex items-center text-base leading-5 text-foreground ${
+                  index === serviceRows.length - 1 ? "rounded-bl-lg" : ""
                 }`}
               >
                 {row.service}
               </div>
-              <div className={`${styles.tableCell} ${styles.tableCellCenter}`}>
+              <div className="p-4 border border-t-0 border-l-0 border-border min-h-[52px] flex items-center justify-center text-base leading-5 text-foreground">
                 {row.timeline}
               </div>
               <div
-                className={`${styles.tableCell} ${styles.tableCellRight} ${
-                  index === serviceRows.length - 1 ? styles.tableCellRightRadius : ""
+                className={`p-4 border border-t-0 border-l-0 border-border min-h-[52px] flex items-center text-base leading-5 text-foreground ${
+                  index === serviceRows.length - 1 ? "rounded-br-lg" : ""
                 }`}
               >
                 {row.terms}
@@ -167,9 +165,11 @@ export default function TermsPage() {
           ))}
         </div>
 
-        <article className={styles.privacyCard}>
-          <h3 className={styles.cardTitle}>Privacy & Data Protection</h3>
-          <p className={styles.privacyText}>{privacyText}</p>
+        <article className="w-full bg-white rounded-lg p-4 flex flex-col gap-6">
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">Privacy & Data Protection</h3>
+          <p className="m-0 text-base leading-5 font-normal text-foreground whitespace-pre-line">
+            {privacyText}
+          </p>
         </article>
 
         <ContactSection />

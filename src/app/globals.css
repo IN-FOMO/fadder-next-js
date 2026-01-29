@@ -3,35 +3,167 @@
 :root {
   --background: #f5f6f8;
   --foreground: #0f0f0f;
+  /* Hero overlay gradient */
+  --hero-overlay: linear-gradient(13deg, rgba(28, 28, 28, 0.04) 0%, rgba(0, 0, 0, 0.75) 100%);
 }
 
 @theme inline {
+  /* Design tokens – LionAuto / Fadder palette */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-lato);
+  --color-primary: #ffaf0e;
+  --color-primary-hover: #ffbf3e;
+  --color-primary-pressed: #ffaa00;
+  --color-primary-disabled: #7b7b7b;
+  --color-dark: #0f0f0f;
+  --color-muted: #7b7b7b;
+  --color-surface: #f5f6f8;
+  --color-white: #ffffff;
+  --color-success: #00b333;
+  --color-copart: #0e5db8;
+  --color-iaai: #d91e1d;
+  --color-footer: #330000;
+  --color-black: #0c0c0c;
+
+  /* Borders & UI */
+  --color-border: #cccccc;
+  --color-table-header: #cccccc;
+  --color-info: #2571ff;
+  --color-info-bg: #daeaff;
+  --color-error: #e61f26;
+  --color-danger: #f30004;
+  --color-radio-checked: #24a0ed;
+  --color-secondary-disabled: #cccccc;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 16px;
+  --radius-xl: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-card-soft: 0 4px 12px rgba(15, 15, 15, 0.12);
+  --shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.08);
+  --shadow-input: 0 0 8px rgba(0, 0, 0, 0.12);
+  --shadow-dropdown: 0 8px 24px rgba(15, 15, 15, 0.15);
+
+  /* Font */
+  --font-sans: var(--font-lato), ui-sans-serif, system-ui, sans-serif;
+
+  /* Breakpoints (min-width) – project uses 699, 1279, 1679 */
+  --breakpoint-narrow: 699px;
+  --breakpoint-tablet: 1279px;
+  --breakpoint-wide: 1679px;
 }
 
 body {
-  background: var(--Gray, #f5f6f8);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
 }
 
 input:focus-visible,
 textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid #ffaf0e;
+select:focus-visible,
+:focus-visible {
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid #ffaf0e;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-:focus-visible {
-  outline: 2px solid #ffaf0e;
-  outline-offset: 2px;
+/* Buttons – LionAuto design system */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-foreground);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+.btn-primary:active {
+  background: var(--color-primary-pressed);
+}
+.btn-primary:disabled {
+  background: var(--color-primary-disabled);
+  color: var(--color-white);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-foreground);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  box-shadow: var(--shadow-hover);
+}
+.btn-secondary:active {
+  background: var(--color-surface);
+}
+.btn-secondary:disabled {
+  background: var(--color-secondary-disabled);
+  cursor: not-allowed;
+}
+
+.btn-outline-primary {
+  background: transparent;
+  color: var(--color-foreground);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-outline-primary:hover {
+  border-color: var(--color-primary-hover);
+}
+.btn-outline-primary:active {
+  border-color: var(--color-primary);
+}
+
+/* Table – header and borders */
+.table-header-cell {
+  background: var(--color-table-header);
+  border: 1px solid var(--color-border);
+  font-weight: 700;
+}
+.table-cell {
+  border: 1px solid var(--color-border);
+}
+
+/* Range slider (search page): input track hidden, thumb styled */
+.range-input-thumb {
+  appearance: none;
+  pointer-events: none;
+}
+.range-input-thumb::-webkit-slider-thumb {
+  appearance: none;
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-xl);
+  background: var(--color-white);
+  border: 2px solid var(--color-black);
+  box-shadow: var(--shadow-hover);
+}
+.range-input-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-xl);
+  background: var(--color-white);
+  border: 2px solid var(--color-black);
+  box-shadow: var(--shadow-hover);
 }

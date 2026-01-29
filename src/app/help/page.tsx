@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { ContactSection } from "../_components/ContactSection";
 import { PageHeader } from "../_components/PageHeader";
-import styles from "./help.module.css";
 
 const faqSections = [
   {
@@ -148,23 +147,26 @@ export default function HelpPage() {
   });
 
   return (
-    <main className={styles.page}>
+    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
       <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Help" }]} />
       <PageHeader
         title="Help & Support"
         subtitle="Find answers to common questions and get the help you need"
       />
 
-      <section className={styles.faqGrid}>
+      <section className="w-full max-w-[1760px] mx-auto grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
         {faqSections.map((section) => (
-          <div key={section.title} className={styles.faqCard}>
-            <h3 className={styles.faqTitle}>{section.title}</h3>
-            <div className={styles.faqList}>
+          <div key={section.title} className="bg-white rounded-lg p-4 flex flex-col gap-4">
+            <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{section.title}</h3>
+            <div className="flex flex-col">
               {section.items.map((item, index) => (
-                <div key={`${item.question}-${index}`} className={styles.faqItem}>
+                <div
+                  key={`${item.question}-${index}`}
+                  className="py-3 border-b border-border last:border-b-0 flex flex-col gap-2"
+                >
                   <button
                     type="button"
-                    className={styles.faqHeader}
+                    className="flex items-center justify-between gap-3 w-full border-0 bg-transparent p-0 text-left cursor-pointer"
                     aria-expanded={openState[`${section.title}:${item.question}`]}
                     onClick={() =>
                       setOpenState((prev) => ({
@@ -174,7 +176,7 @@ export default function HelpPage() {
                       }))
                     }
                   >
-                    <span className={styles.faqQuestion}>{item.question}</span>
+                    <span className="text-base leading-5 font-bold text-foreground">{item.question}</span>
                     <Image
                       src={
                         openState[`${section.title}:${item.question}`]
@@ -187,13 +189,13 @@ export default function HelpPage() {
                     />
                   </button>
                   <div
-                    className={`${styles.faqAnswerWrap} ${
+                    className={`overflow-hidden transition-[max-height,opacity] duration-[220ms] ease-[ease] ${
                       openState[`${section.title}:${item.question}`]
-                        ? styles.faqAnswerOpen
-                        : ""
+                        ? "max-h-[220px] opacity-100"
+                        : "max-h-0 opacity-0"
                     }`}
                   >
-                    <p className={styles.faqAnswer}>{item.answer}</p>
+                    <p className="m-0 text-base leading-5 font-normal text-muted">{item.answer}</p>
                   </div>
                 </div>
               ))}

@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./header.module.css";
+import { Button } from "./Button";
 
 const navLinks = [
   { label: "Marketplace", href: "/marketplace" },
+  { label: "Catalog", href: "/search" },
   { label: "Delivery", href: "/delivery" },
   { label: "Terms", href: "/terms" },
   { label: "Help", href: "/help" },
@@ -13,63 +14,62 @@ const navLinks = [
 
 export function Header() {
   return (
-    <header className={styles.header}>
-      <Link href="/" className={styles.logoLink}>
+    <header className="grid grid-cols-[auto_1fr_auto] items-center justify-between gap-[150px] bg-white px-20 py-4 max-wide:px-[60px] max-tablet:gap-2 max-tablet:py-3 max-tablet:px-4 max-narrow:px-4 max-narrow:py-2">
+      <Link href="/" className="inline-flex items-center">
         <Image
           src="/figma/icons/logo.svg"
           alt="Fadder"
           width={134}
           height={40}
-          className={styles.logoImage}
+          className="h-10 w-[134px] max-narrow:h-10 max-narrow:w-[42px]"
         />
       </Link>
-      <nav className={styles.nav}>
+      <nav className="flex items-center justify-center gap-8 text-base font-bold max-tablet:hidden">
         {navLinks.map((item) => (
-          <Link key={item.label} href={item.href} className={styles.navItem}>
+          <Link
+            key={item.label}
+            href={item.href}
+            className="whitespace-nowrap text-inherit no-underline shrink-0 hover:opacity-80 active:opacity-80"
+          >
             {item.label}
           </Link>
         ))}
       </nav>
-      <div className={styles.headerActions}>
-        <button type="button" className={styles.iconOnlyButton}>
-          <Image src="/figma/icons/icon-search.svg" alt="" width={40} height={40} />
-        </button>
-        <button type="button" className={styles.langButton}>
+      <div className="flex items-center gap-2 text-sm font-semibold shrink-0 max-tablet:hidden">
+        <Button href="/search" variant="ghost" size="icon" className="p-0 min-w-10 min-h-10">
+          <Image src="/figma/icons/icon-search.svg" alt="Search" width={40} height={40} />
+        </Button>
+        <Button variant="secondary" size="sm">
           <span>English</span>
-          <Image
-            src="/figma/icons/icon-arrow-down.svg"
-            alt=""
-            width={24}
-            height={24}
-          />
-        </button>
-        <button type="button" className={styles.iconButton}>
+          <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+        </Button>
+        <Button variant="secondary" size="sm">
           <Image src="/figma/icons/icon-wallet.svg" alt="" width={24} height={24} />
           <span>$0</span>
-        </button>
-        <button type="button" className={styles.iconButton}>
+        </Button>
+        <Button variant="secondary" size="sm">
           <Image src="/figma/icons/icon-gavel.svg" alt="" width={24} height={24} />
           <span>0 | 0</span>
-        </button>
-        <button type="button" className={styles.iconButton}>
+        </Button>
+        <Button variant="secondary" size="sm">
           <Image src="/figma/icons/icon-heart.svg" alt="" width={24} height={24} />
           <span>0</span>
-        </button>
-        <Link href="/account" className={styles.accountButton}>
+        </Button>
+        <Button href="/account" variant="secondary" size="sm">
           <Image
             src="/figma/images/my-account.png"
             alt=""
             width={24}
             height={24}
-            className={styles.accountAvatar}
+            className="h-6 w-6 rounded-full"
           />
           <span>My Account</span>
-        </Link>
+        </Button>
       </div>
-      <div className={styles.mobileActions}>
-        <button type="button" className={styles.mobileMenu}>
+      <div className="hidden items-center gap-3 max-tablet:flex">
+        <Button variant="secondary" size="icon">
           <Image src="/figma/icons/icon-menu.svg" alt="" width={24} height={24} />
-        </button>
+        </Button>
       </div>
     </header>
   );

@@ -1,7 +1,6 @@
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { ContactSection } from "../_components/ContactSection";
 import { PageHeader } from "../_components/PageHeader";
-import styles from "./about.module.css";
 
 const missionVision = [
   {
@@ -64,42 +63,50 @@ const timeline = [
 
 export default function AboutPage() {
   return (
-    <main className={styles.page}>
+    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
       <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "About" }]} />
       <PageHeader
         title="About Fadder"
         subtitle="Helping individuals and companies purchase quality vehicles from abroad since 2014"
       />
 
-      <section className={styles.section}>
-        <div className={styles.missionGrid}>
+      <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-[74px] max-tablet:w-[calc(100%-0px)]">
+        <div className="grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
           {missionVision.map((item) => (
-            <article key={item.title} className={styles.infoCard}>
-              <h3 className={styles.cardTitle}>{item.title}</h3>
-              <p className={styles.cardText}>{item.text}</p>
+            <article
+              key={item.title}
+              className="bg-white rounded-lg p-4 flex flex-col gap-6"
+            >
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{item.title}</h3>
+              <p className="m-0 text-base leading-5 font-normal text-foreground">{item.text}</p>
             </article>
           ))}
         </div>
 
-        <div className={styles.statsGrid}>
+        <div className="grid grid-cols-4 gap-4 max-tablet:grid-cols-2 max-narrow:grid-cols-1">
           {stats.map((item) => (
-            <div key={item.label} className={styles.statCard}>
-              <div className={styles.statValue}>{item.value}</div>
-              <div className={styles.statLabel}>{item.label}</div>
+            <div
+              key={item.label}
+              className="bg-white rounded-lg p-4 flex flex-col gap-2 items-center"
+            >
+              <div className="text-xl leading-6 font-bold text-primary">{item.value}</div>
+              <div className="text-base leading-5 font-normal text-muted text-center">{item.label}</div>
             </div>
           ))}
         </div>
 
-        <div className={styles.timeline}>
+        <div className="flex flex-col gap-4">
           {timeline.map((item) => (
-            <div key={item.year} className={styles.timelineItem}>
-              <div className={styles.timelineMarker}>
-                <div className={styles.timelineYear}>{item.year}</div>
-                <span className={styles.timelineLine} aria-hidden="true" />
+            <div key={item.year} className="flex gap-4 items-stretch">
+              <div className="w-14 flex flex-col items-center gap-1 self-stretch shrink-0">
+                <div className="bg-black text-white rounded-lg py-1 px-2 text-sm leading-4 font-bold inline-flex items-center justify-center">
+                  {item.year}
+                </div>
+                <span className="w-0.5 flex-1 bg-black min-h-[20px]" aria-hidden="true" />
               </div>
-              <div className={styles.timelineCard}>
-                <h3 className={styles.cardTitle}>{item.title}</h3>
-                <p className={styles.cardText}>{item.description}</p>
+              <div className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6">
+                <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{item.title}</h3>
+                <p className="m-0 text-base leading-5 font-normal text-foreground">{item.description}</p>
               </div>
             </div>
           ))}

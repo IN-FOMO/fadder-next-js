@@ -1,5 +1,5 @@
 import Image from "next/image";
-import styles from "./pagination.module.css";
+import { Button } from "./Button";
 
 type PaginationProps = {
   pages: Array<number | string>;
@@ -8,29 +8,34 @@ type PaginationProps = {
 
 export function Pagination({ pages, current }: PaginationProps) {
   return (
-    <div className={styles.pagination} role="navigation" aria-label="Pagination">
-      <button type="button" className={styles.navButton}>
+    <div
+      className="flex items-center justify-center gap-4"
+      role="navigation"
+      aria-label="Pagination"
+    >
+      <Button variant="white" size="md" className="gap-2 min-w-0">
         <Image src="/figma/icons/icon-arrow-left.svg" alt="" width={24} height={24} />
         <span>Prev</span>
-      </button>
-      <div className={styles.pageList}>
+      </Button>
+      <div className="flex items-center gap-1">
         {pages.map((page, index) => {
           const isActive = typeof page === "number" && page === current;
           return (
-            <button
+            <Button
               key={`${page}-${index}`}
-              type="button"
-              className={`${styles.pageButton} ${isActive ? styles.pageActive : ""}`}
+              variant={isActive ? "primary" : "white"}
+              size="md"
+              className="min-w-11 whitespace-nowrap"
             >
               {page}
-            </button>
+            </Button>
           );
         })}
       </div>
-      <button type="button" className={styles.navButton}>
+      <Button variant="white" size="md" className="gap-2 min-w-0">
         <span>Next</span>
         <Image src="/figma/icons/icon-arrow-right.svg" alt="" width={24} height={24} />
-      </button>
+      </Button>
     </div>
   );
 }

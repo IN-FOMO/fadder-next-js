@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./breadcrumbs.module.css";
 
 type BreadcrumbItem = {
   label: string;
@@ -13,17 +12,22 @@ type BreadcrumbsProps = {
 
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
-    <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+    <nav className="flex items-center gap-1" aria-label="Breadcrumb">
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         return (
-          <div key={`${item.label}-${index}`} className={styles.crumbGroup}>
+          <div key={`${item.label}-${index}`} className="inline-flex items-center gap-1">
             {item.href && !isLast ? (
-              <Link className={styles.crumb} href={item.href}>
+              <Link
+                className="inline-flex items-center gap-2.5 text-xs font-normal leading-[14px] text-muted no-underline"
+                href={item.href}
+              >
                 {item.label}
               </Link>
             ) : (
-              <span className={`${styles.crumb} ${styles.crumbActive}`}>{item.label}</span>
+              <span className="inline-flex items-center gap-2.5 text-xs font-normal leading-[14px] text-dark">
+                {item.label}
+              </span>
             )}
             {!isLast ? (
               <Image
@@ -31,7 +35,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                 alt=""
                 width={24}
                 height={24}
-                className={styles.icon}
+                className="h-6 w-6"
               />
             ) : null}
           </div>

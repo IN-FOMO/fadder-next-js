@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
+import { Button } from "../_components/Button";
 import { Pagination } from "../_components/Pagination";
 import { VehicleCard, type VehicleCardData } from "../_components/VehicleCard";
-import styles from "./search.module.css";
 
 const vehicleCards: VehicleCardData[] = [
   {
@@ -362,7 +362,7 @@ export default function SearchPage() {
   const yearMaxPct = ((yearRange.max - 1900) / (2025 - 1900)) * 100;
 
   return (
-    <main className={styles.page}>
+    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-4 text-foreground">
       <Breadcrumbs
         items={[
           { label: "Home page", href: "/" },
@@ -370,27 +370,33 @@ export default function SearchPage() {
           { label: "Search Results" },
         ]}
       />
-      <h1 className={styles.title}>Repairable, Salvage and Wrecked Car Auctions</h1>
-      <div className={styles.layout}>
-        <aside className={styles.filters}>
+      <h1 className="text-[32px] font-bold leading-9 m-0 text-foreground">
+        Repairable, Salvage and Wrecked Car Auctions
+      </h1>
+      <div className="flex items-start gap-4">
+        <aside className="w-[424px] flex flex-col gap-2">
           <div
-            className={`${styles.filtersCard} ${
-              filtersCollapsed ? styles.filtersCardCollapsed : ""
+            className={`bg-white rounded-2xl p-4 flex flex-col gap-[29px] relative ${
+              filtersCollapsed ? "h-[52px] gap-0 overflow-hidden" : ""
             }`}
           >
             <div
-              className={`${styles.filtersHeader} ${
-                filtersCollapsed ? styles.filtersHeaderCollapsed : ""
+              className={`flex items-center justify-between w-[245px] ${
+                filtersCollapsed ? "gap-[182px]" : "gap-[130px]"
               }`}
             >
-              <h2>Search filters</h2>
-              <button type="button" className={styles.resetButton} onClick={resetAll}>
+              <h2 className="text-xl font-bold m-0">Search filters</h2>
+              <button
+                type="button"
+                className="border-0 bg-transparent text-sm font-semibold text-foreground cursor-pointer w-14 text-left"
+                onClick={resetAll}
+              >
                 Reset All
               </button>
             </div>
             <button
               type="button"
-              className={styles.filtersCollapseButton}
+              className="absolute right-0 top-0 w-[38px] h-[52px] p-0 border-0 bg-transparent inline-flex items-center justify-center cursor-pointer"
               aria-label={filtersCollapsed ? "Expand filters" : "Collapse filters"}
               onClick={() => setFiltersCollapsed((prev) => !prev)}
             >
@@ -402,25 +408,23 @@ export default function SearchPage() {
               />
             </button>
             {filtersCollapsed ? null : (
-              <div className={styles.filterList}>
+              <div className="flex flex-col gap-[18px] w-full">
                 {quickFilters.map((item) => {
                   const isChecked = quickState[item.label];
                   return (
                     <button
                       key={item.label}
                       type="button"
-                      className={`${styles.filterOption} ${
-                        item.label === "Vehicles Only"
-                          ? styles.filterOptionTight
-                          : styles.filterOptionWide
+                      className={`flex items-center justify-between gap-3 border-0 bg-transparent p-0 cursor-pointer text-left w-full ${
+                        item.label === "Vehicles Only" ? "gap-3" : "gap-[38px]"
                       }`}
                       onClick={() =>
                         setQuickState((prev) => ({ ...prev, [item.label]: !prev[item.label] }))
                       }
                     >
                       <span
-                        className={`${styles.filterLabel} ${
-                          item.label === "Vehicles Only" ? styles.filterLabelTight : ""
+                        className={`flex items-center gap-2 text-sm font-semibold ${
+                          item.label === "Vehicles Only" ? "items-end" : ""
                         }`}
                       >
                         {item.label === "Vehicles Only" ? (
@@ -429,7 +433,7 @@ export default function SearchPage() {
                             alt=""
                             width={74}
                             height={20}
-                            className={styles.filterIcon}
+                            className="w-[74px] h-5 object-cover"
                           />
                         ) : null}
                         <span>{item.label}</span>
@@ -453,20 +457,20 @@ export default function SearchPage() {
 
           {filtersCollapsed ? null : (
             <>
-              <div className={styles.filterSection}>
-            <div className={styles.filterSectionHeader}>
+              <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
               <span>Auction type</span>
               <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
             </div>
-            <div className={styles.filterSubSection}>
+            <div className="flex flex-col gap-[11px]">
               <button
                 type="button"
-                className={styles.filterItem}
+                className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
                 onClick={() =>
                   setAuctionState((prev) => ({ ...prev, All: !prev.All }))
                 }
               >
-                <span className={styles.filterItemLeft}>
+                <span className="flex items-center gap-2">
                   <Image
                     src={
                       auctionState.All
@@ -482,7 +486,7 @@ export default function SearchPage() {
               </button>
               <button
                 type="button"
-                className={styles.auctionRow}
+                className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
                 onClick={() =>
                   setAuctionState((prev) => ({ ...prev, Copart: !prev.Copart }))
                 }
@@ -497,13 +501,13 @@ export default function SearchPage() {
                   width={24}
                   height={24}
                 />
-                <span className={`${styles.auctionBadge} ${styles.badgeCopart}`}>
+                <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-copart">
                   Copart
                 </span>
               </button>
               <button
                 type="button"
-                className={styles.auctionRow}
+                className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
                 onClick={() => setAuctionState((prev) => ({ ...prev, IAAI: !prev.IAAI }))}
               >
                 <Image
@@ -516,27 +520,27 @@ export default function SearchPage() {
                   width={24}
                   height={24}
                 />
-                <span className={`${styles.auctionBadge} ${styles.badgeIaai}`}>IAAI</span>
+                <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-iaai">IAAI</span>
               </button>
             </div>
           </div>
 
-          <div className={styles.filterSection}>
-            <div className={styles.filterSectionHeader}>
+          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
               <span>Lot status</span>
               <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
             </div>
-            <div className={styles.filterItems}>
+            <div className="flex flex-col gap-[11px]">
               {(["Active", "Sold", "Upcoming"] as const).map((status) => (
                 <button
                   key={status}
                   type="button"
-                  className={styles.filterItem}
+                  className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
                   onClick={() =>
                     setLotStatusState((prev) => ({ ...prev, [status]: !prev[status] }))
                   }
                 >
-                  <span className={styles.filterItemLeft}>
+                  <span className="flex items-center gap-2">
                     <Image
                       src={
                         lotStatusState[status]
@@ -554,16 +558,16 @@ export default function SearchPage() {
             </div>
           </div>
 
-          <div className={styles.filterSection}>
-            <div className={styles.filterSectionHeader}>
+          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
               <span>Estimated price USD</span>
               <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
             </div>
-            <div className={styles.rangeRow}>
-              <span className={styles.rangeLabel}>min</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted">min</span>
               <input
                 type="number"
-                className={styles.rangeValue}
+                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
                 value={priceRange.min}
                 min={0}
                 max={priceRange.max}
@@ -574,11 +578,11 @@ export default function SearchPage() {
                   }))
                 }
               />
-              <div className={styles.rangeDivider} />
-              <span className={styles.rangeLabel}>max</span>
+              <div className="w-6 h-0.5 bg-muted" />
+              <span className="text-sm text-muted">max</span>
               <input
                 type="number"
-                className={styles.rangeValue}
+                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
                 value={priceRange.max}
                 min={priceRange.min}
                 max={100000}
@@ -591,9 +595,9 @@ export default function SearchPage() {
               />
             </div>
             <div
-              className={styles.rangeTrack}
+              className="h-1.5 rounded-full bg-border relative flex items-center"
               style={{
-                background: `linear-gradient(to right, #cccccc ${priceMinPct}%, #ffaf0e ${priceMinPct}%, #ffaf0e ${priceMaxPct}%, #cccccc ${priceMaxPct}%)`,
+                background: `linear-gradient(to right, var(--color-border) ${priceMinPct}%, var(--color-primary) ${priceMinPct}%, var(--color-primary) ${priceMaxPct}%, var(--color-border) ${priceMaxPct}%)`,
               }}
             >
               <input
@@ -607,7 +611,7 @@ export default function SearchPage() {
                     min: Math.min(Number(event.target.value), prev.max),
                   }))
                 }
-                className={styles.rangeInput}
+                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
               />
               <input
                 type="range"
@@ -620,28 +624,28 @@ export default function SearchPage() {
                     max: Math.max(Number(event.target.value), prev.min),
                   }))
                 }
-                className={styles.rangeInput}
+                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
               />
             </div>
-            <div className={styles.rangeValues}>
+            <div className="flex justify-between text-sm">
               <span>{priceRange.min} $</span>
-              <span>{priceRange.max} $</span>
+              <span className="text-muted">{priceRange.max} $</span>
             </div>
-            <button type="button" className={styles.applyButton}>
+            <Button variant="primary" size="md">
               Apply
-            </button>
+            </Button>
           </div>
 
-          <div className={styles.filterSection}>
-            <div className={styles.filterSectionHeader}>
+          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
               <span>Year of manufacture</span>
               <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
             </div>
-            <div className={styles.rangeRow}>
-              <span className={styles.rangeLabel}>from</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted">from</span>
               <input
                 type="number"
-                className={styles.rangeValue}
+                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
                 value={yearRange.min}
                 min={1900}
                 max={yearRange.max}
@@ -652,11 +656,11 @@ export default function SearchPage() {
                   }))
                 }
               />
-              <div className={styles.rangeDivider} />
-              <span className={styles.rangeLabel}>to</span>
+              <div className="w-6 h-0.5 bg-muted" />
+              <span className="text-sm text-muted">to</span>
               <input
                 type="number"
-                className={styles.rangeValue}
+                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
                 value={yearRange.max}
                 min={yearRange.min}
                 max={2025}
@@ -669,9 +673,9 @@ export default function SearchPage() {
               />
             </div>
             <div
-              className={styles.rangeTrack}
+              className="h-1.5 rounded-full bg-border relative flex items-center"
               style={{
-                background: `linear-gradient(to right, #cccccc ${yearMinPct}%, #ffaf0e ${yearMinPct}%, #ffaf0e ${yearMaxPct}%, #cccccc ${yearMaxPct}%)`,
+                background: `linear-gradient(to right, var(--color-border) ${yearMinPct}%, var(--color-primary) ${yearMinPct}%, var(--color-primary) ${yearMaxPct}%, var(--color-border) ${yearMaxPct}%)`,
               }}
             >
               <input
@@ -685,7 +689,7 @@ export default function SearchPage() {
                     min: Math.min(Number(event.target.value), prev.max),
                   }))
                 }
-                className={styles.rangeInput}
+                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
               />
               <input
                 type="range"
@@ -698,29 +702,30 @@ export default function SearchPage() {
                     max: Math.max(Number(event.target.value), prev.min),
                   }))
                 }
-                className={styles.rangeInput}
+                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
               />
             </div>
-            <div className={styles.rangeValues}>
+            <div className="flex justify-between text-sm">
               <span>{yearRange.min} Year</span>
-              <span>{yearRange.max} Year</span>
+              <span className="text-muted">{yearRange.max} Year</span>
             </div>
-            <button type="button" className={styles.applyButton}>
+            <Button variant="primary" size="md">
               Apply
-            </button>
+            </Button>
           </div>
 
-          <div className={styles.filterSection}>
-            <div className={styles.filterSectionHeader}>
+          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
               <span>Damage type</span>
               <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
             </div>
-            <label className={styles.filterSearch}>
+            <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 text-base text-muted min-h-[44px]">
               <input
                 placeholder="Search"
                 aria-label="Search damage type"
                 value={damageSearchValue}
                 onChange={(event) => setDamageSearchValue(event.target.value)}
+                className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
               />
               <Image
                 src="/figma/icons/icon-search-rounded.svg"
@@ -729,7 +734,7 @@ export default function SearchPage() {
                 height={24}
               />
             </label>
-            <div className={styles.filterItems}>
+            <div className="flex flex-col gap-[11px]">
               {damageTypeItems
                 .filter((item) =>
                   item.label.toLowerCase().includes(damageSearchValue.toLowerCase()),
@@ -740,7 +745,7 @@ export default function SearchPage() {
                     <button
                       key={item.label}
                       type="button"
-                      className={styles.filterItem}
+                      className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
                       onClick={() =>
                         setConditionState((prev) => ({
                           ...prev,
@@ -748,7 +753,7 @@ export default function SearchPage() {
                         }))
                       }
                     >
-                      <span className={styles.filterItemLeft}>
+                      <span className="flex items-center gap-2">
                         <Image
                           src={
                             isChecked
@@ -761,7 +766,7 @@ export default function SearchPage() {
                         />
                         <span>{item.label}</span>
                       </span>
-                      <span className={styles.filterCount}>{item.count}</span>
+                      <span className="text-sm font-normal text-foreground">{item.count}</span>
                     </button>
                   );
                 })}
@@ -776,14 +781,14 @@ export default function SearchPage() {
                 return (
                   <div
                     key={title}
-                    className={`${styles.filterCollapsedGroup} ${
-                      isOpen ? styles.filterCollapsedGroupOpen : ""
-                    } ${isOpen && isScrollable ? styles.filterCollapsedGroupFixed : ""}`}
+                    className={`flex flex-col gap-3 ${
+                      isOpen ? "bg-white rounded-2xl p-4 gap-4 w-full" : ""
+                    } ${isOpen && isScrollable ? "h-[476px] overflow-hidden" : ""}`}
                   >
                     <button
                       type="button"
-                      className={`${styles.filterCollapsed} ${
-                        isOpen ? styles.filterCollapsedOpen : ""
+                      className={`flex items-center justify-between p-4 rounded-2xl bg-white text-base font-semibold leading-5 border-0 cursor-pointer w-full gap-[130px] ${
+                        isOpen ? "p-0 bg-transparent rounded-none gap-[142px]" : ""
                       }`}
                       onClick={() =>
                         setCollapsedState((prev) => ({ ...prev, [title]: !prev[title] }))
@@ -799,13 +804,13 @@ export default function SearchPage() {
                     </button>
                     {isOpen && section ? (
                       <div
-                        className={`${styles.filterExpanded} ${
-                          isScrollable ? styles.filterExpandedScrollable : ""
+                        className={`bg-transparent rounded-none p-0 flex flex-col gap-[11px] ${
+                          isScrollable ? "flex-1 min-h-0" : ""
                         }`}
                       >
                         {title === "Search near ZIP code" ? (
-                          <div className={styles.filterExpandedZipRow}>
-                            <label className={styles.filterExpandedInput}>
+                          <div className="flex items-center gap-1">
+                            <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[44px]">
                               <input
                                 placeholder="Zip code"
                                 value={sectionState?.input ?? ""}
@@ -815,9 +820,10 @@ export default function SearchPage() {
                                     [title]: { ...prev[title], input: event.target.value },
                                   }))
                                 }
+                                className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
                               />
                             </label>
-                            <div className={styles.filterExpandedDistance}>
+                            <div className="bg-surface rounded-[14px] py-2.5 px-3 inline-flex items-center gap-1 text-base leading-5 text-muted whitespace-nowrap">
                               <span>50 mi</span>
                               <Image
                                 src="/figma/icons/icon-arrow-down.svg"
@@ -829,12 +835,12 @@ export default function SearchPage() {
                           </div>
                         ) : null}
                         {title === "Search near ZIP code" ? (
-                          <button type="button" className={styles.zipSearchButton}>
+                          <Button variant="primary" size="md">
                             Search
-                          </button>
+                          </Button>
                         ) : null}
                         {section.searchPlaceholder ? (
-                          <label className={styles.filterExpandedSearch}>
+                          <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[44px]">
                             <input
                               placeholder={section.searchPlaceholder}
                               value={sectionState?.search ?? ""}
@@ -844,6 +850,7 @@ export default function SearchPage() {
                                   [title]: { ...prev[title], search: event.target.value },
                                 }))
                               }
+                              className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
                             />
                             <Image
                               src="/figma/icons/icon-search-rounded.svg"
@@ -854,7 +861,7 @@ export default function SearchPage() {
                           </label>
                         ) : null}
                         {section.inputPlaceholder && title !== "Search near ZIP code" ? (
-                          <label className={styles.filterExpandedInput}>
+                          <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[44px]">
                             <input
                               placeholder={section.inputPlaceholder}
                               value={sectionState?.input ?? ""}
@@ -864,13 +871,14 @@ export default function SearchPage() {
                                   [title]: { ...prev[title], input: event.target.value },
                                 }))
                               }
+                              className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
                             />
                           </label>
                         ) : null}
                         {section.items ? (
                           <div
-                            className={`${styles.filterExpandedList} ${
-                              isScrollable ? styles.filterExpandedListScrollable : ""
+                            className={`flex flex-col gap-[11px] w-full ${
+                              isScrollable ? "flex-1 min-h-0 overflow-y-auto" : ""
                             }`}
                           >
                             {(sectionState?.items ?? [])
@@ -885,7 +893,7 @@ export default function SearchPage() {
                                 <button
                                   key={item.label}
                                   type="button"
-                                  className={styles.filterExpandedItem}
+                                  className="flex items-center justify-between gap-2 border-0 bg-transparent p-0 cursor-pointer text-left w-full text-sm font-normal"
                                   onClick={() =>
                                     setExpandedState((prev) => ({
                                       ...prev,
@@ -900,7 +908,7 @@ export default function SearchPage() {
                                     }))
                                   }
                                 >
-                                  <span className={styles.filterItemLeft}>
+                                  <span className="flex items-center gap-2">
                                     <Image
                                       src={
                                         item.checked
@@ -913,7 +921,7 @@ export default function SearchPage() {
                                     />
                                     <span>{item.label}</span>
                                   </span>
-                                  <span className={styles.filterCount}>{item.count}</span>
+                                  <span className="text-sm font-normal text-foreground">{item.count}</span>
                                 </button>
                               ))}
                           </div>
@@ -927,19 +935,30 @@ export default function SearchPage() {
           )}
         </aside>
 
-        <section className={styles.results}>
-          <div className={styles.resultsTop}>
-            <div className={styles.resultsCount}>Results 22,328</div>
-            <div className={styles.sortControls}>
-              <button type="button" className={styles.sortButton}>
+        <section className="w-[1320px] flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="bg-white rounded-r-2xl py-4 pl-[30px] pr-3.5 text-base font-bold leading-5">
+              Results 22,328
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5"
+              >
                 <span>20 cards</span>
                 <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
               </button>
-              <button type="button" className={styles.sortButton}>
+              <button
+                type="button"
+                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5"
+              >
                 <span>Sort by</span>
                 <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
               </button>
-              <button type="button" className={styles.shareButton}>
+              <button
+                type="button"
+                className="flex items-center justify-center p-3.5 bg-white rounded-2xl border-0 cursor-pointer"
+              >
                 <Image
                   src="/figma/icons/icon-share-small.svg"
                   alt=""
@@ -950,12 +969,12 @@ export default function SearchPage() {
             </div>
           </div>
 
-          <div className={styles.filterTags}>
+          <div className="flex flex-wrap gap-2 py-2.5">
             {activeTags.map((item) => (
               <button
                 key={item}
                 type="button"
-                className={styles.filterTag}
+                className="inline-flex items-center gap-2 py-1 px-3 bg-white rounded-2xl text-sm font-bold border-0 cursor-pointer"
                 onClick={() =>
                   setConditionState((prev) => ({ ...prev, [item]: !prev[item] }))
                 }
@@ -966,17 +985,21 @@ export default function SearchPage() {
             ))}
           </div>
 
-          <div className={styles.cardsGrid}>
+          <div className="flex flex-wrap gap-4 w-[1320px]">
             {vehicleCards.map((card, index) => (
-              <VehicleCard key={`${card.title}-${index}`} card={card} className={styles.cardItem} />
+              <VehicleCard
+                key={`${card.title}-${index}`}
+                card={card}
+                className="w-[318px]"
+              />
             ))}
           </div>
 
-          <div className={styles.paginationWrap}>
+          <div className="mt-2">
             <Pagination pages={[1, 2, 3, 5, "...", 125, 126, 127]} current={2} />
           </div>
 
-          <p className={styles.resultsDescription}>
+          <p className="text-base text-muted mt-6 w-[986px]">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
             incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
             nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.

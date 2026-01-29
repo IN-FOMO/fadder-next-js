@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
+import { Button } from "../_components/Button";
+import { ContactSection } from "../_components/ContactSection";
 import { PageHeader } from "../_components/PageHeader";
-import styles from "./delivery.module.css";
 
 const deliveryOptions = [
   {
@@ -47,38 +48,35 @@ const requiredDocs = [
 
 export default function DeliveryPage() {
   return (
-    <main className={styles.page}>
+    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
       <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Delivery" }]} />
       <PageHeader
         title="Delivery"
         subtitle="Professional car delivery throughout Poland with full cargo insurance"
       />
 
-      <section className={styles.heroSection}>
-        <div className={styles.heroBackground}>
+      <section className="w-full max-w-[1760px] mx-auto flex flex-col items-center gap-[74px]">
+        <div className="w-full h-[587px] rounded-lg overflow-hidden bg-white relative">
           <Image
             src="/figma/images/delivery-hero.png"
             alt=""
             width={1760}
             height={587}
-            className={styles.heroImage}
+            className="w-full h-full object-cover"
           />
         </div>
-        <div className={styles.deliveryCards}>
+        <div className="w-full flex gap-4 items-stretch max-narrow:flex-col">
           {deliveryOptions.map((option) => (
-            <article key={option.title} className={styles.deliveryCard}>
-              <Image
-                src={option.icon}
-                alt=""
-                width={48}
-                height={48}
-                className={styles.deliveryIcon}
-              />
-              <h3 className={styles.cardTitle}>{option.title}</h3>
-              <p className={styles.cardDescription}>{option.description}</p>
-              <div className={styles.cardDetails}>
+            <article
+              key={option.title}
+              className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6 justify-between"
+            >
+              <Image src={option.icon} alt="" width={48} height={48} className="inline-flex" />
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{option.title}</h3>
+              <p className="m-0 text-base leading-5 font-normal text-foreground">{option.description}</p>
+              <div className="flex flex-col gap-2">
                 {option.details.map((text) => (
-                  <p key={text} className={styles.cardDetail}>
+                  <p key={text} className="m-0 text-base leading-5 font-normal text-foreground">
                     {text}
                   </p>
                 ))}
@@ -88,44 +86,45 @@ export default function DeliveryPage() {
         </div>
       </section>
 
-      <section className={styles.pricingSection}>
-        <div className={styles.pricingTable}>
-          <div className={styles.tableColumn}>
-            <div className={`${styles.tableCell} ${styles.tableHeader} ${styles.tableHeaderLeft}`}>
+      <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-4">
+        <div className="w-full flex items-stretch">
+          <div className="flex-1 flex flex-col">
+            <div className="p-4 border border-border text-base leading-5 font-bold text-foreground min-h-[52px] flex items-center justify-center rounded-tl-lg bg-table-header">
               Route
             </div>
             {pricingRows.map((row, index) => (
               <div
                 key={row.route}
-                className={`${styles.tableCell} ${styles.tableCellRoute} ${
-                  index === pricingRows.length - 1 ? styles.tableCellLeftRadius : ""
+                className={`p-4 border border-t-0 border-border text-base leading-5 text-foreground min-h-[52px] flex justify-center items-center ${
+                  index === pricingRows.length - 1 ? "rounded-bl-lg" : ""
                 }`}
               >
                 {row.route}
               </div>
             ))}
           </div>
-          <div className={styles.tableColumnPrice}>
-            <div
-              className={`${styles.tableCell} ${styles.tableHeader} ${styles.tableHeaderPrice}`}
-            >
+          <div className="flex-1 flex flex-col items-end">
+            <div className="p-4 border border-border text-base leading-5 font-bold text-foreground min-h-[52px] flex items-center bg-table-header w-full justify-center">
               Price
             </div>
             {pricingRows.map((row) => (
-              <div key={row.route} className={`${styles.tableCell} ${styles.tableCellPrice}`}>
+              <div
+                key={row.route}
+                className="p-4 border border-t-0 border-l-0 border-r-0 border-border text-base leading-5 text-foreground min-h-[52px] flex items-center w-full justify-center"
+              >
                 {row.price}
               </div>
             ))}
           </div>
-          <div className={styles.tableColumn}>
-            <div className={`${styles.tableCell} ${styles.tableHeader} ${styles.tableHeaderRight}`}>
+          <div className="flex-1 flex flex-col">
+            <div className="p-4 border border-l border-border text-base leading-5 font-bold text-foreground min-h-[52px] flex items-center rounded-tr-lg justify-center bg-table-header">
               Delivery Time
             </div>
             {pricingRows.map((row, index) => (
               <div
                 key={row.route}
-                className={`${styles.tableCell} ${styles.tableCellDelivery} ${
-                  index === pricingRows.length - 1 ? styles.tableCellRightRadius : ""
+                className={`p-4 border border-t-0 border-border text-base leading-5 text-foreground min-h-[52px] flex items-center border-l border-border justify-center ${
+                  index === pricingRows.length - 1 ? "rounded-br-lg" : ""
                 }`}
               >
                 {row.time}
@@ -133,28 +132,28 @@ export default function DeliveryPage() {
             ))}
           </div>
         </div>
-        <p className={styles.pricingNote}>
-          *Prices are indicative for standard passenger vehicles. Actual cost depends on
-          vehicle type, dimensions, weight, pickup location, and current route availability
+        <p className="m-0 text-base leading-5 font-normal text-foreground">
+          *Prices are indicative for standard passenger vehicles. Actual cost depends on vehicle
+          type, dimensions, weight, pickup location, and current route availability
         </p>
       </section>
 
-      <section className={styles.infoCards}>
-        <article className={styles.infoCard}>
-          <h3 className={styles.cardTitle}>What's Included</h3>
-          <div className={styles.cardList}>
+      <section className="w-full max-w-[1320px] mx-auto flex gap-4 max-narrow:flex-col">
+        <article className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6">
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">What's Included</h3>
+          <div className="flex flex-col gap-2">
             {includedItems.map((item) => (
-              <p key={item} className={styles.cardDetail}>
+              <p key={item} className="m-0 text-base leading-5 font-normal text-foreground">
                 {item}
               </p>
             ))}
           </div>
         </article>
-        <article className={styles.infoCard}>
-          <h3 className={styles.cardTitle}>Required Documents</h3>
-          <div className={styles.cardList}>
+        <article className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6">
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">Required Documents</h3>
+          <div className="flex flex-col gap-2">
             {requiredDocs.map((item) => (
-              <p key={item} className={styles.cardDetail}>
+              <p key={item} className="m-0 text-base leading-5 font-normal text-foreground">
                 {item}
               </p>
             ))}
@@ -162,25 +161,27 @@ export default function DeliveryPage() {
         </article>
       </section>
 
-      <section className={styles.historyCard}>
-        <div className={styles.historyHeader}>
-          <h3 className={styles.historyTitle}>Full Car History</h3>
+      <section className="w-full max-w-[700px] mx-auto bg-white rounded-lg p-4 flex flex-col items-center gap-6">
+        <div className="w-full flex items-center justify-between gap-6">
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">Full Car History</h3>
           <Image
             src="/figma/icons/icon-exclamation-circle.svg"
             alt=""
             width={24}
             height={24}
-            className={styles.historyIcon}
+            className="inline-flex"
           />
         </div>
-        <p className={styles.historyText}>
-          Get a comprehensive report (similar to Carfax) including accident history, service
-          records, and more.
+        <p className="m-0 text-base leading-5 font-normal text-foreground text-center">
+          Get a comprehensive report (similar to Carfax) including accident history, service records,
+          and more.
         </p>
-        <button type="button" className={styles.historyButton}>
+        <Button variant="primary" size="lg">
           Request Full History (Carfax)
-        </button>
+        </Button>
       </section>
+
+      <ContactSection />
     </main>
   );
 }

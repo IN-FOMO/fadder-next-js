@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
+import { Button } from "../_components/Button";
 import { VehicleCard, type VehicleCardData } from "../_components/VehicleCard";
-import styles from "./vehicle.module.css";
 
 const primarySpecs = [
   { label: "Lot Number", value: "62812505" },
@@ -140,7 +140,7 @@ export default function VehiclePage() {
   });
 
   return (
-    <main className={styles.page}>
+    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-12 text-foreground">
       <Breadcrumbs
         items={[
           { label: "Home page", href: "/" },
@@ -150,30 +150,40 @@ export default function VehiclePage() {
         ]}
       />
 
-      <div className={styles.titleRow}>
-        <h1 className={styles.title}>1982 Chevrolet Corvette</h1>
-        <span className={`${styles.auctionBadge} ${styles.titleBadge}`}>Copart</span>
+      <div className="flex items-end gap-4 flex-nowrap">
+        <h1 className="m-0 text-[32px] leading-9 font-bold text-foreground w-[354px] whitespace-nowrap">
+          1982 Chevrolet Corvette
+        </h1>
+        <span className="self-end bg-copart text-white rounded-lg py-1 px-2 text-xs leading-[14px] font-normal">
+          Copart
+        </span>
       </div>
 
-      <div className={styles.pageBody}>
-        <section className={styles.content}>
-          <div className={styles.mediaColumn}>
-          <div className={styles.mainImageWrap}>
+      <div className="flex flex-col gap-6">
+        <section className="flex gap-4 items-start">
+          <div className="w-[700px] flex-[0_0_700px] flex flex-col gap-4">
+          <div className="relative w-full h-[460px] rounded-lg overflow-visible">
             <Image
               src="/figma/images/vehicle-detail-main-22d215.png"
               alt=""
               width={700}
               height={460}
-              className={styles.mainImage}
+              className="w-full h-[460px] object-fill rounded-lg"
             />
-            <button type="button" className={`${styles.mediaNav} ${styles.mediaNavLeft}`}>
+            <button
+              type="button"
+              className="absolute top-[204px] left-[-224px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 cursor-pointer"
+            >
               <Image src="/figma/icons/icon-arrow-left.svg" alt="" width={24} height={24} />
             </button>
-            <button type="button" className={`${styles.mediaNav} ${styles.mediaNavRight}`}>
+            <button
+              type="button"
+              className="absolute top-[204px] right-[-4px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 cursor-pointer"
+            >
               <Image src="/figma/icons/icon-arrow-right.svg" alt="" width={24} height={24} />
             </button>
           </div>
-          <div className={styles.thumbGrid}>
+          <div className="grid grid-cols-5 gap-2">
             {Array.from({ length: 15 }).map((_, index) => (
               <Image
                 key={`thumb-${index}`}
@@ -181,71 +191,85 @@ export default function VehiclePage() {
                 alt=""
                 width={140}
                 height={72}
-                className={`${styles.thumbImage} ${index === 0 ? styles.thumbActive : ""}`}
+                className={`w-full h-[72px] object-fill rounded-lg border-2 ${
+                  index === 0 ? "border-foreground" : "border-transparent"
+                }`}
               />
             ))}
           </div>
-          <div className={styles.leftCard}>
-            <div className={styles.cardHeaderRow}>
-              <h3 className={styles.cardTitle}>Full Car History</h3>
+          <div className="bg-white rounded-lg p-4 flex flex-col gap-4 w-full">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">Full Car History</h3>
               <Image src="/figma/icons/icon-exclamation-circle.svg" alt="" width={24} height={24} />
             </div>
-            <p className={styles.cardTextDark}>
+            <p className="m-0 text-base leading-5 font-normal text-foreground">
               Get a comprehensive report (similar to Carfax) including accident history, service
               records, and more.
             </p>
-            <button type="button" className={styles.primaryButton}>
+            <Button variant="primary" size="lg" fullWidth>
               Request Full History (Carfax)
-            </button>
+            </Button>
           </div>
-          <div className={styles.leftCard}>
-            <div className={styles.cardHeaderRow}>
-              <h3 className={styles.cardTitle}>Get Alerts for Similar Vehicles</h3>
+          <div className="bg-white rounded-lg p-4 flex flex-col gap-4 w-full">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+                Get Alerts for Similar Vehicles
+              </h3>
               <Image src="/figma/icons/icon-exclamation-circle.svg" alt="" width={24} height={24} />
             </div>
-            <div className={styles.alertStack}>
-              <input className={styles.alertInput} placeholder="Email" />
-              <div className={styles.frequencyRow}>
-                <span className={styles.frequencyLabel}>Select Frequency</span>
-                <div className={styles.frequencyOptions}>
-                  <label className={styles.radioItem}>
-                    <span className={styles.radioChecked} />
+            <div className="flex flex-col gap-4">
+              <input
+                className="h-[52px] border-0 rounded-[14px] bg-surface py-4 px-6 text-base leading-5 text-muted placeholder:text-muted"
+                placeholder="Email"
+              />
+              <div className="flex items-center gap-6">
+                <span className="text-base leading-5 font-normal text-foreground">
+                  Select Frequency
+                </span>
+                <div className="flex items-center gap-8 w-[212px]">
+                  <label className="inline-flex items-center gap-2 text-base leading-5 text-foreground">
+                    <span className="w-5 h-5 rounded-[10px] border-2 border-radio-checked inline-flex items-center justify-center after:content-[''] after:w-2 after:h-2 after:rounded-full after:bg-radio-checked" />
                     <span>Daily</span>
                   </label>
-                  <label className={styles.radioItem}>
-                    <span className={styles.radioUnchecked} />
+                  <label className="inline-flex items-center gap-2 text-base leading-5 text-foreground">
+                    <span className="w-5 h-5 rounded-[10px] border border-border inline-flex items-center justify-center" />
                     <span>Weekly</span>
                   </label>
                 </div>
               </div>
             </div>
-            <button type="button" className={styles.alertButton}>
+            <Button variant="secondary" size="lg" fullWidth className="gap-2.5">
               <Image src="/figma/icons/icon-notification-bell.svg" alt="" width={24} height={24} />
               <span>Set Alert</span>
-            </button>
+            </Button>
           </div>
-          <div className={styles.leftCard}>
-            <h3 className={styles.cardTitle}>Legal Import Restrictions</h3>
-            <p className={styles.legalText}>
+          <div className="bg-white rounded-lg p-4 flex flex-col gap-4 w-full">
+            <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+              Legal Import Restrictions
+            </h3>
+            <p className="m-0 text-base leading-5 font-normal text-danger whitespace-pre-line">
               Potential Restrictions:
               {"\n"}Vehicles older than 10 years may incur higher import duties in Poland.
               {"\n"}Salvage title vehicles require a mandatory technical inspection and
               re-registration process in Poland.
               {"\n"}Emissions standards apply to imported vehicles. This 2022 Camry meets Euro 6.
             </p>
-            <p className={styles.legalNote}>
+            <p className="m-0 text-base leading-5 font-normal text-foreground">
               Please consult with a local expert for definitive information.
             </p>
           </div>
         </div>
 
-        <div className={styles.specsColumn}>
-          <div className={styles.specsCard}>
-            <div className={styles.specsGrid}>
+        <div className="flex-[0_0_600px] w-[600px] flex flex-col gap-4">
+          <div className="bg-white rounded-lg py-4 w-full">
+            <div className="flex flex-col">
               {primarySpecs.map((item) => (
-                <div key={item.label} className={styles.specRow}>
-                  <span className={styles.specLabel}>{item.label}</span>
-                  <span className={styles.specValue}>
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between gap-[172px] py-3 px-4 border-b border-surface last:border-b-0"
+                >
+                  <span className="text-base leading-5 font-normal text-muted">{item.label}</span>
+                  <span className="text-base leading-5 font-bold text-foreground inline-flex items-center gap-1">
                     {item.value}
                     {item.label === "Lot Number" || item.label === "VIN" ? (
                       <Image
@@ -253,7 +277,7 @@ export default function VehiclePage() {
                         alt=""
                         width={24}
                         height={24}
-                        className={styles.copyIcon}
+                        className="w-6 h-6"
                       />
                     ) : null}
                   </span>
@@ -262,183 +286,210 @@ export default function VehiclePage() {
             </div>
           </div>
 
-          <div className={styles.specsCard}>
-            <div className={styles.specsGrid}>
+          <div className="bg-white rounded-lg py-4 w-full">
+            <div className="flex flex-col">
               {secondarySpecs.map((item) => (
-                <div key={item.label} className={styles.specRow}>
-                  <span className={styles.specLabel}>{item.label}</span>
-                  <span className={styles.specValue}>{item.value}</span>
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between gap-[172px] py-3 px-4 border-b border-surface last:border-b-0"
+                >
+                  <span className="text-base leading-5 font-normal text-muted">{item.label}</span>
+                  <span className="text-base leading-5 font-bold text-foreground">{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className={styles.calculatorCard}>
-            <div className={styles.calculatorHeader}>
-              <h3 className={styles.cardTitle}>Final Price Calculator</h3>
+          <div className="bg-white rounded-lg py-4 flex flex-col gap-4 w-full">
+            <div className="flex items-center justify-between gap-2 px-4 w-full">
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+                Final Price Calculator
+              </h3>
               <Image src="/figma/icons/icon-exclamation-circle.svg" alt="" width={24} height={24} />
             </div>
-            <div className={styles.calculatorList}>
+            <div className="flex flex-col w-full">
               {calculatorRows.map((row) => (
-                <div key={row.label} className={styles.calculatorRow}>
-                  <span className={styles.specLabel}>{row.label}</span>
-                  <span className={styles.specValue}>{row.value}</span>
+                <div
+                  key={row.label}
+                  className="flex items-center justify-between border-b border-surface py-3 px-4"
+                >
+                  <span className="text-base leading-5 font-normal text-muted">{row.label}</span>
+                  <span className="text-base leading-5 font-bold text-foreground">{row.value}</span>
                 </div>
               ))}
-              <div className={styles.calculatorTotal}>
+              <div className="flex justify-between items-center py-3 px-4 text-base leading-5 font-bold text-foreground">
                 <span>Subtotal</span>
                 <span>$8,950</span>
               </div>
-              <p className={styles.calculatorNote}>
-                The calculator check location of the vehicle and shipment from one of the six
-                ports in the USA depending on the branch location. Penalties and additional
-                auction fees
+              <p className="m-0 px-4 text-xs leading-[14px] font-normal text-foreground">
+                The calculator check location of the vehicle and shipment from one of the six ports
+                in the USA depending on the branch location. Penalties and additional auction fees
               </p>
             </div>
           </div>
         </div>
 
-        <div className={styles.actionsColumn}>
-          <div className={styles.actionRow}>
-            <button type="button" className={styles.shareButton}>
+        <div className="flex-[0_0_428px] w-[428px] flex flex-col gap-4">
+          <div className="flex items-center gap-4 w-full">
+            <button
+              type="button"
+              className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer"
+            >
               <Image src="/figma/icons/icon-share.svg" alt="" width={24} height={24} />
             </button>
-            <button type="button" className={styles.shareButton}>
+            <button
+              type="button"
+              className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer"
+            >
               <Image src="/figma/icons/icon-heart.svg" alt="" width={24} height={24} />
             </button>
-            <button type="button" className={styles.askManagerButton}>
+            <button
+              type="button"
+              className="flex-1 bg-white border-0 rounded-lg py-4 px-12 text-sm leading-4 font-bold text-foreground cursor-pointer"
+            >
               Ask Manager
             </button>
           </div>
 
-          <div className={styles.timeCard}>
-            <div className={styles.timeRow}>
-              <span className={styles.timeLabel}>Time left</span>
-              <span className={styles.timeValue}>1 d 21 h 23 min 00 sec</span>
+          <div className="bg-white rounded-lg p-4 flex flex-col gap-4 items-center w-full">
+            <div className="w-full flex justify-between items-center gap-2.5">
+              <span className="text-xl leading-6 font-bold text-foreground">Time left</span>
+              <span className="text-base leading-5 font-bold text-error">
+                1 d 21 h 23 min 00 sec
+              </span>
             </div>
-            <button type="button" className={styles.calendarButton}>
+            <Button variant="secondary" size="md" className="w-[278px] gap-2.5">
               <Image src="/figma/icons/icon-reminder.svg" alt="" width={24} height={24} />
               <span>Add to calendar</span>
-            </button>
+            </Button>
           </div>
 
-          <div className={styles.bidCard}>
-            <div className={styles.bidHeader}>
-              <span className={styles.bidTitle}>Your bid</span>
+          <div className="bg-white rounded-lg p-4 flex flex-col gap-4 items-center w-full">
+            <div className="w-full flex items-center justify-between">
+              <span className="text-xl leading-6 font-bold text-foreground">Your bid</span>
               <Image src="/figma/icons/icon-question.svg" alt="" width={24} height={24} />
             </div>
-            <div className={styles.bidControls}>
-              <div className={styles.bidAmount}>
-                <button type="button" className={styles.bidControlButton}>
+            <div className="w-full flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-3 py-3.5 px-4 rounded-[14px] bg-white shadow-input">
+                <button type="button" className="border-0 bg-transparent p-0 cursor-pointer">
                   <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
                 </button>
-                <span className={styles.bidValue}>$525</span>
-                <button type="button" className={styles.bidControlButton}>
+                <span className="text-xl leading-6 font-bold text-foreground">$525</span>
+                <button type="button" className="border-0 bg-transparent p-0 cursor-pointer">
                   <Image src="/figma/icons/icon-plus.svg" alt="" width={24} height={24} />
                 </button>
               </div>
-              <p className={styles.bidHint}>Enter Maximum Bid ($25 Bid Increments)</p>
+              <p className="m-0 text-xs leading-[14px] font-normal text-muted">
+                Enter Maximum Bid ($25 Bid Increments)
+              </p>
             </div>
-            <button type="button" className={styles.bidButton}>
+            <button
+              type="button"
+              className="w-full bg-primary hover:bg-primary-hover active:bg-primary-pressed border-0 rounded-[14px] py-4 px-8 text-sm leading-4 font-bold text-foreground cursor-pointer"
+            >
               Bid Now
             </button>
           </div>
 
-          <div className={styles.auctionCard}>
-            <div className={styles.auctionRow}>
-              <span className={styles.specLabel}>Auction</span>
-              <span className={styles.auctionBadge}>Copart</span>
+          <div className="bg-white rounded-lg py-4 flex flex-col items-center w-full">
+            <div className="flex items-center justify-between gap-[172px] py-3 px-4 border-b border-surface w-full last:border-b-0">
+              <span className="text-base leading-5 font-normal text-muted">Auction</span>
+              <span className="bg-copart text-white rounded-lg py-1 px-2 text-xs leading-[14px] font-normal">
+                Copart
+              </span>
             </div>
-            <div className={styles.auctionRow}>
-              <span className={styles.specLabel}>Current Bid</span>
-              <span className={styles.currentBid}>$525 USD</span>
+            <div className="flex items-center justify-between gap-[172px] py-3 px-4 border-b border-surface w-full">
+              <span className="text-base leading-5 font-normal text-muted">Current Bid</span>
+              <span className="text-xl leading-6 font-bold text-success">$525 USD</span>
             </div>
-            <div className={styles.auctionRow}>
-              <span className={styles.specLabel}>Bid Status</span>
-              <span className={styles.specValueMuted}>You Haven't Bid</span>
+            <div className="flex items-center justify-between gap-[172px] py-3 px-4 border-b border-surface w-full">
+              <span className="text-base leading-5 font-normal text-muted">Bid Status</span>
+              <span className="text-base leading-5 font-normal text-muted">You Haven't Bid</span>
             </div>
-            <div className={styles.auctionRow}>
-              <span className={styles.specLabel}>Sale Status</span>
-              <span className={styles.specValue}>On Minimum Bid</span>
+            <div className="flex items-center justify-between gap-[172px] py-3 px-4 border-b border-surface w-full">
+              <span className="text-base leading-5 font-normal text-muted">Sale Status</span>
+              <span className="text-base leading-5 font-bold text-foreground">On Minimum Bid</span>
             </div>
-            <div className={styles.auctionRow}>
-              <span className={styles.specLabel}>Sellers Reserve</span>
-              <span className={styles.specValue}>Not yet met</span>
+            <div className="flex items-center justify-between gap-[172px] py-3 px-4 w-full">
+              <span className="text-base leading-5 font-normal text-muted">Sellers Reserve</span>
+              <span className="text-base leading-5 font-bold text-foreground">Not yet met</span>
             </div>
           </div>
 
-          <div className={styles.fastBuyCard}>
-            <div className={styles.fastBuyHeader}>
-              <span className={styles.bidTitle}>Fast Buy Price</span>
+          <div className="bg-white rounded-lg p-4 flex flex-col gap-4 items-center w-full">
+            <div className="w-full flex items-center justify-between">
+              <span className="text-xl leading-6 font-bold text-foreground">Fast Buy Price</span>
               <Image src="/figma/icons/icon-question.svg" alt="" width={24} height={24} />
             </div>
-            <span className={styles.fastBuyPrice}>$6,000 USD</span>
-            <button type="button" className={styles.fastBuyButton}>
+            <span className="text-xl leading-6 font-bold text-info">$6,000 USD</span>
+            <Button variant="secondary" size="lg" fullWidth>
               Buy Now
-            </button>
+            </Button>
           </div>
         </div>
       </section>
 
-        <section className={styles.faqSection}>
-        <div className={styles.faqCard}>
-          <div className={styles.faqHeaderRow}>
-            <h3 className={styles.cardTitle}>FAQ</h3>
+        <section className="w-full flex flex-col">
+        <div className="bg-white rounded-lg py-4 w-full flex flex-col gap-4">
+          <div className="px-4 flex items-center justify-between">
+            <h3 className="m-0 text-xl leading-6 font-bold text-foreground">FAQ</h3>
           </div>
-          <div className={styles.faqList}>
+          <div className="flex flex-col">
             {faqItems.map((item) => (
               <div
                 key={item.question}
-                  className={`${styles.faqItem} ${
-                    openState[item.question] ? styles.faqItemOpen : ""
-                  }`}
+                className="p-4 flex flex-col gap-3 border-b border-surface last:border-b-0"
               >
-                  <button
-                    type="button"
-                    className={styles.faqQuestionRow}
-                    aria-expanded={openState[item.question]}
-                    onClick={() =>
-                      setOpenState((prev) => ({
-                        ...prev,
-                        [item.question]: !prev[item.question],
-                      }))
+                <button
+                  type="button"
+                  className="bg-transparent border-0 p-0 flex items-center justify-between gap-4 w-full text-left cursor-pointer"
+                  aria-expanded={openState[item.question]}
+                  onClick={() =>
+                    setOpenState((prev) => ({
+                      ...prev,
+                      [item.question]: !prev[item.question],
+                    }))
+                  }
+                >
+                  <span className="text-base leading-5 font-bold text-foreground">{item.question}</span>
+                  <Image
+                    src={
+                      openState[item.question]
+                        ? "/figma/icons/icon-minus.svg"
+                        : "/figma/icons/icon-plus.svg"
                     }
-                  >
-                    <span className={styles.faqQuestion}>{item.question}</span>
-                    <Image
-                      src={
-                        openState[item.question]
-                          ? "/figma/icons/icon-minus.svg"
-                          : "/figma/icons/icon-plus.svg"
-                      }
-                      alt=""
-                      width={24}
-                      height={24}
-                    />
-                  </button>
-                  <div
-                    className={`${styles.faqAnswerWrap} ${
-                      openState[item.question] ? styles.faqAnswerOpen : ""
-                    }`}
-                  >
-                    <p className={styles.faqAnswer}>{item.answer}</p>
-                  </div>
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-[max-height,opacity] duration-[220ms] ease-[ease] ${
+                    openState[item.question] ? "max-h-[320px] opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <p className="m-0 text-base leading-5 font-normal text-muted">{item.answer}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className={styles.similarSection}>
-        <div className={styles.similarHeader}>
-          <h2 className={styles.similarTitle}>Similar Auctions</h2>
-          <button type="button" className={styles.viewAllButton}>
+      <section className="flex flex-col gap-[74px]">
+        <div className="flex items-end justify-between gap-6">
+          <h2 className="m-0 text-2xl leading-7 font-bold text-foreground">Similar Auctions</h2>
+          <Button variant="white" size="md">
             View all
-          </button>
+          </Button>
         </div>
-        <div className={styles.similarScroller}>
+        <div className="flex gap-4 overflow-x-auto pb-1 scroll-snap-type-x-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {similarCards.map((card, index) => (
-            <VehicleCard key={`${card.title}-${index}`} card={card} className={styles.similarCard} />
+            <VehicleCard
+              key={`${card.title}-${index}`}
+              card={card}
+              className="w-[288px] shrink-0 scroll-snap-align-start"
+            />
           ))}
         </div>
       </section>

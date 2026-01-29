@@ -1,8 +1,7 @@
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { ContactSection } from "../_components/ContactSection";
 import { PageHeader } from "../_components/PageHeader";
-import { MarketplaceClient } from "./MarketplaceClient";
-import styles from "./marketplace.module.css";
+import { MarketplaceClient, type MarketplaceVehicle } from "./MarketplaceClient";
 
 const markets = ["China", "Japan", "Korea"];
 
@@ -27,7 +26,7 @@ const featuredLot = {
   ],
 };
 
-const vehicleCards = [
+const vehicleCards: MarketplaceVehicle[] = [
   {
     title: "2022 BYD Han EV",
     image: "/figma/images/vehicle-1.png",
@@ -263,7 +262,7 @@ const vehicleCards = [
 
 export default function MarketplacePage() {
   return (
-    <main className={styles.page}>
+    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-wide:max-w-[1440px] max-wide:px-[60px] max-tablet:max-w-[834px] max-tablet:py-[72px] max-tablet:px-4 max-tablet:pb-24 max-narrow:max-w-[320px] max-narrow:py-14 max-narrow:gap-4">
       <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Marketplace" }]} />
       <PageHeader
         title="Electric and Hybrid Vehicles"

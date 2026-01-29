@@ -5,7 +5,6 @@ import { HowItWorksSection, type HowStep } from "./_components/HowItWorksSection
 import { PopularMakesSection, type MakeItem } from "./_components/PopularMakesSection";
 import { VehicleSlider } from "./_components/VehicleSlider";
 import type { VehicleCardData } from "./_components/VehicleCard";
-import styles from "./page.module.css";
 
 const vehicleCards: VehicleCardData[] = [
   {
@@ -188,26 +187,14 @@ const howSteps: HowStep[] = [
 
 export default function Home() {
   return (
-    <main className={styles.page}>
+    <main className="mx-auto w-full max-w-[1920px] pb-20 flex flex-col gap-[72px] text-foreground max-wide:gap-16 max-tablet:gap-12">
       <HeroSection />
-      <VehicleSlider
-        title="New Arrivals"
-        viewAllHref="/vehicles"
-        cards={vehicleCards}
-      />
+      <VehicleSlider title="New Arrivals" viewAllHref="/vehicles" cards={vehicleCards} />
       <PopularMakesSection makes={makes} />
       <ContactSection />
       <BlogSection cards={blogCards} />
-      <VehicleSlider
-        title="Popular now"
-        viewAllHref="/popular"
-        cards={vehicleCards}
-      />
-      <VehicleSlider
-        title="Under $10,000"
-        viewAllHref="/vehicles"
-        cards={vehicleCards}
-      />
+      <VehicleSlider title="Popular now" viewAllHref="/popular" cards={vehicleCards} />
+      <VehicleSlider title="Under $10,000" viewAllHref="/vehicles" cards={vehicleCards} />
       <HowItWorksSection steps={howSteps} />
     </main>
   );
