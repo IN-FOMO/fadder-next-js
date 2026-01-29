@@ -7,7 +7,7 @@ export default function AccountSettingsPage() {
       <Breadcrumbs
         items={[
           { label: "Home page", href: "/" },
-          { label: "My Account", href: "/account" },
+          { label: "Dashboard", href: "/dashboard" },
           { label: "Settings" },
         ]}
       />

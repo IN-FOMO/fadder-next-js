@@ -17,6 +17,8 @@ export type VehicleCardData = {
 type VehicleCardProps = {
   card: VehicleCardData;
   className?: string;
+  /** Optional badge overlay on image (e.g. "Active") */
+  imageBadge?: string;
 };
 
 const specRow =
@@ -24,7 +26,7 @@ const specRow =
 const specLabel = "text-muted font-normal shrink-0";
 const specValue = "font-bold leading-4 text-dark ml-auto text-right";
 
-export function VehicleCard({ card, className }: VehicleCardProps) {
+export function VehicleCard({ card, className, imageBadge }: VehicleCardProps) {
   const badgeClass = card.auction === "IAAI" ? "bg-iaai" : "bg-copart";
   return (
     <Link href="/vehicle" className="block no-underline text-inherit cursor-pointer">
@@ -36,6 +38,11 @@ export function VehicleCard({ card, className }: VehicleCardProps) {
       >
         <div className="relative h-[236px] w-full bg-surface">
           <Image src={card.image} alt="" fill sizes="288px" className="object-cover" />
+          {imageBadge ? (
+            <span className="absolute left-2 top-2 rounded-sm bg-success px-2 py-1 text-xs font-bold text-white">
+              {imageBadge}
+            </span>
+          ) : null}
         </div>
         <div className="flex flex-col items-stretch gap-2 p-4 bg-white rounded-b-lg w-full">
           <h3 className="text-base font-bold leading-5 m-0 text-dark">{card.title}</h3>

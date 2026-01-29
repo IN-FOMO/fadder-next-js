@@ -10,6 +10,7 @@ const navLinks = [
   { label: "Help", href: "/help" },
   { label: "About", href: "/about" },
   { label: "Information", href: "/information" },
+  { label: "Blog", href: "/blog" },
 ];
 
 export function Header() {
@@ -48,14 +49,20 @@ export function Header() {
           <span>$0</span>
         </Button>
         <Button variant="secondary" size="sm">
-          <Image src="/figma/icons/icon-gavel.svg" alt="" width={24} height={24} />
-          <span>0 | 0</span>
+          <Image src="/figma/icons/icon-gavel.svg" alt="Active bids" width={24} height={24} />
+          <span>10</span>
         </Button>
         <Button variant="secondary" size="sm">
-          <Image src="/figma/icons/icon-heart.svg" alt="" width={24} height={24} />
+          <Image src="/figma/icons/icon-heart.svg" alt="Watchlist" width={24} height={24} />
           <span>0</span>
         </Button>
-        <Button href="/account" variant="secondary" size="sm">
+        <Button href="/dashboard/notifications" variant="secondary" size="sm" className="relative">
+          <Image src="/figma/icons/icon-notification-bell.svg" alt="Notifications" width={24} height={24} />
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-xl bg-error text-white text-xs font-bold px-1">
+            99
+          </span>
+        </Button>
+        <Button href="/dashboard" variant="secondary" size="sm">
           <Image
             src="/figma/images/my-account.png"
             alt=""
