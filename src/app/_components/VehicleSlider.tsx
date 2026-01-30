@@ -23,7 +23,7 @@ export function VehicleSlider({
           View all
         </Link>
       </div>
-      <div className="w-[calc(100vw-80px)] max-wide:w-[calc(100vw-60px)] max-tablet:w-full">
+      <div className="w-[calc(100%+180px)] max-wide:w-[calc(100%+60px)] max-tablet:w-full">
         <div className="flex items-center gap-4 overflow-x-auto pb-1 scroll-snap-type-x-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {cards.map((card, index) => (
             <VehicleCard key={`${card.title}-${index}`} card={card} />

@@ -61,10 +61,16 @@
   --breakpoint-wide: 1679px;
 }
 
+html,
 body {
   background: var(--color-surface);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+main {
+  overflow-x: clip;
 }
 
 input:focus-visible,
