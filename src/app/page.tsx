@@ -21,6 +21,18 @@ export const metadata: Metadata = {
   description: "Auto auction marketplace for buying and shipping vehicles.",
 };
 
+const DEFAULT_LANG = "en";
+const ALLOWED_LANGS = ["en", "ru", "pl"] as const;
+type AllowedLang = (typeof ALLOWED_LANGS)[number];
+
+function normalizeLang(input?: string): AllowedLang {
+  if (!input) return DEFAULT_LANG;
+  const lower = input.toLowerCase();
+  return (
+    ALLOWED_LANGS.includes(lower as AllowedLang) ? lower : DEFAULT_LANG
+  ) as AllowedLang;
+}
+
 const vehicleCardsBase: VehicleCardData[] = [
   {
     title: "1981 Chevrolet Corvette",
@@ -223,15 +235,21 @@ const popularMakes: MakeItem[] = [
   { name: "Volvo", count: "1,268", icon: "/figma/brands/brand-volvo.svg" },
 ];
 
-export default function HomePage() {
+type HomePageProps = {
+  searchParams?: Promise<{ lang?: string }>;
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const resolvedSearchParams = await searchParams;
+  const lang = normalizeLang(resolvedSearchParams?.lang);
   return (
-    <main className="bg-[#F5F6F8]">
+    <main className="bg-[#F5F6F8] overflow-x-hidden">
       <div className="flex flex-col gap-[74px] pb-20">
         <HeroSection />
         <HomeNewArrivalsSection cards={vehicleCards} />
         <PopularMakesSection makes={popularMakes} />
         <ContactSection />
-        <BlogSection cards={blogCards} />
+        <BlogSection cards={blogCards} lang={lang} />
         <HomePopularSection cards={vehicleCards} />
         <HomeUnder10Section cards={vehicleCards} />
         <HowItWorksSection steps={howSteps} />

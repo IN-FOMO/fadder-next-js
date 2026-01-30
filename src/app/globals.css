@@ -82,6 +82,14 @@ select:focus {
   outline-offset: 2px;
 }
 
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::marker {
+  content: "";
+}
+
 /* Buttons – LionAuto design system */
 .btn-primary {
   background: var(--color-primary);

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./Button";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const footerColumns: {
   title: string;
@@ -74,15 +74,11 @@ export function FooterSection() {
       <div className="flex flex-col items-center gap-8 w-full max-w-[1920px]">
         <div className="flex gap-[60px] w-full">
           <div className="flex flex-col gap-8 w-[318px] shrink-0 text-white">
-            <Button variant="secondary" size="md" className="gap-3 text-dark">
-              <span>English</span>
-              <Image
-                src="/figma/icons/icon-arrow-down.svg"
-                alt=""
-                width={24}
-                height={24}
-              />
-            </Button>
+            <LanguageSwitcher
+              size="md"
+              buttonClassName="gap-3 text-dark"
+              className="text-dark"
+            />
             <div className="flex flex-col gap-3 text-base font-normal leading-5 text-white">
               <a
                 href="mailto:info@fadder.com"

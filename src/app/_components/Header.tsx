@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./Button";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const navLinks = [
   { label: "Marketplace", href: "/marketplace" },
@@ -50,15 +51,7 @@ export function Header() {
             height={40}
           />
         </Button>
-        <Button variant="secondary" size="sm">
-          <span>English</span>
-          <Image
-            src="/figma/icons/icon-arrow-down.svg"
-            alt=""
-            width={24}
-            height={24}
-          />
-        </Button>
+        <LanguageSwitcher size="sm" buttonClassName="gap-2" />
         <Button variant="secondary" size="sm">
           <Image
             src="/figma/icons/icon-wallet.svg"

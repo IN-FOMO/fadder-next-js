@@ -22,16 +22,16 @@ export function PopularMakesSection({ makes }: PopularMakesSectionProps) {
         <h2 className="text-2xl font-bold leading-7 m-0 text-black">
           Popular makes
         </h2>
-        <div className="flex items-center gap-2 bg-white rounded-[16px]">
-          <div className="bg-white border-2 border-primary rounded-[16px] px-4 py-3 text-base font-bold leading-5 text-black">
+        <div className="flex items-center bg-white rounded-[16px]">
+          <div className="flex items-center gap-2 bg-white border-2 border-primary rounded-[16px] px-4 py-3 text-base font-bold leading-5 text-black">
             Automobile
           </div>
-          <div className="bg-white rounded-[16px] px-4 py-3 text-base font-bold leading-5 text-black">
+          <div className="flex items-center gap-2 bg-white rounded-[16px] px-4 py-3 text-base font-bold leading-5 text-black">
             Motorcycle
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-start items-center gap-3 self-stretch">
+      <div className="flex flex-wrap justify-center items-center gap-3 self-stretch max-w-[1704px] mx-auto">
         {makes.map((make) => (
           <Link
             key={make.name}
