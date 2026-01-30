@@ -245,7 +245,7 @@ export default async function BlogPostPage({
       <div className="max-w-[960px] mx-auto w-full">
         <Button
           href={`/blog?lang=${lang}`}
-          variant="secondary"
+          variant="primary"
           size="md"
           className="w-fit"
         >
