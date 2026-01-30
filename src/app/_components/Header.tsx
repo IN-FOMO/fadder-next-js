@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Button } from "./Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
@@ -51,7 +52,15 @@ export function Header() {
             height={40}
           />
         </Button>
-        <LanguageSwitcher size="sm" buttonClassName="gap-2" />
+        <Suspense
+          fallback={
+            <div className="inline-flex items-center justify-center gap-2 rounded-sm py-2 px-3.5 text-xs font-semibold min-h-9 bg-surface text-foreground">
+              English
+            </div>
+          }
+        >
+          <LanguageSwitcher size="sm" buttonClassName="gap-2" />
+        </Suspense>
         <Button variant="secondary" size="sm">
           <Image
             src="/figma/icons/icon-wallet.svg"

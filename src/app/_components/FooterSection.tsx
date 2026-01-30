@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const footerColumns: {
@@ -74,11 +75,19 @@ export function FooterSection() {
       <div className="flex flex-col items-center gap-8 w-full max-w-[1920px]">
         <div className="flex gap-[60px] w-full">
           <div className="flex flex-col gap-8 w-[318px] shrink-0 text-white">
-            <LanguageSwitcher
-              size="md"
-              buttonClassName="gap-3 text-dark"
-              className="text-dark"
-            />
+            <Suspense
+              fallback={
+                <div className="inline-flex items-center justify-center gap-3 rounded-sm py-3 px-5 text-sm font-semibold min-h-10 bg-surface text-dark">
+                  English
+                </div>
+              }
+            >
+              <LanguageSwitcher
+                size="md"
+                buttonClassName="gap-3 text-dark"
+                className="text-dark"
+              />
+            </Suspense>
             <div className="flex flex-col gap-3 text-base font-normal leading-5 text-white">
               <a
                 href="mailto:info@fadder.com"

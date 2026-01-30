@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Breadcrumbs } from "../../_components/Breadcrumbs";
 import { Button } from "../../_components/Button";
+import { ContactSection } from "../../_components/ContactSection";
 
 type ContentBlock =
   | { type: "text"; value: string }
@@ -74,8 +75,13 @@ async function findPost(lang: string, slug: string) {
   return null;
 }
 
+async function getRelatedPosts(lang: string, currentId: number) {
+  const data = await getNews(lang, 1);
+  return data.posts.filter((post) => post.id !== currentId).slice(0, 3);
+}
+
 type BlogPostPageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
   searchParams?: Promise<{ lang?: string }>;
 };
 
@@ -85,9 +91,10 @@ export async function generateMetadata({
   params,
   searchParams,
 }: BlogPostPageProps): Promise<Metadata> {
+  const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const lang = normalizeLang(resolvedSearchParams?.lang);
-  const post = await findPost(lang, params.slug);
+  const post = await findPost(lang, resolvedParams.slug);
   if (!post) {
     return { title: "Blog", description: "News and updates." };
   }
@@ -106,10 +113,12 @@ export default async function BlogPostPage({
   params,
   searchParams,
 }: BlogPostPageProps) {
+  const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const lang = normalizeLang(resolvedSearchParams?.lang);
-  const post = await findPost(lang, params.slug);
-  const canonicalUrl = `${SITE_URL}/blog/${params.slug}?lang=${lang}`;
+  const post = await findPost(lang, resolvedParams.slug);
+  const canonicalUrl = `${SITE_URL}/blog/${resolvedParams.slug}?lang=${lang}`;
+  const relatedPosts = post ? await getRelatedPosts(lang, post.id) : [];
 
   if (!post) {
     return (
@@ -168,7 +177,7 @@ export default async function BlogPostPage({
           { label: post.title },
         ]}
       />
-      <header className="flex flex-col gap-4 max-w-[960px]">
+      <header className="flex flex-col gap-4 max-w-[960px] mx-auto w-full">
         <h1 className="text-[32px] leading-[38px] font-bold m-0 text-foreground">
           {post.title}
         </h1>
@@ -187,7 +196,7 @@ export default async function BlogPostPage({
         ) : null}
       </header>
 
-      <article className="flex flex-col gap-6 max-w-[960px]">
+      <article className="flex flex-col gap-6 max-w-[960px] mx-auto w-full">
         {post.content_factory.map((block) => {
           if (block.type === "text") {
             const key = `text-${block.value.slice(0, 48)}`;
@@ -233,11 +242,61 @@ export default async function BlogPostPage({
         })}
       </article>
 
-      <div className="max-w-[960px]">
-        <Button href={`/blog?lang=${lang}`} variant="secondary" size="sm">
+      <div className="max-w-[960px] mx-auto w-full">
+        <Button
+          href={`/blog?lang=${lang}`}
+          variant="secondary"
+          size="md"
+          className="w-fit"
+        >
           Back to blog
         </Button>
       </div>
+
+      {relatedPosts.length > 0 ? (
+        <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-6">
+          <h2 className="text-2xl font-bold leading-7 m-0 text-foreground">
+            Other articles
+          </h2>
+          <div className="grid grid-cols-3 gap-6 max-wide:grid-cols-2 max-tablet:grid-cols-1">
+            {relatedPosts.map((item) => (
+              <article
+                key={item.id}
+                className="bg-white rounded-[16px] overflow-hidden flex flex-col shadow-card-soft"
+              >
+                <div className="relative h-[180px] bg-surface rounded-t-[16px] overflow-hidden">
+                  <Image
+                    src={item.sharing_image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 834px) 100vw, 560px"
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+                <div className="p-4 flex flex-col gap-3 flex-1">
+                  <h3 className="text-base font-bold m-0 text-dark">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-muted m-0 flex-1">
+                    {item.news_lead}
+                  </p>
+                  <Button
+                    href={`/blog/${getPostSlug(item)}?lang=${lang}`}
+                    variant="secondary"
+                    size="sm"
+                    className="w-fit"
+                  >
+                    Read more
+                  </Button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <ContactSection />
     </main>
   );
 }
