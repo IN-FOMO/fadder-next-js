@@ -25,7 +25,7 @@ const faqSections = [
       {
         question: "How do I start buying cars?",
         answer:
-          "Create an account on our website, place a refundable deposit, and you'll get access to live car auctions and the \"Buy Now\" option.",
+          'Create an account on our website, place a refundable deposit, and you\'ll get access to live car auctions and the "Buy Now" option.',
         open: false,
       },
     ],
@@ -148,7 +148,9 @@ export default function HelpPage() {
 
   return (
     <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
-      <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Help" }]} />
+      <Breadcrumbs
+        items={[{ label: "Home page", href: "/" }, { label: "Help" }]}
+      />
       <PageHeader
         title="Help & Support"
         subtitle="Find answers to common questions and get the help you need"
@@ -156,8 +158,13 @@ export default function HelpPage() {
 
       <section className="w-full max-w-[1760px] mx-auto grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
         {faqSections.map((section) => (
-          <div key={section.title} className="bg-white rounded-lg p-4 flex flex-col gap-4">
-            <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{section.title}</h3>
+          <div
+            key={section.title}
+            className="bg-white rounded-lg p-4 flex flex-col gap-4"
+          >
+            <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+              {section.title}
+            </h3>
             <div className="flex flex-col">
               {section.items.map((item, index) => (
                 <div
@@ -167,7 +174,9 @@ export default function HelpPage() {
                   <button
                     type="button"
                     className="flex items-center justify-between gap-3 w-full border-0 bg-transparent p-0 text-left cursor-pointer"
-                    aria-expanded={openState[`${section.title}:${item.question}`]}
+                    aria-expanded={
+                      openState[`${section.title}:${item.question}`]
+                    }
                     onClick={() =>
                       setOpenState((prev) => ({
                         ...prev,
@@ -176,7 +185,9 @@ export default function HelpPage() {
                       }))
                     }
                   >
-                    <span className="text-base leading-5 font-bold text-foreground">{item.question}</span>
+                    <span className="text-base leading-5 font-bold text-foreground">
+                      {item.question}
+                    </span>
                     <Image
                       src={
                         openState[`${section.title}:${item.question}`]
@@ -195,7 +206,9 @@ export default function HelpPage() {
                         : "max-h-0 opacity-0"
                     }`}
                   >
-                    <p className="m-0 text-base leading-5 font-normal text-muted">{item.answer}</p>
+                    <p className="m-0 text-base leading-5 font-normal text-muted">
+                      {item.answer}
+                    </p>
                   </div>
                 </div>
               ))}

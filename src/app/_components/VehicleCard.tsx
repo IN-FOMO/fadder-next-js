@@ -29,23 +29,84 @@ const specValue = "font-bold leading-4 text-dark ml-auto text-right";
 export function VehicleCard({ card, className, imageBadge }: VehicleCardProps) {
   const badgeClass = card.auction === "IAAI" ? "bg-iaai" : "bg-copart";
   return (
-    <Link href="/vehicle" className="block no-underline text-inherit cursor-pointer">
+    <Link
+      href="/vehicle"
+      className="block no-underline text-inherit cursor-pointer"
+    >
       <article
         className={
-          "bg-white rounded-lg overflow-hidden w-[288px] min-w-[288px] max-w-[318px] flex flex-col items-stretch snap-start " +
+          "bg-white rounded-[16px] overflow-hidden w-[288px] min-w-[288px] max-w-[318px] flex flex-col items-stretch snap-start " +
           (className ?? "")
         }
       >
-        <div className="relative h-[236px] w-full bg-surface">
-          <Image src={card.image} alt="" fill sizes="288px" className="object-cover" />
-          {imageBadge ? (
-            <span className="absolute left-2 top-2 rounded-sm bg-success px-2 py-1 text-xs font-bold text-white">
-              {imageBadge}
-            </span>
-          ) : null}
+        <div className="relative h-[236px] w-full bg-surface rounded-t-[16px] overflow-visible">
+          <Image
+            src={card.image}
+            alt=""
+            fill
+            sizes="288px"
+            className="object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute left-[-40px] top-[196px] p-2 bg-white/60 rounded-tr-[14px]"
+          >
+            <Image
+              src="/figma/icons/icon-arrow-left.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute right-0 top-[196px] p-2 bg-white/60 rounded-tl-[16px]"
+          >
+            <Image
+              src="/figma/icons/icon-arrow-right.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute top-0 right-[-30px] p-2 bg-white/60 rounded-tr-[16px] rounded-br-[14px]"
+          >
+            <Image
+              src="/figma/icons/icon-share-small.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute top-0 right-0 p-2 bg-white/60 rounded-tr-[16px] rounded-bl-[16px]"
+          >
+            <Image
+              src="/figma/icons/icon-favorite.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
+          </div>
+          <span className="absolute left-4 top-4 rounded-[8px] bg-success px-2 py-1 text-xs leading-[14px] font-normal text-white">
+            {imageBadge ?? "Active"}
+          </span>
+          <div
+            aria-hidden="true"
+            className="absolute left-1/2 -translate-x-1/2 top-[240px] flex items-center gap-[2px]"
+          >
+            <div className="w-[4px] h-[10px] rounded-full bg-white/60" />
+            <div className="w-[8px] h-[8px] rounded-full bg-white/60" />
+            <div className="w-[6px] h-[6px] rounded-full bg-white/60" />
+          </div>
         </div>
-        <div className="flex flex-col items-stretch gap-2 p-4 bg-white rounded-b-lg w-full">
-          <h3 className="text-base font-bold leading-5 m-0 text-dark">{card.title}</h3>
+        <div className="flex flex-col items-stretch gap-2 p-4 bg-white rounded-b-[16px] w-full">
+          <h3 className="text-base font-bold leading-5 m-0 text-dark">
+            {card.title}
+          </h3>
           <div className="flex flex-col self-stretch w-full">
             <div className={specRow}>
               <span className={specLabel}>Odometer</span>
@@ -70,12 +131,16 @@ export function VehicleCard({ card, className, imageBadge }: VehicleCardProps) {
           </div>
           <div className="flex flex-col gap-2 self-stretch w-full">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-success text-sm">{card.timer}</span>
-              <span className={"text-white rounded-lg py-1 px-2 text-xs " + badgeClass}>
+              <span className="text-success text-sm leading-4">
+                {card.timer}
+              </span>
+              <span
+                className={`text-white rounded-[8px] py-1 px-2 text-xs leading-[14px] ${badgeClass}`}
+              >
                 {card.auction}
               </span>
             </div>
-            <div className="flex items-center justify-center gap-2.5 py-4 px-8 bg-surface rounded-md text-sm font-bold w-full min-h-12 box-border">
+            <div className="flex items-center justify-center gap-2.5 px-8 h-[52px] bg-surface rounded-[14px] text-sm leading-4 font-bold w-full box-border">
               <span>Current Bid</span>
               <strong>{card.bid}</strong>
             </div>

@@ -114,27 +114,42 @@ export default function AccountDepositPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-surface">
       <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-6 max-tablet:px-8 max-narrow:px-4">
-        <div className="flex gap-4 flex-col lg:flex-row">
+        <div className="flex gap-4 flex-col tablet:flex-row">
           <DashboardSidebar />
 
-          <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-4">
+          <div className="flex-1 min-w-0 flex flex-col tablet:flex-row gap-4">
             {/* Left column */}
-            <div className="flex flex-col gap-4 w-full lg:w-[652px]">
+            <div className="flex flex-col gap-4 w-full tablet:w-[652px]">
               <section className="bg-white rounded-lg p-4 flex flex-col gap-6">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm leading-4 font-bold text-dark">Current Deposit</span>
+                  <span className="text-sm leading-4 font-bold text-dark">
+                    Current Deposit
+                  </span>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <span className="text-[32px] leading-[1.125] font-bold text-dark">$10,000.00</span>
-                  <span className="text-sm leading-4 text-muted">Available for bidding</span>
+                  <span className="text-[32px] leading-[1.125] font-bold text-dark">
+                    $10,000.00
+                  </span>
+                  <span className="text-sm leading-4 text-muted">
+                    Available for bidding
+                  </span>
                 </div>
                 <div className="h-px w-full bg-border" />
                 <div className="flex items-center justify-between gap-8">
                   {depositSummary.map((item) => (
-                    <div key={item.title} className="flex flex-col gap-2 min-w-[91px]">
-                      <span className="text-sm leading-4 text-muted">{item.title}</span>
-                      <span className="text-xl leading-6 font-bold text-dark">{item.value}</span>
-                      <span className="text-sm leading-4 text-muted">{item.desc}</span>
+                    <div
+                      key={item.title}
+                      className="flex flex-col gap-2 min-w-[91px]"
+                    >
+                      <span className="text-sm leading-4 text-muted">
+                        {item.title}
+                      </span>
+                      <span className="text-xl leading-6 font-bold text-dark">
+                        {item.value}
+                      </span>
+                      <span className="text-sm leading-4 text-muted">
+                        {item.desc}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -142,7 +157,9 @@ export default function AccountDepositPage() {
 
               <section className="bg-white rounded-lg p-4 flex flex-col gap-4 min-h-[616px]">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm leading-4 font-bold text-dark">Transaction History</span>
+                  <span className="text-sm leading-4 font-bold text-dark">
+                    Transaction History
+                  </span>
                 </div>
                 <div className="flex flex-col gap-4">
                   {transactions.map((item, index) => (
@@ -153,13 +170,23 @@ export default function AccountDepositPage() {
                       <div className="flex items-center gap-4">
                         <Image src={item.icon} alt="" width={40} height={40} />
                         <div className="flex flex-col gap-1">
-                          <span className="text-base leading-5 font-bold text-dark">{item.title}</span>
-                          <span className="text-xs leading-[14px] text-dark">{item.date}</span>
+                          <span className="text-base leading-5 font-bold text-dark">
+                            {item.title}
+                          </span>
+                          <span className="text-xs leading-[14px] text-dark">
+                            {item.date}
+                          </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-8">
-                        <span className="text-base leading-5 text-dark">{item.method}</span>
-                        <span className={`text-base leading-5 font-bold ${item.color}`}>{item.amount}</span>
+                        <span className="text-base leading-5 text-dark">
+                          {item.method}
+                        </span>
+                        <span
+                          className={`text-base leading-5 font-bold ${item.color}`}
+                        >
+                          {item.amount}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -168,18 +195,24 @@ export default function AccountDepositPage() {
             </div>
 
             {/* Right column: Top Up Balance */}
-            <section className="w-full lg:w-[476px] bg-white rounded-lg p-4 flex flex-col gap-6">
+            <section className="w-full tablet:w-[476px] bg-white rounded-lg p-4 flex flex-col gap-6">
               <div className="flex flex-col gap-2">
-                <span className="text-sm leading-4 font-bold text-dark">Top Up Balance</span>
+                <span className="text-sm leading-4 font-bold text-dark">
+                  Top Up Balance
+                </span>
                 <span className="text-sm leading-4 text-muted">
                   Add funds to your account using various payment methods
                 </span>
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="text-sm leading-4 font-semibold text-dark">Amount (USD)</span>
+                <span className="text-sm leading-4 font-semibold text-dark">
+                  Amount (USD)
+                </span>
                 <div className="flex items-center justify-between gap-[10px] bg-surface rounded-[14px] px-6 py-2.5">
-                  <span className="text-sm leading-4 text-muted">Enter amount</span>
+                  <span className="text-sm leading-4 text-muted">
+                    Enter amount
+                  </span>
                 </div>
                 <div className="flex gap-2">
                   {amountOptions.map((opt) => (
@@ -194,14 +227,23 @@ export default function AccountDepositPage() {
               </div>
 
               <div className="flex flex-col gap-4">
-                <span className="text-sm leading-4 font-semibold text-dark">Payment Method</span>
+                <span className="text-sm leading-4 font-semibold text-dark">
+                  Payment Method
+                </span>
                 <div className="flex flex-col gap-4">
                   {paymentMethods.map((method) => (
-                    <div key={method.name} className="flex items-center gap-4 bg-surface rounded-[16px] p-4">
+                    <div
+                      key={method.name}
+                      className="flex items-center gap-4 bg-surface rounded-[16px] p-4"
+                    >
                       <Image src={method.icon} alt="" width={20} height={20} />
                       <div className="flex flex-col gap-1">
-                        <span className="text-base leading-5 font-semibold text-dark">{method.name}</span>
-                        <span className="text-sm leading-4 text-muted">{method.description}</span>
+                        <span className="text-base leading-5 font-semibold text-dark">
+                          {method.name}
+                        </span>
+                        <span className="text-sm leading-4 text-muted">
+                          {method.description}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -209,11 +251,16 @@ export default function AccountDepositPage() {
               </div>
 
               <div className="flex flex-col gap-4">
-                <Button variant="primary" size="md" className="rounded-[14px] w-full">
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="rounded-[14px] w-full"
+                >
                   Continue to Payment
                 </Button>
                 <p className="text-sm leading-4 text-muted m-0">
-                  Minimum deposit: $10. Funds are typically available within 5-10 minutes
+                  Minimum deposit: $10. Funds are typically available within
+                  5-10 minutes
                 </p>
               </div>
             </section>

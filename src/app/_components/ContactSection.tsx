@@ -11,8 +11,8 @@ export function ContactSection() {
               Have Questions? We're Here to Help!
             </h2>
             <p className="text-base leading-5 m-0 text-foreground opacity-80 max-w-[426px]">
-              Our expert team is ready to assist you with any questions about our auctions, bidding
-              process, or vehicle inspections.
+              Our expert team is ready to assist you with any questions about
+              our auctions, bidding process, or vehicle inspections.
               <br />
               <br />
               Get in touch today!

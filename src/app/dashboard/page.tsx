@@ -108,26 +108,34 @@ export default function DashboardPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
       <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-4 max-tablet:px-8 max-narrow:px-4">
-        <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
           {/* Main content (x=236, width 1144) */}
-          <div className="flex-1 min-w-0 flex flex-col gap-4 lg:w-[1144px]">
+          <div className="flex-1 min-w-0 flex flex-col gap-4 tablet:w-[1144px]">
             {/* Greeting */}
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold m-0 text-dark">Hi, Jane Cooper!</h1>
+              <h1 className="text-2xl font-bold m-0 text-dark">
+                Hi, Jane Cooper!
+              </h1>
             </div>
 
             {/* Dashboard Summary: Current Deposit + Bid Limits */}
-            <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex flex-col tablet:flex-row gap-4">
               <div className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-dark">Current Deposit</span>
+                  <span className="text-sm font-bold text-dark">
+                    Current Deposit
+                  </span>
                 </div>
                 <div className="flex items-end gap-4">
                   <div className="flex flex-col gap-2">
-                    <span className="text-[32px] leading-[1.125] font-bold text-dark">$10,000.00</span>
-                    <span className="text-sm text-muted">Available for bidding</span>
+                    <span className="text-[32px] leading-[1.125] font-bold text-dark">
+                      $10,000.00
+                    </span>
+                    <span className="text-sm text-muted">
+                      Available for bidding
+                    </span>
                   </div>
                   <Button
                     href="/account/deposit"
@@ -139,13 +147,16 @@ export default function DashboardPage() {
                   </Button>
                 </div>
               </div>
-              <div className="w-full lg:w-[384px] bg-white rounded-lg p-4 flex flex-col gap-4">
+              <div className="w-full tablet:w-[384px] bg-white rounded-lg p-4 flex flex-col gap-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-dark">Bid Limits</span>
+                  <span className="text-sm font-bold text-dark">
+                    Bid Limits
+                  </span>
                 </div>
                 <p className="text-sm text-dark whitespace-pre-line m-0">
-                  With your current deposit, you can have up to 15 active bids simultaneously.
-{`\n`}
+                  With your current deposit, you can have up to 15 active bids
+                  simultaneously.
+                  {`\n`}
                   Currently active: 12 bids
                 </p>
                 <div className="flex flex-col gap-2">
@@ -174,24 +185,41 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col gap-2">
                 {activeBids.map((bid, i) => (
-                  <div key={`${bid.lotId}-${i}`} className="flex items-center w-full">
+                  <div
+                    key={`${bid.lotId}-${i}`}
+                    className="flex items-center w-full"
+                  >
                     <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[14px] overflow-hidden bg-surface">
-                      <Image src={bid.image} alt="" fill sizes="168px" className="object-cover" />
+                      <Image
+                        src={bid.image}
+                        alt=""
+                        fill
+                        sizes="168px"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 h-[112px] bg-surface rounded-r-[14px] p-4 flex items-center justify-between gap-6">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
-                          <span className="text-base font-bold text-dark">{bid.title}</span>
-                          <span className="text-sm text-muted">{bid.lotId}</span>
+                          <span className="text-base font-bold text-dark">
+                            {bid.title}
+                          </span>
+                          <span className="text-sm text-muted">
+                            {bid.lotId}
+                          </span>
                         </div>
-                        <span className="text-sm text-dark">{bid.timeRemaining}</span>
+                        <span className="text-sm text-dark">
+                          {bid.timeRemaining}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-sm text-muted">Status</span>
                         <span
                           className={
                             "inline-flex w-fit rounded-[4px] px-2 py-1 text-xs font-bold text-white " +
-                            (bid.status === "Leading" ? "bg-success" : "bg-error")
+                            (bid.status === "Leading"
+                              ? "bg-success"
+                              : "bg-error")
                           }
                         >
                           {bid.status}
@@ -199,15 +227,21 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-sm text-muted">Current Bid</span>
-                        <span className="text-base font-bold text-dark">{bid.currentBid}</span>
+                        <span className="text-base font-bold text-dark">
+                          {bid.currentBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-sm text-muted">Your Bid</span>
-                        <span className="text-base font-bold text-dark">{bid.yourBid}</span>
+                        <span className="text-base font-bold text-dark">
+                          {bid.yourBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-sm text-muted">Next Min Bid</span>
-                        <span className="text-base font-bold text-dark">{bid.nextMinBid}</span>
+                        <span className="text-base font-bold text-dark">
+                          {bid.nextMinBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-sm text-muted">Auction</span>
@@ -234,7 +268,9 @@ export default function DashboardPage() {
         {/* Recently Viewed (full width) */}
         <section className="w-full max-w-[1320px] mx-auto flex flex-col gap-4">
           <div className="flex items-end justify-between gap-6">
-            <h2 className="text-2xl font-bold m-0 text-dark">Recently Viewed</h2>
+            <h2 className="text-2xl font-bold m-0 text-dark">
+              Recently Viewed
+            </h2>
             <Link
               href="/search"
               className="bg-white rounded-lg px-4 py-2 text-sm font-bold text-dark no-underline"
@@ -243,8 +279,11 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory">
-            {recentlyViewedCards.map((card, i) => (
-              <div key={i} className="snap-start shrink-0">
+            {recentlyViewedCards.map((card) => (
+              <div
+                key={`${card.title}-${card.image}`}
+                className="snap-start shrink-0"
+              >
                 <VehicleCard card={card} imageBadge="Active" />
               </div>
             ))}

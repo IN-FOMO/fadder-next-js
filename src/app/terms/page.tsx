@@ -101,7 +101,9 @@ const privacyText =
 export default function TermsPage() {
   return (
     <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
-      <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Terms" }]} />
+      <Breadcrumbs
+        items={[{ label: "Home page", href: "/" }, { label: "Terms" }]}
+      />
       <PageHeader
         title="Terms & Conditions"
         subtitle="Please read our terms and conditions carefully before using our services"
@@ -109,21 +111,32 @@ export default function TermsPage() {
 
       <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-[74px]">
         <div className="w-full bg-info-bg rounded-[14px] p-4 flex flex-col gap-3">
-          <h3 className="m-0 text-xl leading-6 font-bold text-info">Important Notice</h3>
+          <h3 className="m-0 text-xl leading-6 font-bold text-info">
+            Important Notice
+          </h3>
           <p className="m-0 text-base leading-5 font-normal text-info">
-            These Terms and Conditions form a legally binding agreement between you (the Client) and
-            Fadder. By using our website and services, you confirm that you have read, understood,
-            and agreed to these Terms. Please review them carefully before placing any order.
+            These Terms and Conditions form a legally binding agreement between
+            you (the Client) and Fadder. By using our website and services, you
+            confirm that you have read, understood, and agreed to these Terms.
+            Please review them carefully before placing any order.
           </p>
         </div>
 
         <div className="w-full grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
           {termsSections.map((section) => (
-            <article key={section.title} className="bg-white rounded-lg p-4 flex flex-col gap-6">
-              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{section.title}</h3>
+            <article
+              key={section.title}
+              className="bg-white rounded-lg p-4 flex flex-col gap-6"
+            >
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+                {section.title}
+              </h3>
               <div className="flex flex-col gap-2">
                 {section.items.map((item) => (
-                  <p key={item} className="m-0 text-base leading-5 font-normal text-foreground whitespace-pre-line">
+                  <p
+                    key={item}
+                    className="m-0 text-base leading-5 font-normal text-foreground whitespace-pre-line"
+                  >
                     {item}
                   </p>
                 ))}
@@ -166,7 +179,9 @@ export default function TermsPage() {
         </div>
 
         <article className="w-full bg-white rounded-lg p-4 flex flex-col gap-6">
-          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">Privacy & Data Protection</h3>
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+            Privacy & Data Protection
+          </h3>
           <p className="m-0 text-base leading-5 font-normal text-foreground whitespace-pre-line">
             {privacyText}
           </p>

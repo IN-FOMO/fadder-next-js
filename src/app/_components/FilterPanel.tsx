@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "./Button";
 
 type Option = {
@@ -85,17 +85,15 @@ export function FilterPanel({ className }: FilterPanelProps) {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
-  const close = () => setOpenId(null);
-
   useEffect(() => {
     if (openId === null) return;
     const onMouseDown = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        close();
+        setOpenId(null);
       }
     };
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape") setOpenId(null);
     };
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("keydown", onKeyDown);
@@ -109,7 +107,7 @@ export function FilterPanel({ className }: FilterPanelProps) {
     <div
       ref={panelRef}
       className={
-        "bg-white rounded-sm shadow-card p-6 flex flex-col gap-4 w-full items-center " +
+        "bg-white rounded-[16px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.2)] p-6 flex flex-col gap-4 w-full items-center " +
         (className ?? "")
       }
     >
@@ -122,7 +120,12 @@ export function FilterPanel({ className }: FilterPanelProps) {
             aria-expanded={openId === "type"}
           >
             <span>{selectType.value}</span>
-            <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+            <Image
+              src="/figma/icons/icon-arrow-down.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
           </button>
           {openId === "type" && (
             <ul className={dropdownList}>
@@ -151,7 +154,12 @@ export function FilterPanel({ className }: FilterPanelProps) {
             aria-expanded={openId === "make"}
           >
             <span>{selectMake.value}</span>
-            <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+            <Image
+              src="/figma/icons/icon-arrow-down.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
           </button>
           {openId === "make" && (
             <ul className={dropdownList}>
@@ -180,7 +188,12 @@ export function FilterPanel({ className }: FilterPanelProps) {
             aria-expanded={openId === "model"}
           >
             <span>{selectModel.value}</span>
-            <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+            <Image
+              src="/figma/icons/icon-arrow-down.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
           </button>
           {openId === "model" && (
             <ul className={dropdownList}>
@@ -212,7 +225,12 @@ export function FilterPanel({ className }: FilterPanelProps) {
               aria-expanded={openId === "yearFrom"}
             >
               <span>{yearFrom.value}</span>
-              <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+              <Image
+                src="/figma/icons/icon-arrow-down.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
             </button>
             {openId === "yearFrom" && (
               <ul className={dropdownList}>
@@ -241,7 +259,12 @@ export function FilterPanel({ className }: FilterPanelProps) {
               aria-expanded={openId === "yearTo"}
             >
               <span>{yearTo.value}</span>
-              <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+              <Image
+                src="/figma/icons/icon-arrow-down.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
             </button>
             {openId === "yearTo" && (
               <ul className={dropdownList}>
@@ -272,7 +295,12 @@ export function FilterPanel({ className }: FilterPanelProps) {
               aria-expanded={openId === "minPrice"}
             >
               <span>{minPrice.value}</span>
-              <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+              <Image
+                src="/figma/icons/icon-arrow-down.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
             </button>
             {openId === "minPrice" && (
               <ul className={dropdownList}>
@@ -301,7 +329,12 @@ export function FilterPanel({ className }: FilterPanelProps) {
               aria-expanded={openId === "maxPrice"}
             >
               <span>{maxPrice.value}</span>
-              <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+              <Image
+                src="/figma/icons/icon-arrow-down.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
             </button>
             {openId === "maxPrice" && (
               <ul className={dropdownList}>
@@ -350,7 +383,9 @@ export function FilterPanel({ className }: FilterPanelProps) {
               width={24}
               height={24}
             />
-            <span className="text-white rounded-sm py-1 px-2 text-xs bg-copart">Copart</span>
+            <span className="text-white rounded-sm py-1 px-2 text-xs bg-copart">
+              Copart
+            </span>
           </button>
           <button
             type="button"
@@ -368,7 +403,9 @@ export function FilterPanel({ className }: FilterPanelProps) {
               width={24}
               height={24}
             />
-            <span className="text-white rounded-sm py-1 px-2 text-xs bg-iaai">IAAI</span>
+            <span className="text-white rounded-sm py-1 px-2 text-xs bg-iaai">
+              IAAI
+            </span>
           </button>
         </div>
         <Button variant="primary" size="md">

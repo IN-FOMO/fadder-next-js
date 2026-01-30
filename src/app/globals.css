@@ -4,7 +4,11 @@
   --background: #f5f6f8;
   --foreground: #0f0f0f;
   /* Hero overlay gradient */
-  --hero-overlay: linear-gradient(13deg, rgba(28, 28, 28, 0.04) 0%, rgba(0, 0, 0, 0.75) 100%);
+  --hero-overlay: linear-gradient(
+    13deg,
+    rgba(28, 28, 28, 0.04) 0%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
 }
 
 @theme inline {

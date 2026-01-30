@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./Button";
 
 export type BlogCard = {
   title: string;
@@ -15,35 +14,53 @@ type BlogSectionProps = {
 
 export function BlogSection({ cards }: BlogSectionProps) {
   return (
-    <section className="flex flex-col gap-4 mx-20 max-wide:mx-[60px] max-tablet:mx-4">
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold m-0 text-dark">Latest Insights from Our Blog</h2>
+    <section className="flex flex-col gap-4 w-full max-w-[1760px] mx-auto px-20 max-wide:px-[60px] max-tablet:px-4">
+      <div className="flex items-end justify-between gap-4">
+        <h2 className="text-2xl font-bold leading-7 m-0 text-black">
+          Latest Insights from Our Blog
+        </h2>
         <Link
           href="/blog"
-          className="text-base font-bold text-dark no-underline hover:underline active:underline"
+          className="text-base font-bold text-foreground no-underline bg-white py-2.5 px-4 rounded-[16px] inline-flex items-center justify-center hover:bg-surface transition-colors"
         >
           View all
         </Link>
       </div>
-      <div className="grid grid-cols-3 gap-6 max-wide:grid-cols-2 max-tablet:grid-cols-1">
+      <div className="flex items-stretch gap-4 max-tablet:flex-col">
         {cards.map((card) => (
-          <article key={card.title} className="bg-white rounded-lg overflow-hidden flex flex-col">
-            <div className="relative h-[180px] bg-surface">
+          <article
+            key={card.title}
+            className="bg-white rounded-[16px] overflow-hidden flex flex-col flex-1"
+          >
+            <div className="relative h-[180px] bg-surface rounded-t-[16px] overflow-hidden">
               <Image
                 src={card.image}
                 alt=""
                 fill
-                sizes="(max-width: 834px) 100vw, 560px"
+                sizes="(max-width: 834px) 100vw, 576px"
                 className="object-cover"
               />
             </div>
-            <div className="p-4 flex flex-col gap-3">
-              <span className="text-sm text-muted">{card.date}</span>
-              <h3 className="text-base font-bold m-0 text-dark">{card.title}</h3>
-              <p className="text-sm text-muted m-0">{card.description}</p>
-              <Button href="/blog" variant="secondary" size="sm" className="w-fit">
+            <div className="p-4 flex flex-col justify-between gap-6 flex-1">
+              <div className="flex flex-col gap-6">
+                <span className="text-base leading-5 text-black">
+                  {card.date}
+                </span>
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-xl font-bold leading-6 m-0 text-black">
+                    {card.title}
+                  </h3>
+                  <p className="text-base leading-5 m-0 text-black">
+                    {card.description}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/blog"
+                className="flex items-center justify-center gap-2.5 px-8 h-[52px] bg-surface rounded-[14px] text-base leading-5 font-bold text-black no-underline"
+              >
                 Read more
-              </Button>
+              </Link>
             </div>
           </article>
         ))}

@@ -6,7 +6,7 @@ const infoBlocks = [
   {
     title: "How Auctions Work",
     content:
-      "We partner with leading auction platforms (e.g. Copart, IAAI) to give you access to thousands of vehicles. You can bid in real time or use our \"Buy Now\" option. A refundable deposit is required to participate.",
+      'We partner with leading auction platforms (e.g. Copart, IAAI) to give you access to thousands of vehicles. You can bid in real time or use our "Buy Now" option. A refundable deposit is required to participate.',
   },
   {
     title: "Delivery Options",
@@ -28,7 +28,9 @@ const infoBlocks = [
 export default function InformationPage() {
   return (
     <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-16 text-foreground max-wide:px-[60px] max-tablet:px-8 max-tablet:pb-24 max-narrow:px-4">
-      <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Information" }]} />
+      <Breadcrumbs
+        items={[{ label: "Home page", href: "/" }, { label: "Information" }]}
+      />
       <PageHeader
         title="Information"
         subtitle="General information about our services, auctions, and delivery"
@@ -42,7 +44,9 @@ export default function InformationPage() {
               className="bg-white rounded-lg p-6 flex flex-col gap-4 shadow-card-soft"
             >
               <h2 className="text-xl font-bold m-0 text-dark">{block.title}</h2>
-              <p className="text-base leading-5 text-foreground m-0">{block.content}</p>
+              <p className="text-base leading-5 text-foreground m-0">
+                {block.content}
+              </p>
             </article>
           ))}
         </div>

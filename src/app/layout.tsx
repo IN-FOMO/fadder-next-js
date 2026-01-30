@@ -31,7 +31,8 @@ export default function RootLayout({
       {
         "@type": "Organization",
         name: "Fadder",
-        description: "Auto auction marketplace for buying and shipping vehicles.",
+        description:
+          "Auto auction marketplace for buying and shipping vehicles.",
         email: "info@fadder.com",
         address: {
           "@type": "PostalAddress",
@@ -44,7 +45,8 @@ export default function RootLayout({
       {
         "@type": "WebSite",
         name: "Fadder",
-        description: "Auto auction marketplace for buying and shipping vehicles.",
+        description:
+          "Auto auction marketplace for buying and shipping vehicles.",
       },
     ],
   };

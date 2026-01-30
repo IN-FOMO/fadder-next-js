@@ -13,7 +13,8 @@ const deliveryOptions = [
   },
   {
     title: "Sea Shipping",
-    description: "Container shipping from the USA and other international locations",
+    description:
+      "Container shipping from the USA and other international locations",
     details: ["Duration: 30–45 days", "Coverage: All EU countries"],
     icon: "/figma/icons/icon-delivery-sea.svg",
   },
@@ -49,7 +50,9 @@ const requiredDocs = [
 export default function DeliveryPage() {
   return (
     <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
-      <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Delivery" }]} />
+      <Breadcrumbs
+        items={[{ label: "Home page", href: "/" }, { label: "Delivery" }]}
+      />
       <PageHeader
         title="Delivery"
         subtitle="Professional car delivery throughout Poland with full cargo insurance"
@@ -71,12 +74,25 @@ export default function DeliveryPage() {
               key={option.title}
               className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6 justify-between"
             >
-              <Image src={option.icon} alt="" width={48} height={48} className="inline-flex" />
-              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">{option.title}</h3>
-              <p className="m-0 text-base leading-5 font-normal text-foreground">{option.description}</p>
+              <Image
+                src={option.icon}
+                alt=""
+                width={48}
+                height={48}
+                className="inline-flex"
+              />
+              <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+                {option.title}
+              </h3>
+              <p className="m-0 text-base leading-5 font-normal text-foreground">
+                {option.description}
+              </p>
               <div className="flex flex-col gap-2">
                 {option.details.map((text) => (
-                  <p key={text} className="m-0 text-base leading-5 font-normal text-foreground">
+                  <p
+                    key={text}
+                    className="m-0 text-base leading-5 font-normal text-foreground"
+                  >
                     {text}
                   </p>
                 ))}
@@ -133,27 +149,38 @@ export default function DeliveryPage() {
           </div>
         </div>
         <p className="m-0 text-base leading-5 font-normal text-foreground">
-          *Prices are indicative for standard passenger vehicles. Actual cost depends on vehicle
-          type, dimensions, weight, pickup location, and current route availability
+          *Prices are indicative for standard passenger vehicles. Actual cost
+          depends on vehicle type, dimensions, weight, pickup location, and
+          current route availability
         </p>
       </section>
 
       <section className="w-full max-w-[1320px] mx-auto flex gap-4 max-narrow:flex-col">
         <article className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6">
-          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">What's Included</h3>
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+            What's Included
+          </h3>
           <div className="flex flex-col gap-2">
             {includedItems.map((item) => (
-              <p key={item} className="m-0 text-base leading-5 font-normal text-foreground">
+              <p
+                key={item}
+                className="m-0 text-base leading-5 font-normal text-foreground"
+              >
                 {item}
               </p>
             ))}
           </div>
         </article>
         <article className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6">
-          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">Required Documents</h3>
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+            Required Documents
+          </h3>
           <div className="flex flex-col gap-2">
             {requiredDocs.map((item) => (
-              <p key={item} className="m-0 text-base leading-5 font-normal text-foreground">
+              <p
+                key={item}
+                className="m-0 text-base leading-5 font-normal text-foreground"
+              >
                 {item}
               </p>
             ))}
@@ -163,7 +190,9 @@ export default function DeliveryPage() {
 
       <section className="w-full max-w-[700px] mx-auto bg-white rounded-lg p-4 flex flex-col items-center gap-6">
         <div className="w-full flex items-center justify-between gap-6">
-          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">Full Car History</h3>
+          <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+            Full Car History
+          </h3>
           <Image
             src="/figma/icons/icon-exclamation-circle.svg"
             alt=""
@@ -173,8 +202,8 @@ export default function DeliveryPage() {
           />
         </div>
         <p className="m-0 text-base leading-5 font-normal text-foreground text-center">
-          Get a comprehensive report (similar to Carfax) including accident history, service records,
-          and more.
+          Get a comprehensive report (similar to Carfax) including accident
+          history, service records, and more.
         </p>
         <Button variant="primary" size="lg">
           Request Full History (Carfax)

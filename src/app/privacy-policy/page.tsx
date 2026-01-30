@@ -33,7 +33,9 @@ const privacySections = [
 export default function PrivacyPolicyPage() {
   return (
     <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-16 text-foreground max-wide:px-[60px] max-tablet:px-8 max-tablet:pb-24 max-narrow:px-4">
-      <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "Privacy Policy" }]} />
+      <Breadcrumbs
+        items={[{ label: "Home page", href: "/" }, { label: "Privacy Policy" }]}
+      />
       <PageHeader
         title="Privacy Policy"
         subtitle="How we collect, use, and protect your personal information"
@@ -41,9 +43,14 @@ export default function PrivacyPolicyPage() {
 
       <section className="w-full max-w-[960px] mx-auto flex flex-col gap-8">
         {privacySections.map((section) => (
-          <article key={section.title} className="bg-white rounded-lg p-6 flex flex-col gap-4">
+          <article
+            key={section.title}
+            className="bg-white rounded-lg p-6 flex flex-col gap-4"
+          >
             <h2 className="text-xl font-bold m-0 text-dark">{section.title}</h2>
-            <p className="text-base leading-5 text-foreground m-0">{section.content}</p>
+            <p className="text-base leading-5 text-foreground m-0">
+              {section.content}
+            </p>
           </article>
         ))}
       </section>

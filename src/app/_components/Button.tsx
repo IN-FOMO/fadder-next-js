@@ -3,7 +3,13 @@
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "outlineInactive" | "ghost" | "white";
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "outlineInactive"
+  | "ghost"
+  | "white";
 type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -58,11 +64,14 @@ export function Button({
   children,
   ...rest
 }: ButtonProps) {
-  const base = "inline-flex items-center justify-center gap-2 no-underline transition-colors";
+  const base =
+    "inline-flex items-center justify-center gap-2 no-underline transition-colors";
   const variantClass = variantClasses[variant];
   const sizeClass = sizeClasses[size];
   const widthClass = fullWidth ? "w-full" : "";
-  const combined = [base, variantClass, sizeClass, widthClass, className].filter(Boolean).join(" ");
+  const combined = [base, variantClass, sizeClass, widthClass, className]
+    .filter(Boolean)
+    .join(" ");
 
   if ("href" in rest && rest.href !== undefined) {
     const { href, ...linkRest } = rest as ButtonAsLink;
@@ -75,7 +84,12 @@ export function Button({
 
   const { type = "button", ...buttonRest } = rest as ButtonAsButton;
   return (
-    <button type={type} className={combined} disabled={disabled} {...buttonRest}>
+    <button
+      type={type}
+      className={combined}
+      disabled={disabled}
+      {...buttonRest}
+    >
       {children}
     </button>
   );

@@ -123,7 +123,6 @@ const damageTypeItems = [
   { label: "Water/Flood Damage", count: "(3,116)", checked: false },
 ];
 
-
 const quickFilters = [
   { label: "Vehicles Only", checked: true },
   { label: "Newly added vehicles", checked: false },
@@ -265,7 +264,9 @@ const expandableFilters = [
 const defaultCollapsedState = Object.fromEntries(
   collapsedFilters.map((item) => [
     item,
-    item === "Vehicle type" || item === "Make" || item === "Search near ZIP code",
+    item === "Vehicle type" ||
+      item === "Make" ||
+      item === "Search near ZIP code",
   ]),
 ) as Record<string, boolean>;
 
@@ -273,10 +274,9 @@ export default function SearchPage() {
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const [quickState, setQuickState] = useState(
     () =>
-      Object.fromEntries(quickFilters.map((item) => [item.label, item.checked])) as Record<
-        string,
-        boolean
-      >,
+      Object.fromEntries(
+        quickFilters.map((item) => [item.label, item.checked]),
+      ) as Record<string, boolean>,
   );
   const [auctionState, setAuctionState] = useState({
     All: true,
@@ -285,17 +285,18 @@ export default function SearchPage() {
   });
   const [conditionState, setConditionState] = useState(
     () =>
-      Object.fromEntries(damageTypeItems.map((item) => [item.label, item.checked])) as Record<
-        string,
-        boolean
-      >,
+      Object.fromEntries(
+        damageTypeItems.map((item) => [item.label, item.checked]),
+      ) as Record<string, boolean>,
   );
   const [lotStatusState, setLotStatusState] = useState({
     Active: true,
     Sold: false,
     Upcoming: false,
   });
-  const [collapsedState, setCollapsedState] = useState(() => defaultCollapsedState);
+  const [collapsedState, setCollapsedState] = useState(
+    () => defaultCollapsedState,
+  );
   const [expandedState, setExpandedState] = useState(
     () =>
       Object.fromEntries(
@@ -309,7 +310,11 @@ export default function SearchPage() {
         ]),
       ) as Record<
         string,
-        { search: string; items: { label: string; count: string; checked: boolean }[]; input: string }
+        {
+          search: string;
+          items: { label: string; count: string; checked: boolean }[];
+          input: string;
+        }
       >,
   );
   const [damageSearchValue, setDamageSearchValue] = useState("");
@@ -317,16 +322,18 @@ export default function SearchPage() {
   const [yearRange, setYearRange] = useState({ min: 1900, max: 2025 });
 
   const activeTags = useMemo(
-    () => damageTypeItems.map((item) => item.label).filter((tag) => conditionState[tag]),
+    () =>
+      damageTypeItems
+        .map((item) => item.label)
+        .filter((tag) => conditionState[tag]),
     [conditionState],
   );
 
   const resetAll = () => {
     setQuickState(
-      Object.fromEntries(quickFilters.map((item) => [item.label, item.checked])) as Record<
-        string,
-        boolean
-      >,
+      Object.fromEntries(
+        quickFilters.map((item) => [item.label, item.checked]),
+      ) as Record<string, boolean>,
     );
     setAuctionState({ All: true, Copart: false, IAAI: false });
     setConditionState(
@@ -348,7 +355,11 @@ export default function SearchPage() {
         ]),
       ) as Record<
         string,
-        { search: string; items: { label: string; count: string; checked: boolean }[]; input: string }
+        {
+          search: string;
+          items: { label: string; count: string; checked: boolean }[];
+          input: string;
+        }
       >,
     );
     setDamageSearchValue("");
@@ -397,7 +408,9 @@ export default function SearchPage() {
             <button
               type="button"
               className="absolute right-0 top-0 w-[38px] h-[52px] p-0 border-0 bg-transparent inline-flex items-center justify-center cursor-pointer"
-              aria-label={filtersCollapsed ? "Expand filters" : "Collapse filters"}
+              aria-label={
+                filtersCollapsed ? "Expand filters" : "Collapse filters"
+              }
               onClick={() => setFiltersCollapsed((prev) => !prev)}
             >
               <Image
@@ -419,7 +432,10 @@ export default function SearchPage() {
                         item.label === "Vehicles Only" ? "gap-3" : "gap-[38px]"
                       }`}
                       onClick={() =>
-                        setQuickState((prev) => ({ ...prev, [item.label]: !prev[item.label] }))
+                        setQuickState((prev) => ({
+                          ...prev,
+                          [item.label]: !prev[item.label],
+                        }))
                       }
                     >
                       <span
@@ -458,92 +474,50 @@ export default function SearchPage() {
           {filtersCollapsed ? null : (
             <>
               <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
-              <span>Auction type</span>
-              <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
-            </div>
-            <div className="flex flex-col gap-[11px]">
-              <button
-                type="button"
-                className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
-                onClick={() =>
-                  setAuctionState((prev) => ({ ...prev, All: !prev.All }))
-                }
-              >
-                <span className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
+                  <span>Auction type</span>
                   <Image
-                    src={
-                      auctionState.All
-                        ? "/figma/icons/icon-checkbox-checked.svg"
-                        : "/figma/icons/icon-checkbox.svg"
-                    }
+                    src="/figma/icons/icon-minus.svg"
                     alt=""
                     width={24}
                     height={24}
                   />
-                  <span>All</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
-                onClick={() =>
-                  setAuctionState((prev) => ({ ...prev, Copart: !prev.Copart }))
-                }
-              >
-                <Image
-                  src={
-                    auctionState.Copart
-                      ? "/figma/icons/icon-checkbox-checked.svg"
-                      : "/figma/icons/icon-checkbox.svg"
-                  }
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-                <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-copart">
-                  Copart
-                </span>
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
-                onClick={() => setAuctionState((prev) => ({ ...prev, IAAI: !prev.IAAI }))}
-              >
-                <Image
-                  src={
-                    auctionState.IAAI
-                      ? "/figma/icons/icon-checkbox-checked.svg"
-                      : "/figma/icons/icon-checkbox.svg"
-                  }
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-                <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-iaai">IAAI</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
-              <span>Lot status</span>
-              <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
-            </div>
-            <div className="flex flex-col gap-[11px]">
-              {(["Active", "Sold", "Upcoming"] as const).map((status) => (
-                <button
-                  key={status}
-                  type="button"
-                  className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
-                  onClick={() =>
-                    setLotStatusState((prev) => ({ ...prev, [status]: !prev[status] }))
-                  }
-                >
-                  <span className="flex items-center gap-2">
+                </div>
+                <div className="flex flex-col gap-[11px]">
+                  <button
+                    type="button"
+                    className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
+                    onClick={() =>
+                      setAuctionState((prev) => ({ ...prev, All: !prev.All }))
+                    }
+                  >
+                    <span className="flex items-center gap-2">
+                      <Image
+                        src={
+                          auctionState.All
+                            ? "/figma/icons/icon-checkbox-checked.svg"
+                            : "/figma/icons/icon-checkbox.svg"
+                        }
+                        alt=""
+                        width={24}
+                        height={24}
+                      />
+                      <span>All</span>
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
+                    onClick={() =>
+                      setAuctionState((prev) => ({
+                        ...prev,
+                        Copart: !prev.Copart,
+                      }))
+                    }
+                  >
                     <Image
                       src={
-                        lotStatusState[status]
+                        auctionState.Copart
                           ? "/figma/icons/icon-checkbox-checked.svg"
                           : "/figma/icons/icon-checkbox.svg"
                       }
@@ -551,212 +525,61 @@ export default function SearchPage() {
                       width={24}
                       height={24}
                     />
-                    <span>{status}</span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+                    <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-copart">
+                      Copart
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
+                    onClick={() =>
+                      setAuctionState((prev) => ({ ...prev, IAAI: !prev.IAAI }))
+                    }
+                  >
+                    <Image
+                      src={
+                        auctionState.IAAI
+                          ? "/figma/icons/icon-checkbox-checked.svg"
+                          : "/figma/icons/icon-checkbox.svg"
+                      }
+                      alt=""
+                      width={24}
+                      height={24}
+                    />
+                    <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-iaai">
+                      IAAI
+                    </span>
+                  </button>
+                </div>
+              </div>
 
-          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
-              <span>Estimated price USD</span>
-              <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted">min</span>
-              <input
-                type="number"
-                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
-                value={priceRange.min}
-                min={0}
-                max={priceRange.max}
-                onChange={(event) =>
-                  setPriceRange((prev) => ({
-                    ...prev,
-                    min: Math.min(Number(event.target.value), prev.max),
-                  }))
-                }
-              />
-              <div className="w-6 h-0.5 bg-muted" />
-              <span className="text-sm text-muted">max</span>
-              <input
-                type="number"
-                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
-                value={priceRange.max}
-                min={priceRange.min}
-                max={100000}
-                onChange={(event) =>
-                  setPriceRange((prev) => ({
-                    ...prev,
-                    max: Math.max(Number(event.target.value), prev.min),
-                  }))
-                }
-              />
-            </div>
-            <div
-              className="h-1.5 rounded-full bg-border relative flex items-center"
-              style={{
-                background: `linear-gradient(to right, var(--color-border) ${priceMinPct}%, var(--color-primary) ${priceMinPct}%, var(--color-primary) ${priceMaxPct}%, var(--color-border) ${priceMaxPct}%)`,
-              }}
-            >
-              <input
-                type="range"
-                min={0}
-                max={100000}
-                value={priceRange.min}
-                onChange={(event) =>
-                  setPriceRange((prev) => ({
-                    ...prev,
-                    min: Math.min(Number(event.target.value), prev.max),
-                  }))
-                }
-                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-              />
-              <input
-                type="range"
-                min={0}
-                max={100000}
-                value={priceRange.max}
-                onChange={(event) =>
-                  setPriceRange((prev) => ({
-                    ...prev,
-                    max: Math.max(Number(event.target.value), prev.min),
-                  }))
-                }
-                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-              />
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>{priceRange.min} $</span>
-              <span className="text-muted">{priceRange.max} $</span>
-            </div>
-            <Button variant="primary" size="md">
-              Apply
-            </Button>
-          </div>
-
-          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
-              <span>Year of manufacture</span>
-              <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted">from</span>
-              <input
-                type="number"
-                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
-                value={yearRange.min}
-                min={1900}
-                max={yearRange.max}
-                onChange={(event) =>
-                  setYearRange((prev) => ({
-                    ...prev,
-                    min: Math.min(Number(event.target.value), prev.max),
-                  }))
-                }
-              />
-              <div className="w-6 h-0.5 bg-muted" />
-              <span className="text-sm text-muted">to</span>
-              <input
-                type="number"
-                className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
-                value={yearRange.max}
-                min={yearRange.min}
-                max={2025}
-                onChange={(event) =>
-                  setYearRange((prev) => ({
-                    ...prev,
-                    max: Math.max(Number(event.target.value), prev.min),
-                  }))
-                }
-              />
-            </div>
-            <div
-              className="h-1.5 rounded-full bg-border relative flex items-center"
-              style={{
-                background: `linear-gradient(to right, var(--color-border) ${yearMinPct}%, var(--color-primary) ${yearMinPct}%, var(--color-primary) ${yearMaxPct}%, var(--color-border) ${yearMaxPct}%)`,
-              }}
-            >
-              <input
-                type="range"
-                min={1900}
-                max={2025}
-                value={yearRange.min}
-                onChange={(event) =>
-                  setYearRange((prev) => ({
-                    ...prev,
-                    min: Math.min(Number(event.target.value), prev.max),
-                  }))
-                }
-                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-              />
-              <input
-                type="range"
-                min={1900}
-                max={2025}
-                value={yearRange.max}
-                onChange={(event) =>
-                  setYearRange((prev) => ({
-                    ...prev,
-                    max: Math.max(Number(event.target.value), prev.min),
-                  }))
-                }
-                className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-              />
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>{yearRange.min} Year</span>
-              <span className="text-muted">{yearRange.max} Year</span>
-            </div>
-            <Button variant="primary" size="md">
-              Apply
-            </Button>
-          </div>
-
-          <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
-              <span>Damage type</span>
-              <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
-            </div>
-            <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 text-base text-muted min-h-[44px]">
-              <input
-                placeholder="Search"
-                aria-label="Search damage type"
-                value={damageSearchValue}
-                onChange={(event) => setDamageSearchValue(event.target.value)}
-                className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
-              />
-              <Image
-                src="/figma/icons/icon-search-rounded.svg"
-                alt=""
-                width={24}
-                height={24}
-              />
-            </label>
-            <div className="flex flex-col gap-[11px]">
-              {damageTypeItems
-                .filter((item) =>
-                  item.label.toLowerCase().includes(damageSearchValue.toLowerCase()),
-                )
-                .map((item) => {
-                  const isChecked = conditionState[item.label];
-                  return (
+              <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
+                  <span>Lot status</span>
+                  <Image
+                    src="/figma/icons/icon-minus.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </div>
+                <div className="flex flex-col gap-[11px]">
+                  {(["Active", "Sold", "Upcoming"] as const).map((status) => (
                     <button
-                      key={item.label}
+                      key={status}
                       type="button"
                       className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
                       onClick={() =>
-                        setConditionState((prev) => ({
+                        setLotStatusState((prev) => ({
                           ...prev,
-                          [item.label]: !prev[item.label],
+                          [status]: !prev[status],
                         }))
                       }
                     >
                       <span className="flex items-center gap-2">
                         <Image
                           src={
-                            isChecked
+                            lotStatusState[status]
                               ? "/figma/icons/icon-checkbox-checked.svg"
                               : "/figma/icons/icon-checkbox.svg"
                           }
@@ -764,20 +587,257 @@ export default function SearchPage() {
                           width={24}
                           height={24}
                         />
-                        <span>{item.label}</span>
+                        <span>{status}</span>
                       </span>
-                      <span className="text-sm font-normal text-foreground">{item.count}</span>
                     </button>
-                  );
-                })}
-            </div>
-          </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
+                  <span>Estimated price USD</span>
+                  <Image
+                    src="/figma/icons/icon-minus.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted">min</span>
+                  <input
+                    type="number"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    value={priceRange.min}
+                    min={0}
+                    max={priceRange.max}
+                    onChange={(event) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        min: Math.min(Number(event.target.value), prev.max),
+                      }))
+                    }
+                  />
+                  <div className="w-6 h-0.5 bg-muted" />
+                  <span className="text-sm text-muted">max</span>
+                  <input
+                    type="number"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    value={priceRange.max}
+                    min={priceRange.min}
+                    max={100000}
+                    onChange={(event) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        max: Math.max(Number(event.target.value), prev.min),
+                      }))
+                    }
+                  />
+                </div>
+                <div
+                  className="h-1.5 rounded-full bg-border relative flex items-center"
+                  style={{
+                    background: `linear-gradient(to right, var(--color-border) ${priceMinPct}%, var(--color-primary) ${priceMinPct}%, var(--color-primary) ${priceMaxPct}%, var(--color-border) ${priceMaxPct}%)`,
+                  }}
+                >
+                  <input
+                    type="range"
+                    min={0}
+                    max={100000}
+                    value={priceRange.min}
+                    onChange={(event) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        min: Math.min(Number(event.target.value), prev.max),
+                      }))
+                    }
+                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
+                  />
+                  <input
+                    type="range"
+                    min={0}
+                    max={100000}
+                    value={priceRange.max}
+                    onChange={(event) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        max: Math.max(Number(event.target.value), prev.min),
+                      }))
+                    }
+                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
+                  />
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>{priceRange.min} $</span>
+                  <span className="text-muted">{priceRange.max} $</span>
+                </div>
+                <Button variant="primary" size="md">
+                  Apply
+                </Button>
+              </div>
+
+              <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
+                  <span>Year of manufacture</span>
+                  <Image
+                    src="/figma/icons/icon-minus.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted">from</span>
+                  <input
+                    type="number"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    value={yearRange.min}
+                    min={1900}
+                    max={yearRange.max}
+                    onChange={(event) =>
+                      setYearRange((prev) => ({
+                        ...prev,
+                        min: Math.min(Number(event.target.value), prev.max),
+                      }))
+                    }
+                  />
+                  <div className="w-6 h-0.5 bg-muted" />
+                  <span className="text-sm text-muted">to</span>
+                  <input
+                    type="number"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    value={yearRange.max}
+                    min={yearRange.min}
+                    max={2025}
+                    onChange={(event) =>
+                      setYearRange((prev) => ({
+                        ...prev,
+                        max: Math.max(Number(event.target.value), prev.min),
+                      }))
+                    }
+                  />
+                </div>
+                <div
+                  className="h-1.5 rounded-full bg-border relative flex items-center"
+                  style={{
+                    background: `linear-gradient(to right, var(--color-border) ${yearMinPct}%, var(--color-primary) ${yearMinPct}%, var(--color-primary) ${yearMaxPct}%, var(--color-border) ${yearMaxPct}%)`,
+                  }}
+                >
+                  <input
+                    type="range"
+                    min={1900}
+                    max={2025}
+                    value={yearRange.min}
+                    onChange={(event) =>
+                      setYearRange((prev) => ({
+                        ...prev,
+                        min: Math.min(Number(event.target.value), prev.max),
+                      }))
+                    }
+                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
+                  />
+                  <input
+                    type="range"
+                    min={1900}
+                    max={2025}
+                    value={yearRange.max}
+                    onChange={(event) =>
+                      setYearRange((prev) => ({
+                        ...prev,
+                        max: Math.max(Number(event.target.value), prev.min),
+                      }))
+                    }
+                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
+                  />
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>{yearRange.min} Year</span>
+                  <span className="text-muted">{yearRange.max} Year</span>
+                </div>
+                <Button variant="primary" size="md">
+                  Apply
+                </Button>
+              </div>
+
+              <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
+                  <span>Damage type</span>
+                  <Image
+                    src="/figma/icons/icon-minus.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </div>
+                <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 text-base text-muted min-h-[44px]">
+                  <input
+                    placeholder="Search"
+                    aria-label="Search damage type"
+                    value={damageSearchValue}
+                    onChange={(event) =>
+                      setDamageSearchValue(event.target.value)
+                    }
+                    className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
+                  />
+                  <Image
+                    src="/figma/icons/icon-search-rounded.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </label>
+                <div className="flex flex-col gap-[11px]">
+                  {damageTypeItems
+                    .filter((item) =>
+                      item.label
+                        .toLowerCase()
+                        .includes(damageSearchValue.toLowerCase()),
+                    )
+                    .map((item) => {
+                      const isChecked = conditionState[item.label];
+                      return (
+                        <button
+                          key={item.label}
+                          type="button"
+                          className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
+                          onClick={() =>
+                            setConditionState((prev) => ({
+                              ...prev,
+                              [item.label]: !prev[item.label],
+                            }))
+                          }
+                        >
+                          <span className="flex items-center gap-2">
+                            <Image
+                              src={
+                                isChecked
+                                  ? "/figma/icons/icon-checkbox-checked.svg"
+                                  : "/figma/icons/icon-checkbox.svg"
+                              }
+                              alt=""
+                              width={24}
+                              height={24}
+                            />
+                            <span>{item.label}</span>
+                          </span>
+                          <span className="text-sm font-normal text-foreground">
+                            {item.count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
 
               {collapsedFilters.map((title) => {
                 const isOpen = collapsedState[title];
-                const section = expandableFilters.find((item) => item.title === title);
+                const section = expandableFilters.find(
+                  (item) => item.title === title,
+                );
                 const sectionState = expandedState[title];
-                const isScrollable = title === "Vehicle type" || title === "Make";
+                const isScrollable =
+                  title === "Vehicle type" || title === "Make";
                 return (
                   <div
                     key={title}
@@ -788,15 +848,24 @@ export default function SearchPage() {
                     <button
                       type="button"
                       className={`flex items-center justify-between p-4 rounded-2xl bg-white text-base font-semibold leading-5 border-0 cursor-pointer w-full gap-[130px] ${
-                        isOpen ? "p-0 bg-transparent rounded-none gap-[142px]" : ""
+                        isOpen
+                          ? "p-0 bg-transparent rounded-none gap-[142px]"
+                          : ""
                       }`}
                       onClick={() =>
-                        setCollapsedState((prev) => ({ ...prev, [title]: !prev[title] }))
+                        setCollapsedState((prev) => ({
+                          ...prev,
+                          [title]: !prev[title],
+                        }))
                       }
                     >
                       <span>{title}</span>
                       <Image
-                        src={isOpen ? "/figma/icons/icon-minus.svg" : "/figma/icons/icon-plus.svg"}
+                        src={
+                          isOpen
+                            ? "/figma/icons/icon-minus.svg"
+                            : "/figma/icons/icon-plus.svg"
+                        }
                         alt=""
                         width={24}
                         height={24}
@@ -817,7 +886,10 @@ export default function SearchPage() {
                                 onChange={(event) =>
                                   setExpandedState((prev) => ({
                                     ...prev,
-                                    [title]: { ...prev[title], input: event.target.value },
+                                    [title]: {
+                                      ...prev[title],
+                                      input: event.target.value,
+                                    },
                                   }))
                                 }
                                 className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
@@ -847,7 +919,10 @@ export default function SearchPage() {
                               onChange={(event) =>
                                 setExpandedState((prev) => ({
                                   ...prev,
-                                  [title]: { ...prev[title], search: event.target.value },
+                                  [title]: {
+                                    ...prev[title],
+                                    search: event.target.value,
+                                  },
                                 }))
                               }
                               className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
@@ -860,7 +935,8 @@ export default function SearchPage() {
                             />
                           </label>
                         ) : null}
-                        {section.inputPlaceholder && title !== "Search near ZIP code" ? (
+                        {section.inputPlaceholder &&
+                        title !== "Search near ZIP code" ? (
                           <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[44px]">
                             <input
                               placeholder={section.inputPlaceholder}
@@ -868,7 +944,10 @@ export default function SearchPage() {
                               onChange={(event) =>
                                 setExpandedState((prev) => ({
                                   ...prev,
-                                  [title]: { ...prev[title], input: event.target.value },
+                                  [title]: {
+                                    ...prev[title],
+                                    input: event.target.value,
+                                  },
                                 }))
                               }
                               className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
@@ -878,7 +957,9 @@ export default function SearchPage() {
                         {section.items ? (
                           <div
                             className={`flex flex-col gap-[11px] w-full ${
-                              isScrollable ? "flex-1 min-h-0 overflow-y-auto" : ""
+                              isScrollable
+                                ? "flex-1 min-h-0 overflow-y-auto"
+                                : ""
                             }`}
                           >
                             {(sectionState?.items ?? [])
@@ -886,7 +967,11 @@ export default function SearchPage() {
                                 section.searchPlaceholder
                                   ? item.label
                                       .toLowerCase()
-                                      .includes((sectionState?.search ?? "").toLowerCase())
+                                      .includes(
+                                        (
+                                          sectionState?.search ?? ""
+                                        ).toLowerCase(),
+                                      )
                                   : true,
                               )
                               .map((item) => (
@@ -899,10 +984,14 @@ export default function SearchPage() {
                                       ...prev,
                                       [title]: {
                                         ...prev[title],
-                                        items: prev[title].items.map((current) =>
-                                          current.label === item.label
-                                            ? { ...current, checked: !current.checked }
-                                            : current,
+                                        items: prev[title].items.map(
+                                          (current) =>
+                                            current.label === item.label
+                                              ? {
+                                                  ...current,
+                                                  checked: !current.checked,
+                                                }
+                                              : current,
                                         ),
                                       },
                                     }))
@@ -921,7 +1010,9 @@ export default function SearchPage() {
                                     />
                                     <span>{item.label}</span>
                                   </span>
-                                  <span className="text-sm font-normal text-foreground">{item.count}</span>
+                                  <span className="text-sm font-normal text-foreground">
+                                    {item.count}
+                                  </span>
                                 </button>
                               ))}
                           </div>
@@ -946,14 +1037,24 @@ export default function SearchPage() {
                 className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5"
               >
                 <span>20 cards</span>
-                <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+                <Image
+                  src="/figma/icons/icon-arrow-down.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                />
               </button>
               <button
                 type="button"
                 className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5"
               >
                 <span>Sort by</span>
-                <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+                <Image
+                  src="/figma/icons/icon-arrow-down.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                />
               </button>
               <button
                 type="button"
@@ -976,11 +1077,19 @@ export default function SearchPage() {
                 type="button"
                 className="inline-flex items-center gap-2 py-1 px-3 bg-white rounded-2xl text-sm font-bold border-0 cursor-pointer"
                 onClick={() =>
-                  setConditionState((prev) => ({ ...prev, [item]: !prev[item] }))
+                  setConditionState((prev) => ({
+                    ...prev,
+                    [item]: !prev[item],
+                  }))
                 }
               >
                 <span>{item}</span>
-                <Image src="/figma/icons/icon-cross-small.svg" alt="" width={24} height={24} />
+                <Image
+                  src="/figma/icons/icon-cross-small.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                />
               </button>
             ))}
           </div>
@@ -996,13 +1105,17 @@ export default function SearchPage() {
           </div>
 
           <div className="mt-2">
-            <Pagination pages={[1, 2, 3, 5, "...", 125, 126, 127]} current={2} />
+            <Pagination
+              pages={[1, 2, 3, 5, "...", 125, 126, 127]}
+              current={2}
+            />
           </div>
 
           <p className="text-base text-muted mt-6 w-[986px]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
           </p>
         </section>
       </div>

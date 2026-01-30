@@ -2,7 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./Button";
 
-const footerColumns: { title: string; items: { label: string; href: string }[] }[] = [
+const footerColumns: {
+  title: string;
+  items: { label: string; href: string }[];
+}[] = [
   {
     title: "Vehicle Type",
     items: [
@@ -15,7 +18,10 @@ const footerColumns: { title: string; items: { label: string; href: string }[] }
       { label: "Boats", href: "/search?type=boats" },
       { label: "Jet Skis", href: "/search?type=jet-skis" },
       { label: "Snowmobiles", href: "/search?type=snowmobiles" },
-      { label: "Industrial Machinery", href: "/search?type=industrial-machinery" },
+      {
+        label: "Industrial Machinery",
+        href: "/search?type=industrial-machinery",
+      },
     ],
   },
   {
@@ -70,7 +76,12 @@ export function FooterSection() {
           <div className="flex flex-col gap-8 w-[318px] shrink-0 text-white">
             <Button variant="secondary" size="md" className="gap-3 text-dark">
               <span>English</span>
-              <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+              <Image
+                src="/figma/icons/icon-arrow-down.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
             </Button>
             <div className="flex flex-col gap-3 text-base font-normal leading-5 text-white">
               <a
@@ -91,8 +102,13 @@ export function FooterSection() {
           </div>
           <div className="flex justify-between gap-8 w-full">
             {footerColumns.map((column) => (
-              <div key={column.title} className="flex flex-col gap-4 w-[170px] text-white">
-                <h4 className="text-xl font-bold leading-6 m-0">{column.title}</h4>
+              <div
+                key={column.title}
+                className="flex flex-col gap-4 w-[170px] text-white"
+              >
+                <h4 className="text-xl font-bold leading-6 m-0">
+                  {column.title}
+                </h4>
                 <div className="flex flex-col gap-3 text-base font-normal leading-5">
                   {column.items.map((item) => (
                     <Link
@@ -117,11 +133,20 @@ export function FooterSection() {
             referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
-        <nav className="flex flex-wrap gap-3 text-white text-base font-normal leading-5" aria-label="Footer links">
-          <Link href="/blog" className="text-inherit no-underline hover:underline active:underline">
+        <nav
+          className="flex flex-wrap gap-3 text-white text-base font-normal leading-5"
+          aria-label="Footer links"
+        >
+          <Link
+            href="/blog"
+            className="text-inherit no-underline hover:underline active:underline"
+          >
             Blog
           </Link>
-          <Link href="/terms" className="text-inherit no-underline hover:underline active:underline">
+          <Link
+            href="/terms"
+            className="text-inherit no-underline hover:underline active:underline"
+          >
             Terms
           </Link>
           <Link
@@ -130,19 +155,34 @@ export function FooterSection() {
           >
             Privacy Policy
           </Link>
-          <Link href="/contact" className="text-inherit no-underline hover:underline active:underline">
+          <Link
+            href="/contact"
+            className="text-inherit no-underline hover:underline active:underline"
+          >
             Contact
           </Link>
-          <Link href="/about" className="text-inherit no-underline hover:underline active:underline">
+          <Link
+            href="/about"
+            className="text-inherit no-underline hover:underline active:underline"
+          >
             About
           </Link>
-          <Link href="/help" className="text-inherit no-underline hover:underline active:underline">
+          <Link
+            href="/help"
+            className="text-inherit no-underline hover:underline active:underline"
+          >
             Help
           </Link>
-          <Link href="/delivery" className="text-inherit no-underline hover:underline active:underline">
+          <Link
+            href="/delivery"
+            className="text-inherit no-underline hover:underline active:underline"
+          >
             Delivery
           </Link>
-          <Link href="/marketplace" className="text-inherit no-underline hover:underline active:underline">
+          <Link
+            href="/marketplace"
+            className="text-inherit no-underline hover:underline active:underline"
+          >
             Marketplace
           </Link>
         </nav>

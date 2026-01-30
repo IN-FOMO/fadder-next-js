@@ -14,8 +14,13 @@ const accountLinks = [
 export default function AccountPage() {
   return (
     <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-16 text-foreground max-wide:px-[60px] max-tablet:px-8 max-tablet:pb-24 max-narrow:px-4">
-      <Breadcrumbs items={[{ label: "Home page", href: "/" }, { label: "My Account" }]} />
-      <PageHeader title="My Account" subtitle="Manage your listings, watchlist, and orders" />
+      <Breadcrumbs
+        items={[{ label: "Home page", href: "/" }, { label: "My Account" }]}
+      />
+      <PageHeader
+        title="My Account"
+        subtitle="Manage your listings, watchlist, and orders"
+      />
 
       <section className="w-full max-w-[960px] mx-auto flex flex-col gap-6">
         <div className="bg-white rounded-lg p-6 flex flex-col gap-4">
@@ -34,8 +39,15 @@ export default function AccountPage() {
         </div>
         <div className="bg-white rounded-lg p-6 flex flex-col gap-4">
           <h2 className="text-xl font-bold m-0 text-dark">Deposit & balance</h2>
-          <p className="text-base text-muted m-0">Place a refundable deposit to participate in auctions.</p>
-          <Button href="/account/deposit" variant="primary" size="md" className="w-fit">
+          <p className="text-base text-muted m-0">
+            Place a refundable deposit to participate in auctions.
+          </p>
+          <Button
+            href="/account/deposit"
+            variant="primary"
+            size="md"
+            className="w-fit"
+          >
             Add deposit
           </Button>
         </div>

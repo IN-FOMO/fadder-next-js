@@ -246,12 +246,42 @@ const shippingCards: ShippingCard[] = [
     image: "/figma/images/vehicle-1.png",
     progressWidth: 358,
     steps: [
-      { label: "Vehicle Picked Up", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-1.svg", size: 48 },
-      { label: "At Departure Terminal", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-2.svg", size: 48 },
-      { label: "International Transit", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-3.svg", size: 56 },
-      { label: "EU Hub", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-4.svg", size: 48 },
-      { label: "Final Delivery", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-5.svg", size: 48 },
-      { label: "Delivered", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-6.svg", size: 48 },
+      {
+        label: "Vehicle Picked Up",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-1.svg",
+        size: 48,
+      },
+      {
+        label: "At Departure Terminal",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-2.svg",
+        size: 48,
+      },
+      {
+        label: "International Transit",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-3.svg",
+        size: 56,
+      },
+      {
+        label: "EU Hub",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-4.svg",
+        size: 48,
+      },
+      {
+        label: "Final Delivery",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-5.svg",
+        size: 48,
+      },
+      {
+        label: "Delivered",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-6.svg",
+        size: 48,
+      },
     ],
   },
   {
@@ -263,12 +293,42 @@ const shippingCards: ShippingCard[] = [
     image: "/figma/images/vehicle-2.png",
     progressWidth: 1112,
     steps: [
-      { label: "Vehicle Picked Up", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-1.svg", size: 48 },
-      { label: "At Departure Terminal", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-2.svg", size: 48 },
-      { label: "International Transit", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-3.svg", size: 56 },
-      { label: "EU Hub", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-4.svg", size: 48 },
-      { label: "Final Delivery", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-5.svg", size: 48 },
-      { label: "Delivered", date: "Oct 15, 2025", icon: "/figma/shipping/shipping-step-6.svg", size: 48 },
+      {
+        label: "Vehicle Picked Up",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-1.svg",
+        size: 48,
+      },
+      {
+        label: "At Departure Terminal",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-2.svg",
+        size: 48,
+      },
+      {
+        label: "International Transit",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-3.svg",
+        size: 56,
+      },
+      {
+        label: "EU Hub",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-4.svg",
+        size: 48,
+      },
+      {
+        label: "Final Delivery",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-5.svg",
+        size: 48,
+      },
+      {
+        label: "Delivered",
+        date: "Oct 15, 2025",
+        icon: "/figma/shipping/shipping-step-6.svg",
+        size: 48,
+      },
     ],
   },
 ];
@@ -279,11 +339,15 @@ type DashboardHistoryPageProps = {
   }>;
 };
 
-export default async function DashboardHistoryPage({ searchParams }: DashboardHistoryPageProps) {
+export default async function DashboardHistoryPage({
+  searchParams,
+}: DashboardHistoryPageProps) {
   const sp = searchParams ? await searchParams : undefined;
   const rawTab = Array.isArray(sp?.tab) ? sp?.tab[0] : sp?.tab;
   const activeParam = rawTab ?? "active";
-  const activeTab = historyTabs.some((tab) => tab.value === activeParam) ? activeParam : "active";
+  const activeTab = historyTabs.some((tab) => tab.value === activeParam)
+    ? activeParam
+    : "active";
 
   const toneClasses = {
     success: "bg-success",
@@ -294,10 +358,10 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
       <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 max-tablet:px-8 max-narrow:px-4">
-        <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
-          <div className="flex-1 min-w-0 flex flex-col gap-12 lg:w-[1144px]">
+          <div className="flex-1 min-w-0 flex flex-col gap-12 tablet:w-[1144px]">
             {/* History tabs (Figma: 2983-61459 Menu History) */}
             <div className="inline-flex w-[666px] shrink-0 items-center gap-[4px] bg-[#FFFFFF] rounded-[16px] self-start">
               {historyTabs.map((tab) => {
@@ -305,7 +369,11 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
                 return (
                   <Link
                     key={tab.value}
-                    href={tab.value === "active" ? "/dashboard/history" : `/dashboard/history?tab=${tab.value}`}
+                    href={
+                      tab.value === "active"
+                        ? "/dashboard/history"
+                        : `/dashboard/history?tab=${tab.value}`
+                    }
                     className={
                       "flex items-center justify-center gap-[14px] w-[130px] px-[24px] py-[8px] rounded-[16px] text-[14px] leading-[16px] font-bold text-[#0F0F0F] border-[1.5px] box-border " +
                       (isActive ? "border-[#FFAF0E]" : "border-transparent")
@@ -320,25 +388,44 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
             {activeTab === "active" ? (
               <div className="flex flex-col gap-4 w-full">
                 {activeBids.map((bid, index) => (
-                  <div key={`${bid.lotId}-${index}`} className="flex items-center w-full">
+                  <div
+                    key={`${bid.lotId}-${index}`}
+                    className="flex items-center w-full"
+                  >
                     <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image src={bid.image} alt="" fill sizes="168px" className="object-cover" />
+                      <Image
+                        src={bid.image}
+                        alt=""
+                        fill
+                        sizes="168px"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">{bid.title}</span>
-                          <span className="text-[14px] leading-[16px] text-muted">{bid.lotId}</span>
+                          <span className="text-[20px] leading-[24px] font-bold text-dark">
+                            {bid.title}
+                          </span>
+                          <span className="text-[14px] leading-[16px] text-muted">
+                            {bid.lotId}
+                          </span>
                         </div>
-                        <span className="text-[14px] leading-[16px] text-dark">{bid.timeRemaining}</span>
+                        <span className="text-[14px] leading-[16px] text-dark">
+                          {bid.timeRemaining}
+                        </span>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Status</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Status
+                        </span>
                         <span
                           className={
                             "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[65px] " +
-                            (bid.status === "Leading" ? "bg-success" : "bg-error")
+                            (bid.status === "Leading"
+                              ? "bg-success"
+                              : "bg-error")
                           }
                         >
                           {bid.status}
@@ -346,19 +433,33 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Current Bid</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">{bid.currentBid}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Current Bid
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-dark">
+                          {bid.currentBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Your Bid</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">{bid.yourBid}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Your Bid
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-dark">
+                          {bid.yourBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Next Min Bid</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">{bid.nextMinBid}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Next Min Bid
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-dark">
+                          {bid.nextMinBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Auction</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Auction
+                        </span>
                         <span
                           className={
                             "inline-flex w-fit rounded-[4px] px-2 py-1 text-white " +
@@ -386,32 +487,61 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
             {activeTab === "won" ? (
               <div className="flex flex-col gap-4 w-full">
                 {wonBids.map((bid, index) => (
-                  <div key={`${bid.orderId}-${index}`} className="flex items-center w-full">
+                  <div
+                    key={`${bid.orderId}-${index}`}
+                    className="flex items-center w-full"
+                  >
                     <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image src={bid.image} alt="" fill sizes="168px" className="object-cover" />
+                      <Image
+                        src={bid.image}
+                        alt=""
+                        fill
+                        sizes="168px"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">{bid.title}</span>
-                          <span className="text-[14px] leading-[16px] text-muted">{bid.orderId}</span>
+                          <span className="text-[20px] leading-[24px] font-bold text-dark">
+                            {bid.title}
+                          </span>
+                          <span className="text-[14px] leading-[16px] text-muted">
+                            {bid.orderId}
+                          </span>
                         </div>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Final Price</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.finalPrice}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Final Price
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+                          {bid.finalPrice}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Payment</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.paymentStatus}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Payment
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+                          {bid.paymentStatus}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Shipping</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.shippingStatus}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Shipping
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+                          {bid.shippingStatus}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Purchase Date</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.purchaseDate}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Purchase Date
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+                          {bid.purchaseDate}
+                        </span>
                       </div>
                       <Button
                         variant="secondary"
@@ -429,40 +559,71 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
             {activeTab === "lost" ? (
               <div className="flex flex-col gap-4 w-full">
                 {lostBids.map((bid, index) => (
-                  <div key={`${bid.lotId}-${index}`} className="flex items-center w-full">
+                  <div
+                    key={`${bid.lotId}-${index}`}
+                    className="flex items-center w-full"
+                  >
                     <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image src={bid.image} alt="" fill sizes="168px" className="object-cover" />
+                      <Image
+                        src={bid.image}
+                        alt=""
+                        fill
+                        sizes="168px"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">{bid.title}</span>
-                          <span className="text-[14px] leading-[16px] text-muted">{bid.lotId}</span>
+                          <span className="text-[20px] leading-[24px] font-bold text-dark">
+                            {bid.title}
+                          </span>
+                          <span className="text-[14px] leading-[16px] text-muted">
+                            {bid.lotId}
+                          </span>
                         </div>
-                        <span className="text-[14px] leading-[16px] text-dark">{bid.endedOn}</span>
+                        <span className="text-[14px] leading-[16px] text-dark">
+                          {bid.endedOn}
+                        </span>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Status</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Status
+                        </span>
                         <span className="inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[65px] bg-error">
                           Lost
                         </span>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Winning Bid</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">{bid.winningBid}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Winning Bid
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-dark">
+                          {bid.winningBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Your Bid</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">{bid.yourBid}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Your Bid
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-dark">
+                          {bid.yourBid}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Difference</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-error">{bid.difference}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Difference
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-error">
+                          {bid.difference}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Auction</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Auction
+                        </span>
                         <span
                           className={
                             "inline-flex w-fit rounded-[4px] px-2 py-1 text-white " +
@@ -490,35 +651,62 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
             {activeTab === "buy-now" ? (
               <div className="flex flex-col gap-4 w-full">
                 {buyNowBids.map((bid, index) => (
-                  <div key={`${bid.lotId}-${index}`} className="flex items-center w-full">
+                  <div
+                    key={`${bid.lotId}-${index}`}
+                    className="flex items-center w-full"
+                  >
                     <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image src={bid.image} alt="" fill sizes="168px" className="object-cover" />
+                      <Image
+                        src={bid.image}
+                        alt=""
+                        fill
+                        sizes="168px"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">{bid.title}</span>
-                          <span className="text-[14px] leading-[16px] text-muted">{bid.lotId}</span>
+                          <span className="text-[20px] leading-[24px] font-bold text-dark">
+                            {bid.title}
+                          </span>
+                          <span className="text-[14px] leading-[16px] text-muted">
+                            {bid.lotId}
+                          </span>
                         </div>
-                        <span className="text-[14px] leading-[16px] text-dark">{bid.endedOn}</span>
+                        <span className="text-[14px] leading-[16px] text-dark">
+                          {bid.endedOn}
+                        </span>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Source</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Source
+                        </span>
                         <span className="inline-flex w-fit rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white bg-[#0E5DB8]">
                           {bid.source}
                         </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Purchase Price</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.purchasePrice}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Purchase Price
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+                          {bid.purchasePrice}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Purchase Date</span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{bid.purchaseDate}</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Purchase Date
+                        </span>
+                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+                          {bid.purchaseDate}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Processing</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Processing
+                        </span>
                         <span
                           className={
                             "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[85px] " +
@@ -529,7 +717,9 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
                         </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Payment</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Payment
+                        </span>
                         <span
                           className={
                             "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[85px] " +
@@ -540,7 +730,9 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
                         </span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">Delivery</span>
+                        <span className="text-[14px] leading-[16px] text-muted">
+                          Delivery
+                        </span>
                         <span
                           className={
                             "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[85px] " +
@@ -560,33 +752,58 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
               <div className="flex flex-col gap-4 w-[1144px]">
                 {shippingCards.map((card, index) => {
                   return (
-                    <div key={`${card.orderId}-${index}`} className="w-[1144px]">
+                    <div
+                      key={`${card.orderId}-${index}`}
+                      className="w-[1144px]"
+                    >
                       {/* Product Info - layout_FO3565 */}
                       <div className="bg-white rounded-[16px_16px_0_0]">
                         <div className="flex items-center justify-between gap-[95px] pr-4 py-4 pl-0 h-[112px]">
                           <div className="flex items-center gap-4">
                             <div className="relative w-[168px] h-[112px] shrink-0 rounded-[16px_0_16px_0] overflow-hidden">
-                              <Image src={card.image} alt="" fill sizes="168px" className="object-cover" />
+                              <Image
+                                src={card.image}
+                                alt=""
+                                fill
+                                sizes="168px"
+                                className="object-cover"
+                              />
                             </div>
                             <div className="flex flex-col justify-between gap-3 self-stretch">
                               <div className="flex flex-col gap-2">
-                                <span className="text-[20px] leading-[24px] font-bold text-[#0F0F0F]">{card.title}</span>
-                                <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">{card.orderId}</span>
+                                <span className="text-[20px] leading-[24px] font-bold text-[#0F0F0F]">
+                                  {card.title}
+                                </span>
+                                <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
+                                  {card.orderId}
+                                </span>
                               </div>
                             </div>
                           </div>
 
                           <div className="flex flex-col gap-2">
-                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">Carrier</span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">{card.carrier}</span>
+                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
+                              Carrier
+                            </span>
+                            <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+                              {card.carrier}
+                            </span>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">Tracking Number</span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">{card.trackingNumber}</span>
+                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
+                              Tracking Number
+                            </span>
+                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
+                              {card.trackingNumber}
+                            </span>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">Estimated Delivery</span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">{card.estimatedDelivery}</span>
+                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
+                              Estimated Delivery
+                            </span>
+                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
+                              {card.estimatedDelivery}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -605,8 +822,16 @@ export default async function DashboardHistoryPage({ searchParams }: DashboardHi
                         {/* Status Steps - layout_V12HL9 */}
                         <div className="relative flex items-start justify-between gap-[10px]">
                           {card.steps.map((step, stepIndex) => (
-                            <div key={`${step.label}-${stepIndex}`} className="flex flex-col items-center gap-2">
-                              <Image src={step.icon} alt="" width={48} height={48} />
+                            <div
+                              key={`${step.label}-${stepIndex}`}
+                              className="flex flex-col items-center gap-2"
+                            >
+                              <Image
+                                src={step.icon}
+                                alt=""
+                                width={48}
+                                height={48}
+                              />
                               <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B] text-center">
                                 {step.label}
                               </span>

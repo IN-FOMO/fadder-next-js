@@ -37,27 +37,67 @@ export function Header() {
         ))}
       </nav>
       <div className="flex items-center gap-2 text-sm font-semibold shrink-0 max-tablet:hidden">
-        <Button href="/search" variant="ghost" size="icon" className="p-0 min-w-10 min-h-10">
-          <Image src="/figma/icons/icon-search.svg" alt="Search" width={40} height={40} />
+        <Button
+          href="/search"
+          variant="ghost"
+          size="icon"
+          className="p-0 min-w-10 min-h-10"
+        >
+          <Image
+            src="/figma/icons/icon-search.svg"
+            alt="Search"
+            width={40}
+            height={40}
+          />
         </Button>
         <Button variant="secondary" size="sm">
           <span>English</span>
-          <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+          <Image
+            src="/figma/icons/icon-arrow-down.svg"
+            alt=""
+            width={24}
+            height={24}
+          />
         </Button>
         <Button variant="secondary" size="sm">
-          <Image src="/figma/icons/icon-wallet.svg" alt="" width={24} height={24} />
+          <Image
+            src="/figma/icons/icon-wallet.svg"
+            alt=""
+            width={24}
+            height={24}
+          />
           <span>$0</span>
         </Button>
         <Button variant="secondary" size="sm">
-          <Image src="/figma/icons/icon-gavel.svg" alt="Active bids" width={24} height={24} />
+          <Image
+            src="/figma/icons/icon-gavel.svg"
+            alt="Active bids"
+            width={24}
+            height={24}
+          />
           <span>10</span>
         </Button>
         <Button variant="secondary" size="sm">
-          <Image src="/figma/icons/icon-heart.svg" alt="Watchlist" width={24} height={24} />
+          <Image
+            src="/figma/icons/icon-heart.svg"
+            alt="Watchlist"
+            width={24}
+            height={24}
+          />
           <span>0</span>
         </Button>
-        <Button href="/dashboard/notifications" variant="secondary" size="sm" className="relative">
-          <Image src="/figma/icons/icon-notification-bell.svg" alt="Notifications" width={24} height={24} />
+        <Button
+          href="/dashboard/notifications"
+          variant="secondary"
+          size="sm"
+          className="relative"
+        >
+          <Image
+            src="/figma/icons/icon-notification-bell.svg"
+            alt="Notifications"
+            width={24}
+            height={24}
+          />
           <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-xl bg-error text-white text-xs font-bold px-1">
             99
           </span>
@@ -75,7 +115,12 @@ export function Header() {
       </div>
       <div className="hidden items-center gap-3 max-tablet:flex">
         <Button variant="secondary" size="icon">
-          <Image src="/figma/icons/icon-menu.svg" alt="" width={24} height={24} />
+          <Image
+            src="/figma/icons/icon-menu.svg"
+            alt=""
+            width={24}
+            height={24}
+          />
         </Button>
       </div>
     </header>
