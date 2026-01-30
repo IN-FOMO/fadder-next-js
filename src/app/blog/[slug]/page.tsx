@@ -122,7 +122,7 @@ export default async function BlogPostPage({
 
   if (!post) {
     return (
-      <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] max-wide:px-[60px] max-tablet:px-8 max-narrow:px-4">
+      <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] max-wide:px-[60px] max-tablet:px-8 max-narrow:px-4">
         <Breadcrumbs
           items={[
             { label: "Home page", href: "/" },
@@ -146,7 +146,7 @@ export default async function BlogPostPage({
   }
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-10 text-foreground max-wide:px-[60px] max-tablet:px-8 max-narrow:px-4">
+    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-10 text-foreground max-wide:px-[60px] max-tablet:px-8 max-narrow:px-4">
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: schema.org markup

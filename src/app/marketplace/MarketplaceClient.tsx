@@ -189,7 +189,7 @@ export function MarketplaceClient({
         ) : null}
       </div>
 
-      <div className="grid grid-cols-3 gap-4 max-wide:grid-cols-2 max-tablet:grid-cols-1">
+      {/* <div className="grid grid-cols-3 gap-4 max-wide:grid-cols-2 max-tablet:grid-cols-1">
         {[
           {
             title: "Verified suppliers",
@@ -212,10 +212,10 @@ export function MarketplaceClient({
             <span className="text-[13px] text-muted">{item.text}</span>
           </div>
         ))}
-      </div>
+      </div> */}
 
       <article className="bg-white rounded-lg p-4 grid grid-cols-[1.2fr_1fr] gap-6 shadow-card-soft max-tablet:grid-cols-1">
-        <div className="relative h-80 rounded-[14px] overflow-hidden bg-surface max-tablet:h-[260px] max-narrow:h-[220px]">
+        <div className="relative h-100 rounded-[14px] overflow-hidden bg-surface max-tablet:h-[260px] max-narrow:h-[220px]">
           <Image
             src={featuredLot.image}
             alt=""

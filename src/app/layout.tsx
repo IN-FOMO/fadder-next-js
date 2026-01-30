@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import { FooterSection } from "./_components/FooterSection";
 import { Header } from "./_components/Header";
+import { ToasterProvider } from "./_components/ToasterProvider";
 import "./globals.css";
 
 const lato = Lato({
@@ -59,6 +60,7 @@ export default function RootLayout({
           // biome-ignore lint/security/noDangerouslySetInnerHtml: schema.org markup
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
+        <ToasterProvider />
         <Header />
         {children}
         <FooterSection />

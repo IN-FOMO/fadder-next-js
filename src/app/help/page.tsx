@@ -147,7 +147,7 @@ export default function HelpPage() {
   });
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
+    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
       <Breadcrumbs
         items={[{ label: "Home page", href: "/" }, { label: "Help" }]}
       />

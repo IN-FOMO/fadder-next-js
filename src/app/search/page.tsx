@@ -373,7 +373,7 @@ export default function SearchPage() {
   const yearMaxPct = ((yearRange.max - 1900) / (2025 - 1900)) * 100;
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-4 text-foreground">
+    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-4 text-foreground">
       <Breadcrumbs
         items={[
           { label: "Home page", href: "/" },

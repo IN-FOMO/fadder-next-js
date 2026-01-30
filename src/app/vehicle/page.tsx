@@ -36,7 +36,7 @@ const calculatorRows = [
   { label: "Auction Fees", value: "$955" },
   { label: "Trucking to port", value: "$400" },
   { label: "Shipping to", value: "$1,595" },
-  { label: "BidCars Fee (+ VAT/Tax)", value: "$450" },
+  { label: "Fadder Fee (+ VAT/Tax)", value: "$450" },
 ];
 
 const faqItems = [
@@ -142,7 +142,7 @@ export default function VehiclePage() {
   });
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[88px] px-20 pb-[120px] flex flex-col gap-12 text-foreground">
+    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-12 text-foreground">
       <Breadcrumbs
         items={[
           { label: "Home page", href: "/" },
