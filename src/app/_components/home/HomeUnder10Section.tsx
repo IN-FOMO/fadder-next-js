@@ -7,6 +7,6 @@ type HomeUnder10SectionProps = {
 
 export function HomeUnder10Section({ cards }: HomeUnder10SectionProps) {
   return (
-    <VehicleSlider title="Under $10" viewAllHref="/search" cards={cards} />
+    <VehicleSlider title="Under $10 000" viewAllHref="/search" cards={cards} />
   );
 }

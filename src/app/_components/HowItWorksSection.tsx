@@ -22,8 +22,8 @@ export function HowItWorksSection({ steps }: HowItWorksSectionProps) {
           <article
             key={step.title}
             className={
-              "relative w-full h-[400px] flex max-narrow:flex-col max-narrow:items-stretch max-narrow:h-auto " +
-              (isAlt ? "flex-row-reverse items-start" : "items-center")
+              "relative w-full h-[400px] flex items-center self-stretch max-narrow:flex-col max-narrow:items-stretch max-narrow:h-auto " +
+              (isAlt ? "flex-row-reverse" : "")
             }
           >
             <div
@@ -41,8 +41,10 @@ export function HowItWorksSection({ steps }: HowItWorksSectionProps) {
             </div>
             <div
               className={
-                "flex flex-col justify-between gap-3 p-4 bg-white rounded-[16px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.2)] h-[280px] w-[1220px] shrink-0 z-[1] max-narrow:w-full max-narrow:h-auto max-narrow:ml-0 max-narrow:mt-[-40px] " +
-                (isAlt ? "mr-[-60px] mt-[60px]" : "ml-[-60px]")
+                "flex flex-col justify-between items-start p-4 bg-white rounded-[16px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.2)] h-[280px] z-[1] max-narrow:w-full max-narrow:h-auto max-narrow:ml-0 max-narrow:mr-0 max-narrow:mt-[-40px] " +
+                (isAlt
+                  ? "w-[1220px] mr-[-60px] mt-[60px]"
+                  : "flex-1 -ml-[60px] mt-[60px]")
               }
             >
               <div className="flex flex-col gap-4">

@@ -49,7 +49,7 @@ export function VehicleCard({ card, className, imageBadge }: VehicleCardProps) {
           />
           <div
             aria-hidden="true"
-            className="absolute left-[-40px] top-[196px] p-2 bg-white/60 rounded-tr-[14px]"
+            className="absolute left-0 top-[196px] p-2 bg-white/60 rounded-tr-[14px]"
           >
             <Image
               src="/figma/icons/icon-arrow-left.svg"
@@ -71,21 +71,10 @@ export function VehicleCard({ card, className, imageBadge }: VehicleCardProps) {
           </div>
           <div
             aria-hidden="true"
-            className="absolute top-0 right-[-30px] p-2 bg-white/60 rounded-tr-[16px] rounded-br-[14px]"
+            className="absolute top-0 right-0 p-2 bg-white/60 rounded-tr-[16px] rounded-bl-[14px]"
           >
             <Image
               src="/figma/icons/icon-share-small.svg"
-              alt=""
-              width={24}
-              height={24}
-            />
-          </div>
-          <div
-            aria-hidden="true"
-            className="absolute top-0 right-0 p-2 bg-white/60 rounded-tr-[16px] rounded-bl-[16px]"
-          >
-            <Image
-              src="/figma/icons/icon-favorite.svg"
               alt=""
               width={24}
               height={24}
@@ -96,11 +85,11 @@ export function VehicleCard({ card, className, imageBadge }: VehicleCardProps) {
           </span>
           <div
             aria-hidden="true"
-            className="absolute left-1/2 -translate-x-1/2 top-[240px] flex items-center gap-[2px]"
+            className="absolute left-1/2 -translate-x-1/2 top-[220px] flex items-center gap-[2px]"
           >
             <div className="w-[4px] h-[10px] rounded-full bg-white/60" />
-            <div className="w-[8px] h-[8px] rounded-full bg-white/60" />
             <div className="w-[6px] h-[6px] rounded-full bg-white/60" />
+            <div className="w-[8px] h-[8px] rounded-full bg-white/60" />
           </div>
         </div>
         <div className="flex flex-col items-stretch gap-2 p-4 bg-white rounded-b-[16px] w-full">

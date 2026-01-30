@@ -23,10 +23,12 @@ export function VehicleSlider({
           View all
         </Link>
       </div>
-      <div className="flex items-center gap-4 overflow-x-auto pb-1 scroll-snap-type-x-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {cards.map((card, index) => (
-          <VehicleCard key={`${card.title}-${index}`} card={card} />
-        ))}
+      <div className="w-[calc(100vw-80px)] max-wide:w-[calc(100vw-60px)] max-tablet:w-full">
+        <div className="flex items-center gap-4 overflow-x-auto pb-1 scroll-snap-type-x-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {cards.map((card, index) => (
+            <VehicleCard key={`${card.title}-${index}`} card={card} />
+          ))}
+        </div>
       </div>
     </section>
   );
