@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useHeaderData } from "@/hooks/useHeaderData";
 import { Button } from "./Button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
@@ -24,6 +26,8 @@ const helpInfoLinks = [
 
 export function Header() {
   const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { data: headerData } = useHeaderData();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHelpInfoOpen, setIsHelpInfoOpen] = useState(false);
@@ -33,6 +37,12 @@ export function Header() {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const helpInfoRef = useRef<HTMLDivElement>(null);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+    setIsMenuOpen(false);
+  };
 
   useEffect(() => {
     if (isSearchOpen) {
@@ -198,64 +208,127 @@ export function Header() {
                 </Suspense>
               </div>
               <div className="flex flex-col gap-2">
-                <Button variant="secondary" size="md" className="w-full">
-                  <Image
-                    src="/figma/icons/icon-wallet.svg"
-                    alt=""
-                    width={20}
-                    height={20}
-                  />
-                  <span>$0</span>
-                </Button>
-                <Button variant="secondary" size="md" className="w-full">
-                  <Image
-                    src="/figma/icons/icon-gavel.svg"
-                    alt="Active bids"
-                    width={20}
-                    height={20}
-                  />
-                  <span>10</span>
-                </Button>
-                <Button variant="secondary" size="md" className="w-full">
-                  <Image
-                    src="/figma/icons/icon-heart.svg"
-                    alt="Watchlist"
-                    width={20}
-                    height={20}
-                  />
-                  <span>0</span>
-                </Button>
-                <Button
-                  href="/dashboard/notifications"
-                  variant="secondary"
-                  size="md"
-                  className="w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Image
-                    src="/figma/icons/icon-notification-bell.svg"
-                    alt="Notifications"
-                    width={20}
-                    height={20}
-                  />
-                  <span>Notifications</span>
-                </Button>
-                <Button
-                  href="/dashboard"
-                  variant="secondary"
-                  size="md"
-                  className="w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Image
-                    src="/figma/images/my-account.png"
-                    alt=""
-                    width={20}
-                    height={20}
-                    className="h-5 w-5 rounded-full"
-                  />
-                  <span>My Account</span>
-                </Button>
+                {isLoading ? (
+                  <div className="h-10 w-full animate-pulse rounded-lg bg-surface" />
+                ) : isAuthenticated ? (
+                  <>
+                    <Button
+                      href="/account/deposit"
+                      variant="secondary"
+                      size="md"
+                      className="w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Image
+                        src="/figma/icons/icon-wallet.svg"
+                        alt=""
+                        width={20}
+                        height={20}
+                      />
+                      <span>${headerData?.balance?.toLocaleString() ?? "0"}</span>
+                    </Button>
+                    <Button
+                      href="/dashboard/history"
+                      variant="secondary"
+                      size="md"
+                      className="w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Image
+                        src="/figma/icons/icon-gavel.svg"
+                        alt="Active bids"
+                        width={20}
+                        height={20}
+                      />
+                      <span>{headerData?.activeBidsCount ?? 0} Bids</span>
+                    </Button>
+                    <Button
+                      href="/dashboard/favorites"
+                      variant="secondary"
+                      size="md"
+                      className="w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Image
+                        src="/figma/icons/icon-heart.svg"
+                        alt="Watchlist"
+                        width={20}
+                        height={20}
+                      />
+                      <span>{headerData?.watchlistCount ?? 0} Saved</span>
+                    </Button>
+                    <Button
+                      href="/dashboard/notifications"
+                      variant="secondary"
+                      size="md"
+                      className="w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Image
+                        src="/figma/icons/icon-notification-bell.svg"
+                        alt="Notifications"
+                        width={20}
+                        height={20}
+                      />
+                      <span>
+                        Notifications
+                        {(headerData?.unreadNotificationsCount ?? 0) > 0 &&
+                          ` (${headerData?.unreadNotificationsCount})`}
+                      </span>
+                    </Button>
+                    <Button
+                      href="/dashboard"
+                      variant="secondary"
+                      size="md"
+                      className="w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {headerData?.avatarUrl ? (
+                        <Image
+                          src={headerData.avatarUrl}
+                          alt=""
+                          width={20}
+                          height={20}
+                          className="h-5 w-5 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-5 w-5 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
+                          {user?.firstName?.charAt(0) || "U"}
+                        </div>
+                      )}
+                      <span>{user?.firstName || "My Account"}</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="md"
+                      className="w-full"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      href="/login"
+                      variant="secondary"
+                      size="md"
+                      className="w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      href="/register"
+                      variant="primary"
+                      size="md"
+                      className="w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Register
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -375,59 +448,82 @@ export function Header() {
           >
             <LanguageSwitcher size="sm" buttonClassName="gap-2" />
           </Suspense>
-          <Button variant="secondary" size="sm">
-            <Image
-              src="/figma/icons/icon-wallet.svg"
-              alt=""
-              width={24}
-              height={24}
-            />
-            <span>$0</span>
-          </Button>
-          <Button variant="secondary" size="sm">
-            <Image
-              src="/figma/icons/icon-gavel.svg"
-              alt="Active bids"
-              width={24}
-              height={24}
-            />
-            <span>10</span>
-          </Button>
-          <Button variant="secondary" size="sm">
-            <Image
-              src="/figma/icons/icon-heart.svg"
-              alt="Watchlist"
-              width={24}
-              height={24}
-            />
-            <span>0</span>
-          </Button>
-          <Button
-            href="/dashboard/notifications"
-            variant="secondary"
-            size="sm"
-            className="relative"
-          >
-            <Image
-              src="/figma/icons/icon-notification-bell.svg"
-              alt="Notifications"
-              width={24}
-              height={24}
-            />
-          <span className="absolute -top-1 -right-1 min-w-[clamp(14px,2vw,18px)] h-[clamp(14px,2vw,18px)] flex items-center justify-center rounded-xl bg-error text-white text-xs font-bold px-1">
-              99
-            </span>
-          </Button>
-          <Button href="/dashboard" variant="secondary" size="sm">
-            <Image
-              src="/figma/images/my-account.png"
-              alt=""
-              width={24}
-              height={24}
-              className="h-6 w-6 rounded-full"
-            />
-            <span>My Account</span>
-          </Button>
+          {isLoading ? (
+            <div className="h-9 w-24 animate-pulse rounded-lg bg-surface" />
+          ) : isAuthenticated ? (
+            <>
+              <Button href="/account/deposit" variant="secondary" size="sm">
+                <Image
+                  src="/figma/icons/icon-wallet.svg"
+                  alt=""
+                  width={24}
+                  height={24}
+                />
+                <span>${headerData?.balance?.toLocaleString() ?? "0"}</span>
+              </Button>
+              <Button href="/dashboard/history" variant="secondary" size="sm">
+                <Image
+                  src="/figma/icons/icon-gavel.svg"
+                  alt="Active bids"
+                  width={24}
+                  height={24}
+                />
+                <span>{headerData?.activeBidsCount ?? 0}</span>
+              </Button>
+              <Button href="/dashboard/favorites" variant="secondary" size="sm">
+                <Image
+                  src="/figma/icons/icon-heart.svg"
+                  alt="Watchlist"
+                  width={24}
+                  height={24}
+                />
+                <span>{headerData?.watchlistCount ?? 0}</span>
+              </Button>
+              <Button
+                href="/dashboard/notifications"
+                variant="secondary"
+                size="sm"
+                className="relative"
+              >
+                <Image
+                  src="/figma/icons/icon-notification-bell.svg"
+                  alt="Notifications"
+                  width={24}
+                  height={24}
+                />
+                {(headerData?.unreadNotificationsCount ?? 0) > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-error text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {headerData?.unreadNotificationsCount}
+                  </span>
+                )}
+              </Button>
+              <Button href="/dashboard" variant="secondary" size="sm">
+                {headerData?.avatarUrl ? (
+                  <Image
+                    src={headerData.avatarUrl}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="h-6 w-6 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="h-6 w-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
+                    {user?.firstName?.charAt(0) || "U"}
+                  </div>
+                )}
+                <span>{user?.firstName || "Account"}</span>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button href="/login" variant="secondary" size="sm">
+                Login
+              </Button>
+              <Button href="/register" variant="primary" size="sm">
+                Register
+              </Button>
+            </>
+          )}
         </div>
         <div className="hidden items-center gap-3 max-tablet:flex">
           <Button

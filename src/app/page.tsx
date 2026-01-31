@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { type BlogCard, BlogSection } from "./_components/BlogSection";
+import { BlogSection } from "./_components/BlogSection";
 import { ContactSection } from "./_components/ContactSection";
 import { HeroSection } from "./_components/HeroSection";
 import {
@@ -14,7 +14,6 @@ import {
   type MakeItem,
   PopularMakesSection,
 } from "./_components/PopularMakesSection";
-import type { VehicleCardData } from "./_components/VehicleCard";
 
 export const metadata: Metadata = {
   title: "Fadder",
@@ -33,70 +32,12 @@ function normalizeLang(input?: string): AllowedLang {
   ) as AllowedLang;
 }
 
-const vehicleCardsBase: VehicleCardData[] = [
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-1.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "IAAI",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-2.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "Copart",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-3.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "Copart",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-4.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "IAAI",
-    bid: "$725",
-  },
-];
-
-// Слайдер в дизайне подразумевает много карточек — расширяем мок.
-const vehicleCards: VehicleCardData[] = [
-  ...vehicleCardsBase,
-  ...vehicleCardsBase,
-  ...vehicleCardsBase,
-];
-
 const howSteps: HowStep[] = [
   {
     number: "01.",
     title: "Vehicle Pickup",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "We coordinate with the auction house to pick up your winning vehicle. Our logistics team handles all the paperwork and ensures safe transport from the lot to our processing facility.",
     button: "Details & Drop-off",
     image: "/figma/images/home-process-1.png",
   },
@@ -104,7 +45,7 @@ const howSteps: HowStep[] = [
     number: "02.",
     title: "Packaging & Loading",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Your vehicle is carefully prepared for international shipping. We perform a thorough inspection, document the condition with photos, and securely load it for ocean transport to your destination port.",
     button: "Process & Handling",
     image: "/figma/images/home-process-2.png",
   },
@@ -112,33 +53,9 @@ const howSteps: HowStep[] = [
     number: "03.",
     title: "Shipping & Delivery",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Track your vehicle in real-time as it ships to your country. We handle customs clearance and final delivery to your doorstep, keeping you informed every step of the way.",
     button: "Track & Receive",
     image: "/figma/images/home-process-3.png",
-  },
-];
-
-const blogCards: BlogCard[] = [
-  {
-    title: "Top 10 Bidding Strategies for Car Auctions",
-    date: "January 15, 2024",
-    description:
-      "Learn the insider secrets that professional bidders use to win their dream cars at auction.",
-    image: "/figma/images/blog-1.png",
-  },
-  {
-    title: "The Ultimate Guide to Shipping Your Auction Vehicle Overseas",
-    date: "February 2, 2024",
-    description:
-      "From port logistics to customs paperwork, this guide covers everything you need to know.",
-    image: "/figma/images/blog-2.png",
-  },
-  {
-    title: "How to Spot a Great Deal at Auto Auctions (Even as a Beginner)",
-    date: "March 12, 2024",
-    description:
-      "Learn what to look for in listings, how to check reports, and how to avoid costly mistakes.",
-    image: "/figma/images/blog-3.png",
   },
 ];
 
@@ -247,12 +164,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     <main className="bg-[#F5F6F8] overflow-x-hidden">
       <div className="flex flex-col gap-[clamp(24px,5vw,74px)] pb-[clamp(24px,5vw,80px)]">
         <HeroSection />
-        <HomeNewArrivalsSection cards={vehicleCards} />
+        <HomeNewArrivalsSection />
         <PopularMakesSection makes={popularMakes} />
         <ContactSection />
-        <BlogSection cards={blogCards} lang={lang} />
-        <HomePopularSection cards={vehicleCards} />
-        <HomeUnder10Section cards={vehicleCards} />
+        <BlogSection lang={lang} />
+        <HomePopularSection />
+        <HomeUnder10Section />
         <HowItWorksSection steps={howSteps} />
       </div>
     </main>

@@ -34,7 +34,7 @@ type FeaturedLot = {
 
 type MarketplaceClientProps = {
   markets: string[];
-  featuredLot: FeaturedLot;
+  featuredLot: FeaturedLot | null;
   vehicles: MarketplaceVehicle[];
 };
 
@@ -278,97 +278,74 @@ export function MarketplaceClient({
         ) : null}
       </div>
 
-      {/* <div className="grid grid-cols-3 gap-4 max-wide:grid-cols-2 max-tablet:grid-cols-1">
-        {[
-          {
-            title: "Verified suppliers",
-            text: "Document and history verification.",
-          },
-          {
-            title: "Battery diagnostics",
-            text: "SoH checks and warranty details.",
-          },
-          {
-            title: "Door-to-door delivery",
-            text: "From warehouse to customs clearance.",
-          },
-        ].map((item) => (
-          <div
-            key={item.title}
-            className="bg-white rounded-lg p-4 flex flex-col gap-1.5"
-          >
-            <strong className="text-sm text-foreground">{item.title}</strong>
-            <span className="text-[13px] text-muted">{item.text}</span>
+      {featuredLot && (
+        <article className="bg-white rounded-lg p-4 grid grid-cols-[1.2fr_1fr] gap-6 shadow-card-soft max-tablet:grid-cols-1">
+          <div className="relative h-[clamp(220px,28vw,360px)] rounded-[14px] overflow-hidden bg-surface">
+            <Image
+              src={featuredLot.image}
+              alt=""
+              fill
+              sizes="(max-width: 1279px) 100vw, 840px"
+              className="object-cover"
+            />
           </div>
-        ))}
-      </div> */}
-
-      <article className="bg-white rounded-lg p-4 grid grid-cols-[1.2fr_1fr] gap-6 shadow-card-soft max-tablet:grid-cols-1">
-        <div className="relative h-[clamp(220px,28vw,360px)] rounded-[14px] overflow-hidden bg-surface">
-          <Image
-            src={featuredLot.image}
-            alt=""
-            fill
-            sizes="(max-width: 1279px) 100vw, 840px"
-            className="object-cover"
-          />
-        </div>
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <span className="inline-flex items-center justify-center py-1 px-2.5 rounded-full bg-surface text-xs font-semibold text-foreground w-fit">
-              Featured vehicle
-            </span>
-            <h2 className="m-0 text-xl leading-6 font-bold text-foreground">
-              {featuredLot.title}
-            </h2>
-            <p className="m-0 text-sm leading-[18px] text-muted">
-              {featuredLot.subtitle}
-            </p>
-          </div>
-          <div className="grid gap-2">
-            {featuredLot.specs.map((spec) => (
-              <div
-                key={spec.label}
-                className="flex items-center justify-between gap-3 pb-2 border-b border-surface text-sm leading-4"
-              >
-                <span className="inline-flex items-center gap-1.5 text-muted font-normal">
-                  {spec.label}
-                  {spec.hint ? (
-                    <button
-                      type="button"
-                      className="w-4 h-4 rounded-full border border-border text-muted inline-flex items-center justify-center text-[11px] leading-none cursor-help bg-transparent p-0"
-                      title={spec.hint}
-                      aria-label={spec.hint}
-                    >
-                      i
-                    </button>
-                  ) : null}
-                </span>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <span className="inline-flex items-center justify-center py-1 px-2.5 rounded-full bg-surface text-xs font-semibold text-foreground w-fit">
+                Featured vehicle
+              </span>
+              <h2 className="m-0 text-xl leading-6 font-bold text-foreground">
+                {featuredLot.title}
+              </h2>
+              <p className="m-0 text-sm leading-[18px] text-muted">
+                {featuredLot.subtitle}
+              </p>
+            </div>
+            <div className="grid gap-2">
+              {featuredLot.specs.map((spec) => (
+                <div
+                  key={spec.label}
+                  className="flex items-center justify-between gap-3 pb-2 border-b border-surface text-sm leading-4"
+                >
+                  <span className="inline-flex items-center gap-1.5 text-muted font-normal">
+                    {spec.label}
+                    {spec.hint ? (
+                      <button
+                        type="button"
+                        className="w-4 h-4 rounded-full border border-border text-muted inline-flex items-center justify-center text-[11px] leading-none cursor-help bg-transparent p-0"
+                        title={spec.hint}
+                        aria-label={spec.hint}
+                      >
+                        i
+                      </button>
+                    ) : null}
+                  </span>
+                  <strong className="text-foreground font-bold">
+                    {spec.value}
+                  </strong>
+                </div>
+              ))}
+              <div className="flex items-center justify-between gap-3 pb-2 border-b border-surface text-sm leading-4">
+                <span className="text-muted">Country of origin</span>
                 <strong className="text-foreground font-bold">
-                  {spec.value}
+                  {featuredLot.market}
                 </strong>
               </div>
-            ))}
-            <div className="flex items-center justify-between gap-3 pb-2 border-b border-surface text-sm leading-4">
-              <span className="text-muted">Country of origin</span>
-              <strong className="text-foreground font-bold">
-                {featuredLot.market}
-              </strong>
+            </div>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="text-xl font-bold text-foreground">
+                {featuredLot.price}
+              </div>
+              <Link
+                href="/vehicle"
+                className="h-11 border-0 rounded-[14px] px-6 bg-primary text-foreground text-sm font-semibold cursor-pointer inline-flex items-center justify-center no-underline"
+              >
+                View details
+              </Link>
             </div>
           </div>
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="text-xl font-bold text-foreground">
-              {featuredLot.price}
-            </div>
-            <Link
-              href="/vehicle"
-              className="h-11 border-0 rounded-[14px] px-6 bg-primary text-foreground text-sm font-semibold cursor-pointer inline-flex items-center justify-center no-underline"
-            >
-              View details
-            </Link>
-          </div>
-        </div>
-      </article>
+        </article>
+      )}
 
       {filteredVehicles.length === 0 ? (
         <div className="bg-white rounded-lg p-8 text-center text-muted">

@@ -1,134 +1,71 @@
 "use client";
 
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchLots, type SearchParams } from "@/hooks/useSearchLots";
+import { useFacets } from "@/hooks/useFacets";
+import type { components } from "@/types/api";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { Button } from "../_components/Button";
 import { Pagination } from "../_components/Pagination";
 import { VehicleCard, type VehicleCardData } from "../_components/VehicleCard";
 
-const vehicleCards: VehicleCardData[] = [
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-1.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "IAAI",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-2.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "Copart",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-3.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "Copart",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-4.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "IAAI",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-3.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "Copart",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-1.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "IAAI",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-2.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "Copart",
-    bid: "$725",
-  },
-  {
-    title: "1981 Chevrolet Corvette",
-    image: "/figma/images/vehicle-4.png",
-    odometer: "25 145 mi (40 467 km)",
-    engine: "5.7L, V8",
-    transmission: "Automatic",
-    fuel: "Gasoline",
-    drive: "Rear wheel drive",
-    timer: "1 d 21 h 23 min 00 sec",
-    auction: "IAAI",
-    bid: "$725",
-  },
-];
+// VIN is exactly 17 alphanumeric characters (no I, O, Q)
+function isValidVin(value: string): boolean {
+  const cleaned = value.trim().toUpperCase();
+  if (cleaned.length !== 17) return false;
+  return /^[A-HJ-NPR-Z0-9]{17}$/.test(cleaned);
+}
 
-const damageTypeItems = [
-  { label: "Normal Wear", count: "(5,533)", checked: false },
-  { label: "Low Damage", count: "(18,883)", checked: false },
-  { label: "Hail", count: "(8,287)", checked: false },
-  { label: "Minor Dent/Scratches", count: "(10,596)", checked: true },
-  { label: "Medium - Heavy Damage", count: "(238,374)", checked: false },
-  { label: "All Over", count: "(1,753)", checked: false },
-  { label: "Biohazard/Chemical", count: "(169)", checked: true },
-  { label: "Burn", count: "(115)", checked: true },
-  { label: "Burn - Engine", count: "(34)", checked: false },
-  { label: "Burn - Interior", count: "(44)", checked: false },
-  { label: "Damage History", count: "(106)", checked: false },
-  { label: "Frame Damage", count: "(625)", checked: false },
-  { label: "Front End", count: "(128,755)", checked: false },
-  { label: "Water/Flood Damage", count: "(3,116)", checked: false },
-];
+type LotSummaryDto = components["schemas"]["LotSummaryDto"];
+
+function formatTimer(saleDate?: string): string {
+  if (!saleDate) return "No date";
+  const sale = new Date(saleDate);
+  const now = new Date();
+  const diff = sale.getTime() - now.getTime();
+
+  if (diff <= 0) return "Ended";
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return `${days} d ${hours} h ${minutes} min ${seconds.toString().padStart(2, "0")} sec`;
+}
+
+function formatOdometer(odometer?: number, unit?: string): string {
+  if (!odometer) return "N/A";
+  const miles = unit === "km" ? Math.round(odometer * 0.621371) : odometer;
+  const km = unit === "km" ? odometer : Math.round(odometer * 1.60934);
+  return `${miles.toLocaleString()} mi (${km.toLocaleString()} km)`;
+}
+
+function lotToVehicleCard(lot: LotSummaryDto): VehicleCardData & { images?: string[] } {
+  return {
+    title: lot.title || `${lot.year} ${lot.make} ${lot.model}`,
+    image: lot.cdnImageUrl || lot.primaryImageUrl || "/figma/images/placeholder.png",
+    images: lot.imageUrls,
+    odometer: formatOdometer(lot.odometer, lot.odometerUnit),
+    engine: lot.engineType || "N/A",
+    transmission: lot.transmission || "N/A",
+    fuel: lot.fuelType || "N/A",
+    drive: lot.driveType || "N/A",
+    timer: formatTimer(lot.saleDate),
+    auction: lot.provider === "COPART" ? "Copart" : "IAAI",
+    bid: lot.currentBid ? `$${lot.currentBid.toLocaleString()}` : "No bids",
+    provider: lot.provider,
+    externalLotId: lot.externalLotId,
+  };
+}
 
 const quickFilters = [
-  { label: "Vehicles Only", checked: true },
-  { label: "Newly added vehicles", checked: false },
-  { label: "Exclude upcoming auction vehicles", checked: false },
-  { label: "Show watchlist lots only", checked: false },
+  { label: "Vehicles Only" },
+  { label: "Newly added vehicles" },
+  { label: "Exclude upcoming auction vehicles" },
+  { label: "Show watchlist lots only" },
 ];
 
 const collapsedFilters = [
@@ -147,183 +84,253 @@ const collapsedFilters = [
 ];
 
 const expandableFilters = [
-  {
-    title: "Vehicle type",
-    items: [
-      { label: "ATVS", count: "(11)", checked: true },
-      { label: "Agriculture and Farm equipment", count: "(1)", checked: false },
-      { label: "Boats", count: "(5)", checked: false },
-      { label: "Bus", count: "(5)", checked: false },
-      { label: "Construction equipment", count: "(1)", checked: false },
-      { label: "Heavy Duty Trucks", count: "(4)", checked: false },
-      { label: "Industrial Equipment", count: "(1)", checked: false },
-      { label: "Jet Skis", count: "(4)", checked: false },
-      { label: "Medium Duty Box Trucks", count: "(44)", checked: false },
-      { label: "Pickup Trucks", count: "(20)", checked: false },
-      { label: "RVs", count: "(27)", checked: false },
-      { label: "SUVS", count: "(381)", checked: false },
-      { label: "Snowmobile", count: "(1)", checked: false },
-      { label: "Trailers", count: "(3)", checked: false },
-    ],
-  },
-  {
-    title: "Make",
-    searchPlaceholder: "Search",
-    items: [
-      { label: "Acura", count: "(29)", checked: true },
-      { label: "Alfa Romeo", count: "(5)", checked: false },
-      { label: "Aspt", count: "(1)", checked: false },
-      { label: "Audi", count: "(73)", checked: false },
-      { label: "Bentley", count: "(6)", checked: false },
-      { label: "Blue Bird", count: "(4)", checked: false },
-      { label: "BMW", count: "(111)", checked: false },
-      { label: "Buick", count: "(42)", checked: false },
-      { label: "Buj", count: "(1)", checked: false },
-      { label: "Cadillac", count: "(40)", checked: false },
-      { label: "Can Am", count: "(1)", checked: false },
-      { label: "Cargopress", count: "(1)", checked: false },
-      { label: "Chev", count: "(1)", checked: false },
-      { label: "Chevrolet", count: "(265)", checked: false },
-    ],
-  },
-  {
-    title: "Model",
-    searchPlaceholder: "Search",
-    items: [
-      { label: "Accord", count: "(420)", checked: false },
-      { label: "Camry", count: "(335)", checked: false },
-      { label: "Civic", count: "(512)", checked: true },
-      { label: "Corolla", count: "(291)", checked: false },
-    ],
-  },
-  {
-    title: "Engine type",
-    items: [
-      { label: "Gas", count: "(10,223)", checked: true },
-      { label: "Diesel", count: "(2,104)", checked: false },
-      { label: "Hybrid", count: "(1,875)", checked: false },
-    ],
-  },
-  {
-    title: "Transmission",
-    items: [
-      { label: "Automatic", count: "(18,040)", checked: true },
-      { label: "Manual", count: "(4,288)", checked: false },
-    ],
-  },
-  {
-    title: "Fuel type",
-    items: [
-      { label: "Gasoline", count: "(19,112)", checked: true },
-      { label: "Diesel", count: "(2,204)", checked: false },
-      { label: "Electric", count: "(1,012)", checked: false },
-    ],
-  },
-  {
-    title: "Drive train",
-    items: [
-      { label: "FWD", count: "(10,040)", checked: false },
-      { label: "RWD", count: "(5,212)", checked: true },
-      { label: "AWD", count: "(7,076)", checked: false },
-    ],
-  },
-  {
-    title: "Cylinder",
-    items: [
-      { label: "4 cyl", count: "(8,202)", checked: false },
-      { label: "6 cyl", count: "(6,450)", checked: true },
-      { label: "8 cyl", count: "(3,120)", checked: false },
-    ],
-  },
-  {
-    title: "Location",
-    searchPlaceholder: "Search",
-    items: [
-      { label: "California", count: "(3,204)", checked: true },
-      { label: "Florida", count: "(2,108)", checked: false },
-      { label: "Texas", count: "(2,907)", checked: false },
-    ],
-  },
-  {
-    title: "Body style",
-    items: [
-      { label: "Coupe", count: "(1,492)", checked: false },
-      { label: "Convertible", count: "(821)", checked: false },
-      { label: "Wagon", count: "(504)", checked: false },
-    ],
-  },
-  {
-    title: "Search near ZIP code",
-    inputPlaceholder: "Zip code",
-  },
-  {
-    title: "Sale date",
-    inputPlaceholder: "mm/dd/yyyy",
-  },
+  { title: "Vehicle type", items: [] as { label: string; checked: boolean }[] },
+  { title: "Make", searchPlaceholder: "Search", items: [] as { label: string; checked: boolean }[] },
+  { title: "Model", searchPlaceholder: "Search", items: [] as { label: string; checked: boolean }[] },
+  { title: "Engine type", items: [] as { label: string; checked: boolean }[] },
+  { title: "Transmission", items: [] as { label: string; checked: boolean }[] },
+  { title: "Fuel type", items: [] as { label: string; checked: boolean }[] },
+  { title: "Drive train", items: [] as { label: string; checked: boolean }[] },
+  { title: "Cylinder", items: [] as { label: string; checked: boolean }[] },
+  { title: "Location", searchPlaceholder: "Search", items: [] as { label: string; checked: boolean }[] },
+  { title: "Body style", items: [] as { label: string; checked: boolean }[] },
+  { title: "Search near ZIP code", inputPlaceholder: "Zip code" },
+  { title: "Sale date", inputPlaceholder: "mm/dd/yyyy" },
 ];
-
-const defaultCollapsedState = Object.fromEntries(
-  collapsedFilters.map((item) => [
-    item,
-    item === "Vehicle type" ||
-      item === "Make" ||
-      item === "Search near ZIP code",
-  ]),
-) as Record<string, boolean>;
 
 function SearchContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const queryParam = searchParams.get("q") ?? "";
+  const makeParam = searchParams.get("make") ?? "";
+
   const [filtersCollapsed, setFiltersCollapsed] = useState(true);
   const [searchQuery, setSearchQuery] = useState(queryParam);
-  const [quickState, setQuickState] = useState(
-    () =>
-      Object.fromEntries(
-        quickFilters.map((item) => [item.label, item.checked]),
-      ) as Record<string, boolean>,
-  );
-  const [auctionState, setAuctionState] = useState({
-    All: true,
-    Copart: false,
-    IAAI: false,
-  });
-  const [conditionState, setConditionState] = useState(
-    () =>
-      Object.fromEntries(
-        damageTypeItems.map((item) => [item.label, item.checked]),
-      ) as Record<string, boolean>,
-  );
-  const [lotStatusState, setLotStatusState] = useState({
-    Active: true,
-    Sold: false,
-    Upcoming: false,
-  });
-  const [collapsedState, setCollapsedState] = useState(
-    () => defaultCollapsedState,
-  );
-  const [expandedState, setExpandedState] = useState(
-    () =>
-      Object.fromEntries(
-        expandableFilters.map((section) => [
-          section.title,
-          {
-            search: "",
-            items: section.items ?? [],
-            input: "",
-          },
-        ]),
-      ) as Record<
-        string,
-        {
-          search: string;
-          items: { label: string; count: string; checked: boolean }[];
-          input: string;
-        }
-      >,
-  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
+  const [quickState, setQuickState] = useState<Record<string, boolean>>({});
+  const [auctionState, setAuctionState] = useState({ All: true, Copart: false, IAAI: false });
+  const [conditionState, setConditionState] = useState<Record<string, boolean>>({});
+  const [lotStatusState, setLotStatusState] = useState({ Active: false, Sold: false, Upcoming: false });
+  const [collapsedState, setCollapsedState] = useState<Record<string, boolean>>({});
+  const [expandedState, setExpandedState] = useState<Record<string, { search: string; items: { label: string; checked: boolean }[]; input: string }>>({});
   const [damageSearchValue, setDamageSearchValue] = useState("");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [yearRange, setYearRange] = useState({ min: 1900, max: 2025 });
+
+  const filtersChangedRef = useRef(false);
+  const autoFetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // API integration
+  const { data: searchData, isLoading, error, search } = useSearchLots();
+  const { facets } = useFacets();
+
+  // Build filter items from facets
+  const facetMakeItems = useMemo(() => {
+    if (!facets?.makes) return [];
+    return facets.makes.map((make) => ({
+      label: make,
+      checked: make.toLowerCase() === makeParam.toLowerCase()
+    }));
+  }, [facets?.makes, makeParam]);
+
+  const facetDamageTypes = useMemo(() => {
+    if (!facets?.damageTypes) return [];
+    return facets.damageTypes.map((type) => ({ label: type, checked: false }));
+  }, [facets?.damageTypes]);
+
+  const facetFuelTypes = useMemo(() => {
+    if (!facets?.fuelTypes) return [];
+    return facets.fuelTypes.map((type) => ({ label: type, checked: false }));
+  }, [facets?.fuelTypes]);
+
+  const facetTransmissionTypes = useMemo(() => {
+    if (!facets?.transmissionTypes) return [];
+    return facets.transmissionTypes.map((type) => ({ label: type, checked: false }));
+  }, [facets?.transmissionTypes]);
+
+  const facetDriveTypes = useMemo(() => {
+    if (!facets?.driveTypes) return [];
+    return facets.driveTypes.map((type) => ({ label: type, checked: false }));
+  }, [facets?.driveTypes]);
+
+  const facetBodyTypes = useMemo(() => {
+    if (!facets?.bodyTypes) return [];
+    return facets.bodyTypes.map((type) => ({ label: type, checked: false }));
+  }, [facets?.bodyTypes]);
+
+  // Build search params from filter state
+  const buildSearchParams = useCallback((): SearchParams => {
+    const providers: ("COPART" | "IAAI")[] = [];
+    if (!auctionState.All) {
+      if (auctionState.Copart) providers.push("COPART");
+      if (auctionState.IAAI) providers.push("IAAI");
+    }
+
+    const selectedDamageTypes = Object.entries(conditionState)
+      .filter(([_, checked]) => checked)
+      .map(([label]) => label);
+
+    const makeSection = expandedState["Make"];
+    const selectedMakes = (makeSection?.items ?? [])
+      .filter((item) => item.checked)
+      .map((item) => item.label);
+
+    const modelSection = expandedState["Model"];
+    const selectedModels = (modelSection?.items ?? [])
+      .filter((item) => item.checked)
+      .map((item) => item.label);
+
+    const fuelSection = expandedState["Fuel type"];
+    const selectedFuelTypes = (fuelSection?.items ?? [])
+      .filter((item) => item.checked)
+      .map((item) => item.label);
+
+    const transSection = expandedState["Transmission"];
+    const selectedTransmissions = (transSection?.items ?? [])
+      .filter((item) => item.checked)
+      .map((item) => item.label);
+
+    const driveSection = expandedState["Drive train"];
+    const selectedDriveTypes = (driveSection?.items ?? [])
+      .filter((item) => item.checked)
+      .map((item) => item.label);
+
+    const bodySection = expandedState["Body style"];
+    const selectedBodyStyles = (bodySection?.items ?? [])
+      .filter((item) => item.checked)
+      .map((item) => item.label);
+
+    // Check if search query is a VIN
+    const isVinSearch = isValidVin(searchQuery);
+
+    return {
+      keyword: isVinSearch ? undefined : (searchQuery || undefined),
+      vin: isVinSearch ? searchQuery.trim().toUpperCase() : undefined,
+      providers: providers.length > 0 ? providers : undefined,
+      make: selectedMakes.length > 0 ? selectedMakes[0] : undefined,
+      model: selectedModels.length > 0 ? selectedModels[0] : undefined,
+      yearMin: yearRange.min > 1900 ? yearRange.min : undefined,
+      yearMax: yearRange.max < 2025 ? yearRange.max : undefined,
+      buyNowPriceMin: priceRange.min > 0 ? priceRange.min : undefined,
+      buyNowPriceMax: priceRange.max < 100000 ? priceRange.max : undefined,
+      damageType: selectedDamageTypes.length > 0 ? selectedDamageTypes : undefined,
+      fuelType: selectedFuelTypes.length > 0 ? selectedFuelTypes : undefined,
+      transmission: selectedTransmissions.length > 0 ? selectedTransmissions : undefined,
+      driveType: selectedDriveTypes.length > 0 ? selectedDriveTypes : undefined,
+      bodyStyle: selectedBodyStyles.length > 0 ? selectedBodyStyles : undefined,
+      page: currentPage,
+      pageSize,
+    };
+  }, [auctionState, conditionState, expandedState, priceRange, yearRange, searchQuery, currentPage, pageSize]);
+
+  // Check for VIN and redirect directly
+  useEffect(() => {
+    if (isValidVin(queryParam)) {
+      // Search by VIN via API to get the lot
+      search({ vin: queryParam.trim().toUpperCase(), page: 1, pageSize: 1 });
+    }
+  }, [queryParam, search]);
+
+  // Redirect when VIN search returns result
+  useEffect(() => {
+    if (!searchData?.lots || searchData.lots.length === 0) return;
+    if (!isValidVin(queryParam)) return;
+
+    const lot = searchData.lots[0];
+    if (lot.provider && lot.externalLotId) {
+      router.replace(`/lot/${lot.provider.toLowerCase()}/${lot.externalLotId}`);
+    }
+  }, [searchData, queryParam, router]);
+
+  // Initial search on mount (if not VIN)
+  useEffect(() => {
+    if (!isValidVin(queryParam)) {
+      const params = buildSearchParams();
+      // Include make from URL if present
+      if (makeParam) {
+        params.make = makeParam;
+      }
+      search(params);
+    }
+  }, []);
+
+  // Update filter options when facets load
+  useEffect(() => {
+    if (!facets) return;
+
+    setExpandedState((prev) => ({
+      ...prev,
+      Make: { ...prev["Make"], search: prev["Make"]?.search ?? "", input: "", items: facetMakeItems },
+      "Engine type": { ...prev["Engine type"], search: "", input: "", items: facetFuelTypes },
+      Transmission: { ...prev["Transmission"], search: "", input: "", items: facetTransmissionTypes },
+      "Fuel type": { ...prev["Fuel type"], search: "", input: "", items: facetFuelTypes },
+      "Drive train": { ...prev["Drive train"], search: "", input: "", items: facetDriveTypes },
+      "Body style": { ...prev["Body style"], search: "", input: "", items: facetBodyTypes },
+    }));
+
+    if (facetDamageTypes.length > 0) {
+      setConditionState(Object.fromEntries(facetDamageTypes.map((item) => [item.label, false])));
+    }
+  }, [facets, facetMakeItems, facetFuelTypes, facetTransmissionTypes, facetDriveTypes, facetBodyTypes, facetDamageTypes]);
+
+  // Handle URL params
+  useEffect(() => {
+    if (makeParam && facets?.makes) {
+      setExpandedState((prev) => ({
+        ...prev,
+        Make: {
+          ...prev["Make"],
+          search: "",
+          input: "",
+          items: facetMakeItems,
+        },
+      }));
+      // Open Make filter section
+      setCollapsedState((prev) => ({ ...prev, Make: true }));
+      // Trigger search with make
+      filtersChangedRef.current = true;
+    }
+  }, [makeParam, facets?.makes, facetMakeItems]);
+
+  // Auto-fetch after filter changes (debounced)
+  useEffect(() => {
+    if (!filtersChangedRef.current) return;
+
+    if (autoFetchTimeoutRef.current) {
+      clearTimeout(autoFetchTimeoutRef.current);
+    }
+
+    autoFetchTimeoutRef.current = setTimeout(() => {
+      setCurrentPage(1);
+      search({ ...buildSearchParams(), page: 1 });
+      filtersChangedRef.current = false;
+    }, 800);
+
+    return () => {
+      if (autoFetchTimeoutRef.current) {
+        clearTimeout(autoFetchTimeoutRef.current);
+      }
+    };
+  }, [auctionState, conditionState, expandedState, lotStatusState, priceRange, yearRange, buildSearchParams, search]);
+
+  // Handle apply filters button
+  const handleApplyFilters = useCallback(() => {
+    setCurrentPage(1);
+    search({ ...buildSearchParams(), page: 1 });
+  }, [search, buildSearchParams]);
+
+  // Handle page change
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    search({ ...buildSearchParams(), page });
+  }, [search, buildSearchParams]);
+
+  // Convert API data to VehicleCardData
+  const vehicleCards: VehicleCardData[] = useMemo(() => {
+    if (!searchData?.lots) return [];
+    return searchData.lots.map(lotToVehicleCard);
+  }, [searchData]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -336,319 +343,107 @@ function SearchContent() {
     setSearchQuery(queryParam);
   }, [queryParam]);
 
-  useEffect(() => {
-    const normalized = queryParam.trim().toLowerCase();
-    if (!normalized) return;
-
-    setQuickState(
-      Object.fromEntries(
-        quickFilters.map((item) => [
-          item.label,
-          item.label.toLowerCase().includes(normalized),
-        ]),
-      ) as Record<string, boolean>,
-    );
-
-    if (normalized.includes("copart")) {
-      setAuctionState({ All: false, Copart: true, IAAI: false });
-    } else if (normalized.includes("iaai")) {
-      setAuctionState({ All: false, Copart: false, IAAI: true });
-    } else if (normalized.includes("all")) {
-      setAuctionState({ All: true, Copart: false, IAAI: false });
-    }
-
-    if (normalized.includes("active")) {
-      setLotStatusState({ Active: true, Sold: false, Upcoming: false });
-    } else if (normalized.includes("sold")) {
-      setLotStatusState({ Active: false, Sold: true, Upcoming: false });
-    } else if (normalized.includes("upcoming")) {
-      setLotStatusState({ Active: false, Sold: false, Upcoming: true });
-    }
-
-    setConditionState(
-      Object.fromEntries(
-        damageTypeItems.map((item) => [
-          item.label,
-          item.label.toLowerCase().includes(normalized),
-        ]),
-      ) as Record<string, boolean>,
-    );
-
-    setExpandedState((prev) =>
-      Object.fromEntries(
-        expandableFilters.map((section) => {
-          const prevSection = prev[section.title];
-          if (!section.items) {
-            return [section.title, prevSection];
-          }
-          return [
-            section.title,
-            {
-              ...prevSection,
-              items: section.items.map((item) => ({
-                ...item,
-                checked: item.label.toLowerCase().includes(normalized),
-              })),
-            },
-          ];
-        }),
-      ) as Record<
-        string,
-        {
-          search: string;
-          items: { label: string; count: string; checked: boolean }[];
-          input: string;
-        }
-      >,
-    );
-  }, [queryParam]);
-
   const activeTags = useMemo(() => {
-    const tags: Array<{
-      id: string;
-      label: string;
-      type:
-        | "quick"
-        | "auction"
-        | "condition"
-        | "lotStatus"
-        | "expanded"
-        | "input"
-        | "price"
-        | "year";
-      value?: string;
-      section?: string;
-    }> = [];
+    const tags: Array<{ id: string; label: string; type: string; value?: string; section?: string }> = [];
 
     quickFilters.forEach((item) => {
       if (quickState[item.label]) {
-        tags.push({
-          id: `quick:${item.label}`,
-          label: item.label,
-          type: "quick",
-          value: item.label,
-        });
+        tags.push({ id: `quick:${item.label}`, label: item.label, type: "quick", value: item.label });
       }
     });
 
     if (!auctionState.All) {
-      (["Copart", "IAAI"] as const).forEach((key) => {
-        if (auctionState[key]) {
-          tags.push({
-            id: `auction:${key}`,
-            label: key,
-            type: "auction",
-            value: key,
-          });
-        }
-      });
+      if (auctionState.Copart) tags.push({ id: "auction:Copart", label: "Copart", type: "auction", value: "Copart" });
+      if (auctionState.IAAI) tags.push({ id: "auction:IAAI", label: "IAAI", type: "auction", value: "IAAI" });
     }
 
     (["Active", "Sold", "Upcoming"] as const).forEach((key) => {
       if (lotStatusState[key]) {
-        tags.push({
-          id: `status:${key}`,
-          label: key,
-          type: "lotStatus",
-          value: key,
-        });
+        tags.push({ id: `status:${key}`, label: key, type: "lotStatus", value: key });
       }
     });
 
-    damageTypeItems.forEach((item) => {
-      if (conditionState[item.label]) {
-        tags.push({
-          id: `condition:${item.label}`,
-          label: item.label,
-          type: "condition",
-          value: item.label,
-        });
+    Object.entries(conditionState).forEach(([label, checked]) => {
+      if (checked) {
+        tags.push({ id: `condition:${label}`, label, type: "condition", value: label });
       }
     });
 
-    expandableFilters.forEach((section) => {
-      const sectionState = expandedState[section.title];
-      if (!sectionState) return;
-      (sectionState.items ?? []).forEach((item) => {
+    Object.entries(expandedState).forEach(([section, state]) => {
+      (state.items ?? []).forEach((item) => {
         if (item.checked) {
-          tags.push({
-            id: `expanded:${section.title}:${item.label}`,
-            label: `${section.title}: ${item.label}`,
-            type: "expanded",
-            value: item.label,
-            section: section.title,
-          });
+          tags.push({ id: `expanded:${section}:${item.label}`, label: `${section}: ${item.label}`, type: "expanded", value: item.label, section });
         }
       });
-      if (sectionState.input?.trim()) {
-        tags.push({
-          id: `input:${section.title}`,
-          label: `${section.title}: ${sectionState.input.trim()}`,
-          type: "input",
-          section: section.title,
-        });
-      }
     });
 
     if (priceRange.min > 0 || priceRange.max < 100000) {
-      tags.push({
-        id: "price",
-        label: `Price: ${priceRange.min} - ${priceRange.max}`,
-        type: "price",
-      });
+      tags.push({ id: "price", label: `Price: $${priceRange.min} - $${priceRange.max}`, type: "price" });
     }
 
     if (yearRange.min > 1900 || yearRange.max < 2025) {
-      tags.push({
-        id: "year",
-        label: `Year: ${yearRange.min} - ${yearRange.max}`,
-        type: "year",
-      });
+      tags.push({ id: "year", label: `Year: ${yearRange.min} - ${yearRange.max}`, type: "year" });
     }
 
     return tags;
-  }, [
-    auctionState,
-    conditionState,
-    expandedState,
-    lotStatusState,
-    priceRange.max,
-    priceRange.min,
-    quickState,
-    yearRange.max,
-    yearRange.min,
-  ]);
+  }, [auctionState, conditionState, expandedState, lotStatusState, priceRange, quickState, yearRange]);
 
-  const handleRemoveTag = (tag: (typeof activeTags)[number]) => {
+  const handleRemoveTag = (tag: { type: string; value?: string; section?: string }) => {
+    filtersChangedRef.current = true;
     switch (tag.type) {
       case "quick":
-        if (!tag.value) return;
-        {
-          const value = tag.value;
-          setQuickState((prev) => ({ ...prev, [value]: false }));
-        }
-        return;
+        if (tag.value) setQuickState((prev) => ({ ...prev, [tag.value!]: false }));
+        break;
       case "auction":
-        if (!tag.value) return;
-        {
-          const value = tag.value as "Copart" | "IAAI";
+        if (tag.value) {
           setAuctionState((prev) => {
-            const next = { ...prev, [value]: false };
-            const hasAny = next.Copart || next.IAAI;
-            return { ...next, All: !hasAny };
+            const next = { ...prev, [tag.value as "Copart" | "IAAI"]: false };
+            return { ...next, All: !next.Copart && !next.IAAI };
           });
         }
-        return;
+        break;
       case "lotStatus":
-        if (!tag.value) return;
-        {
-          const value = tag.value as "Active" | "Sold" | "Upcoming";
-          setLotStatusState((prev) => ({ ...prev, [value]: false }));
-        }
-        return;
+        if (tag.value) setLotStatusState((prev) => ({ ...prev, [tag.value as "Active" | "Sold" | "Upcoming"]: false }));
+        break;
       case "condition":
-        if (!tag.value) return;
-        {
-          const value = tag.value;
-          setConditionState((prev) => ({ ...prev, [value]: false }));
-        }
-        return;
-      case "expanded": {
-        const section = tag.section;
-        const value = tag.value;
-        if (!section || !value) return;
-        setExpandedState((prev) => {
-          const sectionState = prev[section];
-          if (!sectionState) return prev;
-          return {
+        if (tag.value) setConditionState((prev) => ({ ...prev, [tag.value!]: false }));
+        break;
+      case "expanded":
+        if (tag.section && tag.value) {
+          setExpandedState((prev) => ({
             ...prev,
-            [section]: {
-              ...sectionState,
-              items: sectionState.items.map((item) =>
-                item.label === value ? { ...item, checked: false } : item,
+            [tag.section!]: {
+              ...prev[tag.section!],
+              items: prev[tag.section!].items.map((item) =>
+                item.label === tag.value ? { ...item, checked: false } : item
               ),
             },
-          };
-        });
-        return;
-      }
-      case "input": {
-        const section = tag.section;
-        if (!section) return;
-        setExpandedState((prev) => {
-          const sectionState = prev[section];
-          if (!sectionState) return prev;
-          return {
-            ...prev,
-            [section]: {
-              ...sectionState,
-              input: "",
-            },
-          };
-        });
-        return;
-      }
+          }));
+        }
+        break;
       case "price":
         setPriceRange({ min: 0, max: 100000 });
-        return;
+        break;
       case "year":
         setYearRange({ min: 1900, max: 2025 });
-        return;
+        break;
     }
   };
 
-  const filteredCards = useMemo(() => {
-    const normalized = searchQuery.trim().toLowerCase();
-    if (!normalized) return vehicleCards;
-    return vehicleCards.filter((card) =>
-      [
-        card.title,
-        card.auction,
-        card.engine,
-        card.transmission,
-        card.fuel,
-        card.drive,
-        card.odometer,
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(normalized),
-    );
-  }, [searchQuery]);
-
   const resetAll = () => {
-    setQuickState(
-      Object.fromEntries(
-        quickFilters.map((item) => [item.label, item.checked]),
-      ) as Record<string, boolean>,
-    );
+    filtersChangedRef.current = true;
+    setQuickState({});
     setAuctionState({ All: true, Copart: false, IAAI: false });
-    setConditionState(
-      Object.fromEntries(
-        damageTypeItems.map((item) => [item.label, item.checked]),
-      ) as Record<string, boolean>,
-    );
-    setLotStatusState({ Active: true, Sold: false, Upcoming: false });
-    setCollapsedState(defaultCollapsedState);
-    setExpandedState(
-      Object.fromEntries(
-        expandableFilters.map((section) => [
-          section.title,
-          {
-            search: "",
-            items: section.items ?? [],
-            input: "",
-          },
-        ]),
-      ) as Record<
-        string,
-        {
-          search: string;
-          items: { label: string; count: string; checked: boolean }[];
-          input: string;
-        }
-      >,
-    );
+    setConditionState(Object.fromEntries(facetDamageTypes.map((item) => [item.label, false])));
+    setLotStatusState({ Active: false, Sold: false, Upcoming: false });
+    setCollapsedState({});
+    setExpandedState((prev) => {
+      const newState: typeof prev = {};
+      Object.entries(prev).forEach(([key, value]) => {
+        newState[key] = { ...value, items: value.items.map((item) => ({ ...item, checked: false })) };
+      });
+      return newState;
+    });
     setDamageSearchValue("");
     setPriceRange({ min: 0, max: 100000 });
     setYearRange({ min: 1900, max: 2025 });
@@ -658,6 +453,18 @@ function SearchContent() {
   const priceMaxPct = (priceRange.max / 100000) * 100;
   const yearMinPct = ((yearRange.min - 1900) / (2025 - 1900)) * 100;
   const yearMaxPct = ((yearRange.max - 1900) / (2025 - 1900)) * 100;
+
+  // If VIN search, show loading while redirecting
+  if (isValidVin(queryParam)) {
+    return (
+      <main className="page-wrap py-12">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-muted">Looking up VIN {queryParam.toUpperCase()}...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-4 text-foreground">
@@ -673,86 +480,42 @@ function SearchContent() {
       </h1>
       <div className="flex flex-col lg:flex-row items-start gap-4">
         <aside className="w-full lg:w-[clamp(260px,30vw,424px)] flex flex-col gap-2">
-          <div
-            className={`bg-white rounded-2xl p-4 flex flex-col gap-[29px] relative ${
-              filtersCollapsed
-                ? "min-h-[clamp(44px,6vw,52px)] gap-0 overflow-hidden"
-                : ""
-            }`}
-          >
-            <div
-              className={`flex items-center justify-between w-full ${
-                filtersCollapsed ? "gap-[clamp(16px,10vw,182px)]" : "gap-8"
-              }`}
-            >
+          <div className={`bg-white rounded-2xl p-4 flex flex-col gap-[29px] relative ${filtersCollapsed ? "min-h-[clamp(44px,6vw,52px)] gap-0 overflow-hidden" : ""}`}>
+            <div className={`flex items-center justify-between w-full ${filtersCollapsed ? "gap-[clamp(16px,10vw,182px)]" : "gap-8"}`}>
               <h2 className="text-xl font-bold m-0">Search filters</h2>
-              <button
-                type="button"
-                className="border-0 bg-transparent text-sm font-semibold text-foreground cursor-pointer text-nowrap p-0"
-                onClick={resetAll}
-              >
+              <button type="button" className="border-0 bg-transparent text-sm font-semibold text-foreground cursor-pointer text-nowrap p-0" onClick={resetAll}>
                 Reset All
               </button>
             </div>
             <button
               type="button"
               className="absolute right-0 top-0 w-[clamp(32px,4vw,38px)] h-[clamp(44px,6vw,52px)] p-0 border-0 bg-transparent inline-flex items-center justify-center cursor-pointer"
-              aria-label={
-                filtersCollapsed ? "Expand filters" : "Collapse filters"
-              }
+              aria-label={filtersCollapsed ? "Expand filters" : "Collapse filters"}
               onClick={() => setFiltersCollapsed((prev) => !prev)}
             >
-              <Image
-                src="/figma/icons/filters-arrow-container.svg"
-                alt=""
-                width={38}
-                height={52}
-              />
+              <Image src="/figma/icons/filters-arrow-container.svg" alt="" width={38} height={52} />
             </button>
-            {filtersCollapsed ? null : (
+            {!filtersCollapsed && (
               <div className="flex flex-col gap-[18px] w-full">
                 {quickFilters.map((item) => {
-                  const isChecked = quickState[item.label];
+                  const isChecked = quickState[item.label] ?? false;
                   return (
                     <button
                       key={item.label}
                       type="button"
-                      className={`flex items-center justify-between gap-3 border-0 bg-transparent p-0 cursor-pointer text-left w-full ${
-                        item.label === "Vehicles Only" ? "gap-3" : "gap-[38px]"
-                      }`}
-                      onClick={() =>
-                        setQuickState((prev) => ({
-                          ...prev,
-                          [item.label]: !prev[item.label],
-                        }))
-                      }
+                      className="flex items-center justify-between gap-3 border-0 bg-transparent p-0 cursor-pointer text-left w-full"
+                      onClick={() => {
+                        filtersChangedRef.current = true;
+                        setQuickState((prev) => ({ ...prev, [item.label]: !prev[item.label] }));
+                      }}
                     >
-                      <span
-                        className={`flex items-center gap-2 text-sm font-semibold ${
-                          item.label === "Vehicles Only" ? "items-end" : ""
-                        }`}
-                      >
-                        {item.label === "Vehicles Only" ? (
-                        <Image
-                            src="/figma/images/filter-vehicles-only-235a92.png"
-                            alt=""
-                            width={74}
-                            height={20}
-                          className="w-[clamp(52px,8vw,74px)] h-[clamp(16px,3vw,20px)] object-cover"
-                          />
-                        ) : null}
+                      <span className="flex items-center gap-2 text-sm font-semibold">
+                        {item.label === "Vehicles Only" && (
+                          <Image src="/figma/images/filter-vehicles-only-235a92.png" alt="" width={74} height={20} className="w-[clamp(52px,8vw,74px)] h-[clamp(16px,3vw,20px)] object-cover" />
+                        )}
                         <span>{item.label}</span>
                       </span>
-                      <Image
-                        src={
-                          isChecked
-                            ? "/figma/icons/icon-checkbox-checked.svg"
-                            : "/figma/icons/icon-checkbox.svg"
-                        }
-                        alt=""
-                        width={24}
-                        height={24}
-                      />
+                      <Image src={isChecked ? "/figma/icons/icon-checkbox-checked.svg" : "/figma/icons/icon-checkbox.svg"} alt="" width={24} height={24} />
                     </button>
                   );
                 })}
@@ -760,124 +523,59 @@ function SearchContent() {
             )}
           </div>
 
-          {filtersCollapsed ? null : (
+          {!filtersCollapsed && (
             <>
               <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
                   <span>Auction type</span>
-                  <Image
-                    src="/figma/icons/icon-minus.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
+                  <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
                 </div>
                 <div className="flex flex-col gap-[11px]">
-                  <button
-                    type="button"
-                    className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
-                    onClick={() =>
-                      setAuctionState((prev) => ({ ...prev, All: !prev.All }))
-                    }
-                  >
-                    <span className="flex items-center gap-2">
-                      <Image
-                        src={
-                          auctionState.All
-                            ? "/figma/icons/icon-checkbox-checked.svg"
-                            : "/figma/icons/icon-checkbox.svg"
+                  {(["All", "Copart", "IAAI"] as const).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
+                      onClick={() => {
+                        filtersChangedRef.current = true;
+                        if (key === "All") {
+                          setAuctionState({ All: true, Copart: false, IAAI: false });
+                        } else {
+                          setAuctionState((prev) => {
+                            const next = { ...prev, [key]: !prev[key], All: false };
+                            if (!next.Copart && !next.IAAI) next.All = true;
+                            return next;
+                          });
                         }
-                        alt=""
-                        width={24}
-                        height={24}
-                      />
-                      <span>All</span>
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
-                    onClick={() =>
-                      setAuctionState((prev) => ({
-                        ...prev,
-                        Copart: !prev.Copart,
-                      }))
-                    }
-                  >
-                    <Image
-                      src={
-                        auctionState.Copart
-                          ? "/figma/icons/icon-checkbox-checked.svg"
-                          : "/figma/icons/icon-checkbox.svg"
-                      }
-                      alt=""
-                      width={24}
-                      height={24}
-                    />
-                    <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-copart">
-                      Copart
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer"
-                    onClick={() =>
-                      setAuctionState((prev) => ({ ...prev, IAAI: !prev.IAAI }))
-                    }
-                  >
-                    <Image
-                      src={
-                        auctionState.IAAI
-                          ? "/figma/icons/icon-checkbox-checked.svg"
-                          : "/figma/icons/icon-checkbox.svg"
-                      }
-                      alt=""
-                      width={24}
-                      height={24}
-                    />
-                    <span className="py-1 px-2 rounded-lg text-xs font-normal text-white bg-iaai">
-                      IAAI
-                    </span>
-                  </button>
+                      }}
+                    >
+                      <Image src={auctionState[key] ? "/figma/icons/icon-checkbox-checked.svg" : "/figma/icons/icon-checkbox.svg"} alt="" width={24} height={24} />
+                      {key === "All" ? <span>All</span> : (
+                        <span className={`py-1 px-2 rounded-lg text-xs font-normal text-white ${key === "Copart" ? "bg-copart" : "bg-iaai"}`}>{key}</span>
+                      )}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
                   <span>Lot status</span>
-                  <Image
-                    src="/figma/icons/icon-minus.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
+                  <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
                 </div>
                 <div className="flex flex-col gap-[11px]">
                   {(["Active", "Sold", "Upcoming"] as const).map((status) => (
                     <button
                       key={status}
                       type="button"
-                      className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
-                      onClick={() =>
-                        setLotStatusState((prev) => ({
-                          ...prev,
-                          [status]: !prev[status],
-                        }))
-                      }
+                      className="flex items-center gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer"
+                      onClick={() => {
+                        filtersChangedRef.current = true;
+                        setLotStatusState((prev) => ({ ...prev, [status]: !prev[status] }));
+                      }}
                     >
-                      <span className="flex items-center gap-2">
-                        <Image
-                          src={
-                            lotStatusState[status]
-                              ? "/figma/icons/icon-checkbox-checked.svg"
-                              : "/figma/icons/icon-checkbox.svg"
-                          }
-                          alt=""
-                          width={24}
-                          height={24}
-                        />
-                        <span>{status}</span>
-                      </span>
+                      <Image src={lotStatusState[status] ? "/figma/icons/icon-checkbox-checked.svg" : "/figma/icons/icon-checkbox.svg"} alt="" width={24} height={24} />
+                      <span>{status}</span>
                     </button>
                   ))}
                 </div>
@@ -886,12 +584,7 @@ function SearchContent() {
               <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
                   <span>Estimated price USD</span>
-                  <Image
-                    src="/figma/icons/icon-minus.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
+                  <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted">min</span>
@@ -901,12 +594,10 @@ function SearchContent() {
                     value={priceRange.min}
                     min={0}
                     max={priceRange.max}
-                    onChange={(event) =>
-                      setPriceRange((prev) => ({
-                        ...prev,
-                        min: Math.min(Number(event.target.value), prev.max),
-                      }))
-                    }
+                    onChange={(e) => {
+                      filtersChangedRef.current = true;
+                      setPriceRange((prev) => ({ ...prev, min: Math.min(Number(e.target.value), prev.max) }));
+                    }}
                   />
                   <div className="w-6 h-0.5 bg-muted" />
                   <span className="text-sm text-muted">max</span>
@@ -916,65 +607,27 @@ function SearchContent() {
                     value={priceRange.max}
                     min={priceRange.min}
                     max={100000}
-                    onChange={(event) =>
-                      setPriceRange((prev) => ({
-                        ...prev,
-                        max: Math.max(Number(event.target.value), prev.min),
-                      }))
-                    }
+                    onChange={(e) => {
+                      filtersChangedRef.current = true;
+                      setPriceRange((prev) => ({ ...prev, max: Math.max(Number(e.target.value), prev.min) }));
+                    }}
                   />
                 </div>
-                <div
-                  className="h-1.5 rounded-full bg-border relative flex items-center"
-                  style={{
-                    background: `linear-gradient(to right, var(--color-border) ${priceMinPct}%, var(--color-primary) ${priceMinPct}%, var(--color-primary) ${priceMaxPct}%, var(--color-border) ${priceMaxPct}%)`,
-                  }}
-                >
-                  <input
-                    type="range"
-                    min={0}
-                    max={100000}
-                    value={priceRange.min}
-                    onChange={(event) =>
-                      setPriceRange((prev) => ({
-                        ...prev,
-                        min: Math.min(Number(event.target.value), prev.max),
-                      }))
-                    }
-                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-                  />
-                  <input
-                    type="range"
-                    min={0}
-                    max={100000}
-                    value={priceRange.max}
-                    onChange={(event) =>
-                      setPriceRange((prev) => ({
-                        ...prev,
-                        max: Math.max(Number(event.target.value), prev.min),
-                      }))
-                    }
-                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-                  />
+                <div className="h-1.5 rounded-full bg-border relative flex items-center" style={{ background: `linear-gradient(to right, var(--color-border) ${priceMinPct}%, var(--color-primary) ${priceMinPct}%, var(--color-primary) ${priceMaxPct}%, var(--color-border) ${priceMaxPct}%)` }}>
+                  <input type="range" min={0} max={100000} value={priceRange.min} onChange={(e) => { filtersChangedRef.current = true; setPriceRange((prev) => ({ ...prev, min: Math.min(Number(e.target.value), prev.max) })); }} className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none" />
+                  <input type="range" min={0} max={100000} value={priceRange.max} onChange={(e) => { filtersChangedRef.current = true; setPriceRange((prev) => ({ ...prev, max: Math.max(Number(e.target.value), prev.min) })); }} className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none" />
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>{priceRange.min} $</span>
-                  <span className="text-muted">{priceRange.max} $</span>
+                  <span>${priceRange.min.toLocaleString()}</span>
+                  <span className="text-muted">${priceRange.max.toLocaleString()}</span>
                 </div>
-                <Button variant="primary" size="md">
-                  Apply
-                </Button>
+                <Button variant="primary" size="md" onClick={handleApplyFilters}>Apply</Button>
               </div>
 
               <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
                   <span>Year of manufacture</span>
-                  <Image
-                    src="/figma/icons/icon-minus.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
+                  <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-muted">from</span>
@@ -984,12 +637,10 @@ function SearchContent() {
                     value={yearRange.min}
                     min={1900}
                     max={yearRange.max}
-                    onChange={(event) =>
-                      setYearRange((prev) => ({
-                        ...prev,
-                        min: Math.min(Number(event.target.value), prev.max),
-                      }))
-                    }
+                    onChange={(e) => {
+                      filtersChangedRef.current = true;
+                      setYearRange((prev) => ({ ...prev, min: Math.min(Number(e.target.value), prev.max) }));
+                    }}
                   />
                   <div className="w-6 h-0.5 bg-muted" />
                   <span className="text-sm text-muted">to</span>
@@ -999,319 +650,146 @@ function SearchContent() {
                     value={yearRange.max}
                     min={yearRange.min}
                     max={2025}
-                    onChange={(event) =>
-                      setYearRange((prev) => ({
-                        ...prev,
-                        max: Math.max(Number(event.target.value), prev.min),
-                      }))
-                    }
+                    onChange={(e) => {
+                      filtersChangedRef.current = true;
+                      setYearRange((prev) => ({ ...prev, max: Math.max(Number(e.target.value), prev.min) }));
+                    }}
                   />
                 </div>
-                <div
-                  className="h-1.5 rounded-full bg-border relative flex items-center"
-                  style={{
-                    background: `linear-gradient(to right, var(--color-border) ${yearMinPct}%, var(--color-primary) ${yearMinPct}%, var(--color-primary) ${yearMaxPct}%, var(--color-border) ${yearMaxPct}%)`,
-                  }}
-                >
-                  <input
-                    type="range"
-                    min={1900}
-                    max={2025}
-                    value={yearRange.min}
-                    onChange={(event) =>
-                      setYearRange((prev) => ({
-                        ...prev,
-                        min: Math.min(Number(event.target.value), prev.max),
-                      }))
-                    }
-                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-                  />
-                  <input
-                    type="range"
-                    min={1900}
-                    max={2025}
-                    value={yearRange.max}
-                    onChange={(event) =>
-                      setYearRange((prev) => ({
-                        ...prev,
-                        max: Math.max(Number(event.target.value), prev.min),
-                      }))
-                    }
-                    className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none"
-                  />
+                <div className="h-1.5 rounded-full bg-border relative flex items-center" style={{ background: `linear-gradient(to right, var(--color-border) ${yearMinPct}%, var(--color-primary) ${yearMinPct}%, var(--color-primary) ${yearMaxPct}%, var(--color-border) ${yearMaxPct}%)` }}>
+                  <input type="range" min={1900} max={2025} value={yearRange.min} onChange={(e) => { filtersChangedRef.current = true; setYearRange((prev) => ({ ...prev, min: Math.min(Number(e.target.value), prev.max) })); }} className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none" />
+                  <input type="range" min={1900} max={2025} value={yearRange.max} onChange={(e) => { filtersChangedRef.current = true; setYearRange((prev) => ({ ...prev, max: Math.max(Number(e.target.value), prev.min) })); }} className="range-input-thumb absolute left-0 top-[-7px] w-full h-5 bg-transparent pointer-events-none appearance-none" />
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>{yearRange.min} Year</span>
-                  <span className="text-muted">{yearRange.max} Year</span>
+                  <span>{yearRange.min}</span>
+                  <span className="text-muted">{yearRange.max}</span>
                 </div>
-                <Button variant="primary" size="md">
-                  Apply
-                </Button>
+                <Button variant="primary" size="md" onClick={handleApplyFilters}>Apply</Button>
               </div>
 
-              <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
-                <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
-                  <span>Damage type</span>
-                  <Image
-                    src="/figma/icons/icon-minus.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
-                </div>
-                <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 text-base text-muted min-h-[clamp(40px,5vw,44px)]">
-                  <input
-                    placeholder="Search"
-                    aria-label="Search damage type"
-                    value={damageSearchValue}
-                    onChange={(event) =>
-                      setDamageSearchValue(event.target.value)
-                    }
-                    className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
-                  />
-                  <Image
-                    src="/figma/icons/icon-search-rounded.svg"
-                    alt=""
-                    width={24}
-                    height={24}
-                  />
-                </label>
-                <div className="flex flex-col gap-[11px]">
-                  {damageTypeItems
-                    .filter((item) =>
-                      item.label
-                        .toLowerCase()
-                        .includes(damageSearchValue.toLowerCase()),
-                    )
-                    .map((item) => {
-                      const isChecked = conditionState[item.label];
-                      return (
+              {facetDamageTypes.length > 0 && (
+                <div className="bg-white rounded-2xl p-4 flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-2 text-base font-semibold leading-5">
+                    <span>Damage type</span>
+                    <Image src="/figma/icons/icon-minus.svg" alt="" width={24} height={24} />
+                  </div>
+                  <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 text-base text-muted min-h-[clamp(40px,5vw,44px)]">
+                    <input placeholder="Search" value={damageSearchValue} onChange={(e) => setDamageSearchValue(e.target.value)} className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted" />
+                    <Image src="/figma/icons/icon-search-rounded.svg" alt="" width={24} height={24} />
+                  </label>
+                  <div className="flex flex-col gap-[11px] max-h-[200px] overflow-y-auto">
+                    {facetDamageTypes
+                      .filter((item) => item.label.toLowerCase().includes(damageSearchValue.toLowerCase()))
+                      .map((item) => (
                         <button
                           key={item.label}
                           type="button"
-                          className="flex items-center justify-between gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
-                          onClick={() =>
-                            setConditionState((prev) => ({
-                              ...prev,
-                              [item.label]: !prev[item.label],
-                            }))
-                          }
+                          className="flex items-center gap-2 text-sm font-normal border-0 bg-transparent p-0 cursor-pointer text-left w-full"
+                          onClick={() => {
+                            filtersChangedRef.current = true;
+                            setConditionState((prev) => ({ ...prev, [item.label]: !prev[item.label] }));
+                          }}
                         >
-                          <span className="flex items-center gap-2">
-                            <Image
-                              src={
-                                isChecked
-                                  ? "/figma/icons/icon-checkbox-checked.svg"
-                                  : "/figma/icons/icon-checkbox.svg"
-                              }
-                              alt=""
-                              width={24}
-                              height={24}
-                            />
-                            <span>{item.label}</span>
-                          </span>
-                          <span className="text-sm font-normal text-foreground">
-                            {item.count}
-                          </span>
+                          <Image src={conditionState[item.label] ? "/figma/icons/icon-checkbox-checked.svg" : "/figma/icons/icon-checkbox.svg"} alt="" width={24} height={24} />
+                          <span>{item.label}</span>
                         </button>
-                      );
-                    })}
+                      ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {collapsedFilters.map((title) => {
-                const isOpen = collapsedState[title];
-                const section = expandableFilters.find(
-                  (item) => item.title === title,
-                );
+                const isOpen = collapsedState[title] ?? false;
+                const section = expandableFilters.find((item) => item.title === title);
                 const sectionState = expandedState[title];
-                const isScrollable =
-                  title === "Vehicle type" || title === "Make";
+                const isScrollable = title === "Vehicle type" || title === "Make";
+                const hasItems = sectionState?.items && sectionState.items.length > 0;
+
                 return (
-                  <div
-                    key={title}
-                    className={`flex flex-col gap-3 ${
-                      isOpen ? "bg-white rounded-2xl p-4 gap-4 w-full" : ""
-                    } ${
-                      isOpen && isScrollable
-                        ? "max-h-[clamp(280px,40vw,476px)] overflow-hidden"
-                        : ""
-                    }`}
-                  >
+                  <div key={title} className={`flex flex-col gap-3 ${isOpen ? "bg-white rounded-2xl p-4 gap-4 w-full" : ""} ${isOpen && isScrollable ? "max-h-[clamp(280px,40vw,476px)] overflow-hidden" : ""}`}>
                     <button
                       type="button"
-                      className={`flex items-center justify-between p-4 rounded-2xl bg-white text-base font-semibold leading-5 border-0 cursor-pointer w-full gap-[130px] ${
-                        isOpen
-                          ? "p-0 bg-transparent rounded-none gap-[142px]"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setCollapsedState((prev) => ({
-                          ...prev,
-                          [title]: !prev[title],
-                        }))
-                      }
+                      className={`flex items-center justify-between p-4 rounded-2xl bg-white text-base font-semibold leading-5 border-0 cursor-pointer w-full ${isOpen ? "p-0 bg-transparent rounded-none" : ""}`}
+                      onClick={() => setCollapsedState((prev) => ({ ...prev, [title]: !prev[title] }))}
                     >
                       <span>{title}</span>
-                      <Image
-                        src={
-                          isOpen
-                            ? "/figma/icons/icon-minus.svg"
-                            : "/figma/icons/icon-plus.svg"
-                        }
-                        alt=""
-                        width={24}
-                        height={24}
-                      />
+                      <Image src={isOpen ? "/figma/icons/icon-minus.svg" : "/figma/icons/icon-plus.svg"} alt="" width={24} height={24} />
                     </button>
-                    {isOpen && section ? (
-                      <div
-                        className={`bg-transparent rounded-none p-0 flex flex-col gap-[11px] ${
-                          isScrollable ? "flex-1 min-h-0" : ""
-                        }`}
-                      >
-                        {title === "Search near ZIP code" ? (
-                          <div className="flex items-center gap-1">
-                            <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[clamp(40px,5vw,44px)]">
-                              <input
-                                placeholder="Zip code"
-                                value={sectionState?.input ?? ""}
-                                onChange={(event) =>
-                                  setExpandedState((prev) => ({
-                                    ...prev,
-                                    [title]: {
-                                      ...prev[title],
-                                      input: event.target.value,
-                                    },
-                                  }))
-                                }
-                                className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
-                              />
-                            </label>
-                            <div className="bg-surface rounded-[14px] py-2.5 px-3 inline-flex items-center gap-1 text-base leading-5 text-muted whitespace-nowrap">
-                              <span>50 mi</span>
-                              <Image
-                                src="/figma/icons/icon-arrow-down.svg"
-                                alt=""
-                                width={24}
-                                height={24}
-                              />
+                    {isOpen && section && (
+                      <div className={`flex flex-col gap-[11px] ${isScrollable ? "flex-1 min-h-0" : ""}`}>
+                        {title === "Search near ZIP code" && (
+                          <>
+                            <div className="flex items-center gap-1">
+                              <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[clamp(40px,5vw,44px)] flex-1">
+                                <input
+                                  placeholder="Zip code"
+                                  value={sectionState?.input ?? ""}
+                                  onChange={(e) => setExpandedState((prev) => ({ ...prev, [title]: { ...prev[title], input: e.target.value } }))}
+                                  className="border-0 bg-transparent outline-none w-full text-base leading-5 text-dark placeholder:text-muted"
+                                />
+                              </label>
+                              <div className="bg-surface rounded-[14px] py-2.5 px-3 inline-flex items-center gap-1 text-base leading-5 text-muted whitespace-nowrap">
+                                <span>50 mi</span>
+                                <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
+                              </div>
                             </div>
-                          </div>
-                        ) : null}
-                        {title === "Search near ZIP code" ? (
-                          <Button variant="primary" size="md">
-                            Search
-                          </Button>
-                        ) : null}
-                        {section.searchPlaceholder ? (
+                            <Button variant="primary" size="md" onClick={handleApplyFilters}>Search</Button>
+                          </>
+                        )}
+                        {section.searchPlaceholder && title !== "Search near ZIP code" && (
                           <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[clamp(40px,5vw,44px)]">
                             <input
                               placeholder={section.searchPlaceholder}
                               value={sectionState?.search ?? ""}
-                              onChange={(event) =>
-                                setExpandedState((prev) => ({
-                                  ...prev,
-                                  [title]: {
-                                    ...prev[title],
-                                    search: event.target.value,
-                                  },
-                                }))
-                              }
-                              className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
+                              onChange={(e) => setExpandedState((prev) => ({ ...prev, [title]: { ...prev[title], search: e.target.value } }))}
+                              className="border-0 bg-transparent outline-none w-full text-base leading-5 text-dark placeholder:text-muted"
                             />
-                            <Image
-                              src="/figma/icons/icon-search-rounded.svg"
-                              alt=""
-                              width={24}
-                              height={24}
-                            />
+                            <Image src="/figma/icons/icon-search-rounded.svg" alt="" width={24} height={24} />
                           </label>
-                        ) : null}
-                        {section.inputPlaceholder &&
-                        title !== "Search near ZIP code" ? (
+                        )}
+                        {section.inputPlaceholder && title !== "Search near ZIP code" && (
                           <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[clamp(40px,5vw,44px)]">
                             <input
                               placeholder={section.inputPlaceholder}
                               value={sectionState?.input ?? ""}
-                              onChange={(event) =>
-                                setExpandedState((prev) => ({
-                                  ...prev,
-                                  [title]: {
-                                    ...prev[title],
-                                    input: event.target.value,
-                                  },
-                                }))
-                              }
-                              className="border-0 bg-transparent outline-none w-full text-base leading-5 text-muted placeholder:text-muted"
+                              onChange={(e) => setExpandedState((prev) => ({ ...prev, [title]: { ...prev[title], input: e.target.value } }))}
+                              className="border-0 bg-transparent outline-none w-full text-base leading-5 text-dark placeholder:text-muted"
                             />
                           </label>
-                        ) : null}
-                        {section.items ? (
-                          <div
-                            className={`flex flex-col gap-[11px] w-full ${
-                              isScrollable
-                                ? "flex-1 min-h-0 overflow-y-auto"
-                                : ""
-                            }`}
-                          >
+                        )}
+                        {hasItems && (
+                          <div className={`flex flex-col gap-[11px] w-full ${isScrollable ? "flex-1 min-h-0 overflow-y-auto" : ""}`}>
                             {(sectionState?.items ?? [])
-                              .filter((item) =>
-                                section.searchPlaceholder
-                                  ? item.label
-                                      .toLowerCase()
-                                      .includes(
-                                        (
-                                          sectionState?.search ?? ""
-                                        ).toLowerCase(),
-                                      )
-                                  : true,
-                              )
+                              .filter((item) => !section.searchPlaceholder || item.label.toLowerCase().includes((sectionState?.search ?? "").toLowerCase()))
                               .map((item) => (
                                 <button
                                   key={item.label}
                                   type="button"
-                                  className="flex items-center justify-between gap-2 border-0 bg-transparent p-0 cursor-pointer text-left w-full text-sm font-normal"
-                                  onClick={() =>
+                                  className="flex items-center gap-2 border-0 bg-transparent p-0 cursor-pointer text-left w-full text-sm font-normal"
+                                  onClick={() => {
+                                    filtersChangedRef.current = true;
                                     setExpandedState((prev) => ({
                                       ...prev,
                                       [title]: {
                                         ...prev[title],
-                                        items: prev[title].items.map(
-                                          (current) =>
-                                            current.label === item.label
-                                              ? {
-                                                  ...current,
-                                                  checked: !current.checked,
-                                                }
-                                              : current,
+                                        items: prev[title].items.map((current) =>
+                                          current.label === item.label ? { ...current, checked: !current.checked } : current
                                         ),
                                       },
-                                    }))
-                                  }
+                                    }));
+                                  }}
                                 >
-                                  <span className="flex items-center gap-2">
-                                    <Image
-                                      src={
-                                        item.checked
-                                          ? "/figma/icons/icon-checkbox-checked.svg"
-                                          : "/figma/icons/icon-checkbox.svg"
-                                      }
-                                      alt=""
-                                      width={24}
-                                      height={24}
-                                    />
-                                    <span>{item.label}</span>
-                                  </span>
-                                  <span className="text-sm font-normal text-foreground">
-                                    {item.count}
-                                  </span>
+                                  <Image src={item.checked ? "/figma/icons/icon-checkbox-checked.svg" : "/figma/icons/icon-checkbox.svg"} alt="" width={24} height={24} />
+                                  <span>{item.label}</span>
                                 </button>
                               ))}
                           </div>
-                        ) : null}
+                        )}
+                        {!hasItems && section.items !== undefined && title !== "Search near ZIP code" && title !== "Sale date" && (
+                          <p className="text-sm text-muted">Loading options...</p>
+                        )}
                       </div>
-                    ) : null}
+                    )}
                   </div>
                 );
               })}
@@ -1322,79 +800,73 @@ function SearchContent() {
         <section className="w-full flex flex-col gap-4">
           <div className="flex items-center justify-between gap-4">
             <div className="bg-white rounded-r-2xl py-4 pl-[30px] pr-3.5 text-base font-bold leading-5">
-              Results {filteredCards.length}
+              Results {searchData?.total ?? 0}
             </div>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-full min-w-[clamp(90px,12vw,130px)] text-base font-bold cursor-pointer leading-5 text-nowrap"
-              >
+              <button type="button" className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 min-w-[clamp(90px,12vw,130px)] text-base font-bold cursor-pointer leading-5 text-nowrap">
                 <span>20 cards</span>
-                <Image
-                  src="/figma/icons/icon-arrow-down.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                />
+                <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
               </button>
-              <button
-                type="button"
-                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-full min-w-[clamp(90px,12vw,130px)] text-base font-bold cursor-pointer leading-5 text-nowrap"
-              >
+              <button type="button" className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 min-w-[clamp(90px,12vw,130px)] text-base font-bold cursor-pointer leading-5 text-nowrap">
                 <span>Sort by</span>
-                <Image
-                  src="/figma/icons/icon-arrow-down.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                />
+                <Image src="/figma/icons/icon-arrow-down.svg" alt="" width={24} height={24} />
               </button>
-              
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 py-2.5">
-            {activeTags.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="inline-flex items-center gap-2 py-1 px-3 bg-white rounded-2xl text-sm font-bold border-0 cursor-pointer"
-                onClick={() => handleRemoveTag(item)}
-              >
-                <span>{item.label}</span>
-                <Image
-                  src="/figma/icons/icon-cross-small.svg"
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-              </button>
-            ))}
-          </div>
+          {activeTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 py-2.5">
+              {activeTags.map((item) => (
+                <button key={item.id} type="button" className="inline-flex items-center gap-2 py-1 px-3 bg-white rounded-2xl text-sm font-bold border-0 cursor-pointer" onClick={() => handleRemoveTag(item)}>
+                  <span>{item.label}</span>
+                  <Image src="/figma/icons/icon-cross-small.svg" alt="" width={24} height={24} />
+                </button>
+              ))}
+            </div>
+          )}
 
-          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
-            {filteredCards.map((card, index) => (
-              <VehicleCard
-                key={`${card.title}-${index}`}
-                card={card}
-                className="w-full"
+          {isLoading ? (
+            <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {Array.from({ length: pageSize }).map((_, index) => (
+                <div key={`skeleton-${index}`} className="bg-white rounded-[16px] overflow-hidden w-full min-h-[400px] animate-pulse">
+                  <div className="h-[200px] bg-surface" />
+                  <div className="p-4 flex flex-col gap-3">
+                    <div className="h-5 bg-surface rounded w-3/4" />
+                    <div className="h-4 bg-surface rounded w-full" />
+                    <div className="h-4 bg-surface rounded w-full" />
+                    <div className="h-4 bg-surface rounded w-2/3" />
+                    <div className="h-10 bg-surface rounded w-full mt-2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <p className="text-lg text-muted mb-4">Failed to load search results</p>
+              <Button onClick={handleApplyFilters}>Try Again</Button>
+            </div>
+          ) : vehicleCards.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <p className="text-lg text-muted">No vehicles found matching your criteria</p>
+              <p className="text-sm text-muted mt-2">Try adjusting your filters</p>
+            </div>
+          ) : (
+            <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {vehicleCards.map((card, index) => (
+                <VehicleCard key={`${card.provider}-${card.externalLotId}-${index}`} card={card} className="w-full" />
+              ))}
+            </div>
+          )}
+
+          {searchData && searchData.totalPages > 1 && (
+            <div className="mt-2">
+              <Pagination
+                pages={Array.from({ length: Math.min(searchData.totalPages, 7) }, (_, i) => i + 1)}
+                current={currentPage}
+                onPageChange={handlePageChange}
               />
-            ))}
-          </div>
-
-          <div className="mt-2">
-            <Pagination
-              pages={[1, 2, 3, 5, "...", 125, 126, 127]}
-              current={2}
-            />
-          </div>
-
-          <p className="text-base text-muted mt-6 w-full max-w-[clamp(320px,70vw,986px)]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </p>
+            </div>
+          )}
         </section>
       </div>
     </main>
@@ -1403,9 +875,7 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense
-      fallback={<div className="page-wrap py-6 text-muted">Loading...</div>}
-    >
+    <Suspense fallback={<div className="page-wrap py-6 text-muted">Loading...</div>}>
       <SearchContent />
     </Suspense>
   );

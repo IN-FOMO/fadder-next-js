@@ -1,359 +1,351 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { useBids } from "@/hooks/useBids";
+import { usePurchases } from "@/hooks/usePurchases";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Button } from "../../_components/Button";
 import { DashboardSidebar } from "../../_components/DashboardSidebar";
+import type { components } from "@/types/api";
+
+type BidResponseDto = components["schemas"]["BidResponseDto"];
+type PurchaseResponseDto = components["schemas"]["PurchaseResponseDto"];
 
 const historyTabs = [
   { label: "Active Bids", value: "active" },
   { label: "Won", value: "won" },
   { label: "Lost", value: "lost" },
   { label: "Buy Now", value: "buy-now" },
-  { label: "Shipping", value: "shipping" },
 ] as const;
 
-type HistoryBid = {
-  title: string;
-  lotId: string;
-  timeRemaining: string;
-  status: "Leading" | "Outbid";
-  currentBid: string;
-  yourBid: string;
-  nextMinBid: string;
-  auction: "IAAI" | "Copart";
-  image: string;
-};
+function formatTimeRemaining(saleDate?: string): string {
+  if (!saleDate) return "No date";
+  const sale = new Date(saleDate);
+  const now = new Date();
+  const diff = sale.getTime() - now.getTime();
 
-const activeBids: HistoryBid[] = [
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    timeRemaining: "Ends in 2h 34m",
-    status: "Leading",
-    currentBid: "$18,500",
-    yourBid: "$18,600",
-    nextMinBid: "$18,700",
-    auction: "IAAI",
-    image: "/figma/images/vehicle-1.png",
-  },
-  {
-    title: "2021 Honda Accord Sport",
-    lotId: "LOT-2024157",
-    timeRemaining: "Ends in 3h 12m",
-    status: "Outbid",
-    currentBid: "$22,000",
-    yourBid: "$22,100",
-    nextMinBid: "$22,200",
-    auction: "Copart",
-    image: "/figma/images/vehicle-2.png",
-  },
-  {
-    title: "2019 Ford Mustang GT",
-    lotId: "LOT-2024158",
-    timeRemaining: "Ends in 4h 45m",
-    status: "Leading",
-    currentBid: "$30,000",
-    yourBid: "$30,200",
-    nextMinBid: "$30,300",
-    auction: "IAAI",
-    image: "/figma/images/vehicle-3.png",
-  },
-  {
-    title: "2022 Chevrolet Malibu Premier",
-    lotId: "LOT-2024159",
-    timeRemaining: "Ends in 1h 15m",
-    status: "Leading",
-    currentBid: "$25,500",
-    yourBid: "$25,600",
-    nextMinBid: "$25,700",
-    auction: "Copart",
-    image: "/figma/images/vehicle-4.png",
-  },
-];
+  if (diff <= 0) return "Ended";
 
-type WonBid = {
-  title: string;
-  orderId: string;
-  finalPrice: string;
-  paymentStatus: string;
-  shippingStatus: string;
-  purchaseDate: string;
-  image: string;
-};
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-const wonBids: WonBid[] = [
-  {
-    title: "2020 Toyota Camry XLE",
-    orderId: "ORDER-2024156",
-    finalPrice: "$18,700",
-    paymentStatus: "Paid",
-    shippingStatus: "In Transit",
-    purchaseDate: "1/10/2025",
-    image: "/figma/images/vehicle-1.png",
-  },
-  {
-    title: "2019 Ford Fusion Titanium",
-    orderId: "ORDER-2024158",
-    finalPrice: "$19,300",
-    paymentStatus: "Paid",
-    shippingStatus: "Delivered",
-    purchaseDate: "3/5/2025",
-    image: "/figma/images/vehicle-3.png",
-  },
-  {
-    title: "2022 Nissan Altima SR",
-    orderId: "ORDER-2024159",
-    finalPrice: "$24,000",
-    paymentStatus: "Financed",
-    shippingStatus: "In Transit",
-    purchaseDate: "4/20/2025",
-    image: "/figma/images/vehicle-4.png",
-  },
-];
+  if (days > 0) return `Ends in ${days}d ${hours}h`;
+  if (hours > 0) return `Ends in ${hours}h ${minutes}m`;
+  return `Ends in ${minutes}m`;
+}
 
-type LostBid = {
-  title: string;
-  lotId: string;
-  endedOn: string;
-  winningBid: string;
-  yourBid: string;
-  difference: string;
-  auction: "IAAI" | "Copart";
-  image: string;
-};
+function formatDate(dateString?: string): string {
+  if (!dateString) return "N/A";
+  return new Date(dateString).toLocaleDateString();
+}
 
-const lostBids: LostBid[] = [
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    endedOn: "Ended on 12.09.2025",
-    winningBid: "$18,500",
-    yourBid: "$18,000",
-    difference: "+$700",
-    auction: "IAAI",
-    image: "/figma/images/vehicle-1.png",
-  },
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    endedOn: "Ended on 12.09.2025",
-    winningBid: "$22,200",
-    yourBid: "$21,400",
-    difference: "+$800",
-    auction: "Copart",
-    image: "/figma/images/vehicle-2.png",
-  },
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    endedOn: "Ended on 12.09.2025",
-    winningBid: "$19,400",
-    yourBid: "$18,900",
-    difference: "+$500",
-    auction: "Copart",
-    image: "/figma/images/vehicle-3.png",
-  },
-];
+function formatPrice(amount?: number): string {
+  if (amount === undefined || amount === null) return "N/A";
+  return `$${amount.toLocaleString()}`;
+}
 
-type BuyNowBid = {
-  title: string;
-  lotId: string;
-  endedOn: string;
-  source: "Copart" | "IAAI";
-  purchasePrice: string;
-  purchaseDate: string;
-  processing: { label: string; tone: "success" | "info" | "warning" };
-  payment: { label: string; tone: "success" | "info" | "warning" };
-  delivery: { label: string; tone: "success" | "info" | "warning" };
-  image: string;
-};
+function ActiveBidCard({ bid }: { bid: BidResponseDto }) {
+  const lotTitle = (bid.lotTitle as unknown as string) || "Vehicle";
+  const thumbnail = (bid.lotThumbnail as unknown as string) || "/figma/images/vehicle-1.png";
+  const status = (bid.status as string) || "pending";
+  const isLeading = status === "leading" || status === "winning";
+  const provider = bid.provider?.toUpperCase() as "COPART" | "IAAI";
 
-const buyNowBids: BuyNowBid[] = [
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    endedOn: "Ended on 12.09.2025",
-    source: "Copart",
-    purchasePrice: "$28,900",
-    purchaseDate: "11/01/2025",
-    processing: { label: "Completed", tone: "success" },
-    payment: { label: "Pending", tone: "info" },
-    delivery: { label: "In progress", tone: "warning" },
-    image: "/figma/images/vehicle-1.png",
-  },
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    endedOn: "Ended on 12.09.2025",
-    source: "Copart",
-    purchasePrice: "$28,900",
-    purchaseDate: "11/01/2025",
-    processing: { label: "Completed", tone: "success" },
-    payment: { label: "Completed", tone: "success" },
-    delivery: { label: "In progress", tone: "warning" },
-    image: "/figma/images/vehicle-2.png",
-  },
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    endedOn: "Ended on 12.09.2025",
-    source: "Copart",
-    purchasePrice: "$28,900",
-    purchaseDate: "11/01/2025",
-    processing: { label: "Completed", tone: "success" },
-    payment: { label: "Completed", tone: "success" },
-    delivery: { label: "Delivered", tone: "success" },
-    image: "/figma/images/vehicle-3.png",
-  },
-  {
-    title: "2020 Toyota Camry XLE",
-    lotId: "LOT-2024156",
-    endedOn: "Ended on 12.09.2025",
-    source: "Copart",
-    purchasePrice: "$28,900",
-    purchaseDate: "11/01/2025",
-    processing: { label: "Pending", tone: "info" },
-    payment: { label: "Pending", tone: "info" },
-    delivery: { label: "In progress", tone: "warning" },
-    image: "/figma/images/vehicle-4.png",
-  },
-];
+  return (
+    <div className="flex items-center w-full">
+      <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+        <Image src={thumbnail} alt="" fill sizes="168px" className="object-cover" />
+      </div>
+      <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(5,minmax(60px,1fr))_auto]">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <span className="text-[20px] leading-[24px] font-bold text-dark">{lotTitle}</span>
+            <span className="text-[14px] leading-[16px] text-muted">LOT-{bid.externalLotId}</span>
+          </div>
+          <span className="text-[14px] leading-[16px] text-dark">
+            {formatTimeRemaining((bid as Record<string, unknown>).saleDate as string | undefined)}
+          </span>
+        </div>
 
-type ShippingStep = {
-  label: string;
-  date: string;
-  icon: string;
-  size?: number;
-};
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Status</span>
+          <span
+            className={`inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(52px,8vw,65px)] ${
+              isLeading ? "bg-success" : "bg-error"
+            }`}
+          >
+            {isLeading ? "Leading" : "Outbid"}
+          </span>
+        </div>
 
-type ShippingCard = {
-  title: string;
-  orderId: string;
-  carrier: string;
-  trackingNumber: string;
-  estimatedDelivery: string;
-  image: string;
-  steps: ShippingStep[];
-  progressWidth: number;
-};
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Current Bid</span>
+          <span className="text-[16px] leading-[20px] font-bold text-dark">
+            {formatPrice((bid as Record<string, unknown>).currentBid as number | undefined)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Your Bid</span>
+          <span className="text-[16px] leading-[20px] font-bold text-dark">
+            {formatPrice(bid.bidAmount)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Max Bid</span>
+          <span className="text-[16px] leading-[20px] font-bold text-dark">
+            {formatPrice((bid.maxBid as unknown as number) ?? undefined)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Auction</span>
+          <span
+            className={`inline-flex w-fit rounded-[4px] px-2 py-1 text-white ${
+              provider === "IAAI"
+                ? "bg-[#D91E1D] text-[12px] leading-[14px] font-normal"
+                : "bg-[#0E5DB8] text-[14px] leading-[16px] font-bold"
+            }`}
+          >
+            {provider || "N/A"}
+          </span>
+        </div>
+        <Link href={`/lot/${bid.provider?.toLowerCase()}/${bid.externalLotId}`}>
+          <Button
+            variant="secondary"
+            size="md"
+            className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
+          >
+            View
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
 
-const shippingCards: ShippingCard[] = [
-  {
-    title: "2020 Toyota Camry XLE",
-    orderId: "ORD-2024-001",
-    carrier: "AutoTransport Pro",
-    trackingNumber: "ATP-US-2024-8934",
-    estimatedDelivery: "October 8, 2025",
-    image: "/figma/images/vehicle-1.png",
-    progressWidth: 358,
-    steps: [
-      {
-        label: "Vehicle Picked Up",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-1.svg",
-        size: 48,
-      },
-      {
-        label: "At Departure Terminal",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-2.svg",
-        size: 48,
-      },
-      {
-        label: "International Transit",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-3.svg",
-        size: 56,
-      },
-      {
-        label: "EU Hub",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-4.svg",
-        size: 48,
-      },
-      {
-        label: "Final Delivery",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-5.svg",
-        size: 48,
-      },
-      {
-        label: "Delivered",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-6.svg",
-        size: 48,
-      },
-    ],
-  },
-  {
-    title: "2020 Toyota Camry XLE",
-    orderId: "ORD-2024-001",
-    carrier: "AutoTransport Pro",
-    trackingNumber: "ATP-US-2024-8934",
-    estimatedDelivery: "October 8, 2025",
-    image: "/figma/images/vehicle-2.png",
-    progressWidth: 1112,
-    steps: [
-      {
-        label: "Vehicle Picked Up",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-1.svg",
-        size: 48,
-      },
-      {
-        label: "At Departure Terminal",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-2.svg",
-        size: 48,
-      },
-      {
-        label: "International Transit",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-3.svg",
-        size: 56,
-      },
-      {
-        label: "EU Hub",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-4.svg",
-        size: 48,
-      },
-      {
-        label: "Final Delivery",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-5.svg",
-        size: 48,
-      },
-      {
-        label: "Delivered",
-        date: "Oct 15, 2025",
-        icon: "/figma/shipping/shipping-step-6.svg",
-        size: 48,
-      },
-    ],
-  },
-];
+function WonBidCard({ bid }: { bid: BidResponseDto }) {
+  const lotTitle = (bid.lotTitle as unknown as string) || "Vehicle";
+  const thumbnail = (bid.lotThumbnail as unknown as string) || "/figma/images/vehicle-1.png";
 
-type DashboardHistoryPageProps = {
-  searchParams?: Promise<{
-    tab?: string | string[];
-  }>;
-};
+  return (
+    <div className="flex items-center w-full">
+      <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+        <Image src={thumbnail} alt="" fill sizes="168px" className="object-cover" />
+      </div>
+      <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(4,minmax(60px,1fr))_auto]">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <span className="text-[20px] leading-[24px] font-bold text-dark">{lotTitle}</span>
+            <span className="text-[14px] leading-[16px] text-muted">LOT-{bid.externalLotId}</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Final Price</span>
+          <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+            {formatPrice(bid.bidAmount)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Status</span>
+          <span className="inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white bg-success w-fit">
+            Won
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Date</span>
+          <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+            {formatDate((bid as Record<string, unknown>).updatedAt as string | undefined)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Auction</span>
+          <span
+            className={`inline-flex w-fit rounded-[4px] px-2 py-1 text-white ${
+              bid.provider === "IAAI"
+                ? "bg-[#D91E1D] text-[12px] leading-[14px] font-normal"
+                : "bg-[#0E5DB8] text-[14px] leading-[16px] font-bold"
+            }`}
+          >
+            {bid.provider || "N/A"}
+          </span>
+        </div>
+        <Link href={`/lot/${bid.provider?.toLowerCase()}/${bid.externalLotId}`}>
+          <Button
+            variant="secondary"
+            size="md"
+            className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
+          >
+            Details
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
 
-export default async function DashboardHistoryPage({
-  searchParams,
-}: DashboardHistoryPageProps) {
-  const sp = searchParams ? await searchParams : undefined;
-  const rawTab = Array.isArray(sp?.tab) ? sp?.tab[0] : sp?.tab;
-  const activeParam = rawTab ?? "active";
-  const activeTab = historyTabs.some((tab) => tab.value === activeParam)
-    ? activeParam
-    : "active";
+function LostBidCard({ bid }: { bid: BidResponseDto }) {
+  const lotTitle = (bid.lotTitle as unknown as string) || "Vehicle";
+  const thumbnail = (bid.lotThumbnail as unknown as string) || "/figma/images/vehicle-1.png";
+  const winningBid = (bid as Record<string, unknown>).winningBid as number | undefined;
+  const difference = winningBid && bid.bidAmount ? winningBid - bid.bidAmount : undefined;
 
-  const toneClasses = {
-    success: "bg-success",
-    info: "bg-[#2571FF]",
-    warning: "bg-[#F76500]",
-  } as const;
+  return (
+    <div className="flex items-center w-full">
+      <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+        <Image src={thumbnail} alt="" fill sizes="168px" className="object-cover" />
+      </div>
+      <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(5,minmax(60px,1fr))_auto]">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <span className="text-[20px] leading-[24px] font-bold text-dark">{lotTitle}</span>
+            <span className="text-[14px] leading-[16px] text-muted">LOT-{bid.externalLotId}</span>
+          </div>
+          <span className="text-[14px] leading-[16px] text-dark">
+            Ended on {formatDate((bid as Record<string, unknown>).updatedAt as string | undefined)}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Status</span>
+          <span className="inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(52px,8vw,65px)] bg-error">
+            Lost
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Winning Bid</span>
+          <span className="text-[16px] leading-[20px] font-bold text-dark">
+            {formatPrice(winningBid)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Your Bid</span>
+          <span className="text-[16px] leading-[20px] font-bold text-dark">
+            {formatPrice(bid.bidAmount)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Difference</span>
+          <span className="text-[16px] leading-[20px] font-bold text-error">
+            {difference ? `+${formatPrice(difference)}` : "N/A"}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Auction</span>
+          <span
+            className={`inline-flex w-fit rounded-[4px] px-2 py-1 text-white ${
+              bid.provider === "IAAI"
+                ? "bg-[#D91E1D] text-[12px] leading-[14px] font-normal"
+                : "bg-[#0E5DB8] text-[14px] leading-[16px] font-bold"
+            }`}
+          >
+            {bid.provider || "N/A"}
+          </span>
+        </div>
+        <Link href={`/search?query=${encodeURIComponent(lotTitle)}`}>
+          <Button
+            variant="secondary"
+            size="md"
+            className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
+          >
+            Find Similar
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function BuyNowCard({ purchase }: { purchase: PurchaseResponseDto }) {
+  const lotTitle = (purchase.lotTitle as unknown as string) || "Vehicle";
+  const thumbnail = (purchase.lotThumbnail as unknown as string) || "/figma/images/vehicle-1.png";
+
+  return (
+    <div className="flex items-center w-full">
+      <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+        <Image src={thumbnail} alt="" fill sizes="168px" className="object-cover" />
+      </div>
+      <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(4,minmax(60px,1fr))_auto]">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            <span className="text-[20px] leading-[24px] font-bold text-dark">{lotTitle}</span>
+            <span className="text-[14px] leading-[16px] text-muted">LOT-{purchase.externalLotId}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Source</span>
+          <span className="inline-flex w-fit rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white bg-[#0E5DB8]">
+            {purchase.provider || "N/A"}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Purchase Price</span>
+          <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+            {formatPrice(purchase.totalAmount)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Purchase Date</span>
+          <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
+            {formatDate(purchase.createdAt)}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-[14px] leading-[16px] text-muted">Status</span>
+          <span className="inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white bg-success w-fit">
+            {purchase.paymentStatus || "Completed"}
+          </span>
+        </div>
+        <Link href={`/lot/${purchase.provider?.toLowerCase()}/${purchase.externalLotId}`}>
+          <Button
+            variant="secondary"
+            size="md"
+            className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
+          >
+            Details
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 w-full">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="flex items-center w-full animate-pulse">
+          <div className="w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] bg-surface" />
+          <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4">
+            <div className="h-6 bg-surface rounded w-1/3 mb-2" />
+            <div className="h-4 bg-surface rounded w-1/4" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 bg-white rounded-[16px]">
+      <p className="text-lg text-muted">{message}</p>
+    </div>
+  );
+}
+
+function HistoryContent() {
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get("tab") ?? "active";
+
+  const { activeBids, wonBids, lostBids, isLoading: bidsLoading } = useBids();
+  const { buyNowPurchases, isLoading: purchasesLoading } = usePurchases();
+
+  const isLoading = bidsLoading || purchasesLoading;
 
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
@@ -362,7 +354,7 @@ export default async function DashboardHistoryPage({
           <DashboardSidebar />
 
           <div className="flex-1 min-w-0 flex flex-col gap-12">
-            {/* History tabs (Figma: 2983-61459 Menu History) */}
+            {/* History tabs */}
             <div className="inline-flex w-full max-w-[clamp(320px,70vw,666px)] shrink-0 items-center gap-[4px] bg-[#FFFFFF] rounded-[16px] self-start">
               {historyTabs.map((tab) => {
                 const isActive = tab.value === activeTab;
@@ -375,7 +367,7 @@ export default async function DashboardHistoryPage({
                         : `/dashboard/history?tab=${tab.value}`
                     }
                     className={
-                      "flex items-center justify-center gap-[14px] w-full min-w-[clamp(70px,10vw,90px)] px-[24px] py-[8px] rounded-[16px] text-[14px] leading-[16px] font-bold text-[#0F0F0F] border-[1.5px] box-border " +
+                      "flex items-center justify-center gap-[14px] w-full min-w-[clamp(70px,10vw,90px)] px-[24px] py-[8px] rounded-[16px] text-[14px] leading-[16px] font-bold text-[#0F0F0F] border-[1.5px] box-border no-underline " +
                       (isActive ? "border-[#FFAF0E]" : "border-transparent")
                     }
                   >
@@ -385,471 +377,72 @@ export default async function DashboardHistoryPage({
               })}
             </div>
 
-            {activeTab === "active" ? (
-              <div className="flex flex-col gap-4 w-full">
-                {activeBids.map((bid, index) => (
-                  <div
-                    key={`${bid.lotId}-${index}`}
-                    className="flex items-center w-full"
-                  >
-                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image
-                        src={bid.image}
-                        alt=""
-                        fill
-                        sizes="168px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
-                      <div className="flex flex-col gap-3">
-                        <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">
-                            {bid.title}
-                          </span>
-                          <span className="text-[14px] leading-[16px] text-muted">
-                            {bid.lotId}
-                          </span>
-                        </div>
-                        <span className="text-[14px] leading-[16px] text-dark">
-                          {bid.timeRemaining}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Status
-                        </span>
-                        <span
-                          className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(52px,8vw,65px)] " +
-                            (bid.status === "Leading"
-                              ? "bg-success"
-                              : "bg-error")
-                          }
-                        >
-                          {bid.status}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Current Bid
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">
-                          {bid.currentBid}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Your Bid
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">
-                          {bid.yourBid}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Next Min Bid
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">
-                          {bid.nextMinBid}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Auction
-                        </span>
-                        <span
-                          className={
-                            "inline-flex w-fit rounded-[4px] px-2 py-1 text-white " +
-                            (bid.auction === "IAAI"
-                              ? "bg-[#D91E1D] text-[12px] leading-[14px] font-normal"
-                              : "bg-[#0E5DB8] text-[14px] leading-[16px] font-bold")
-                          }
-                        >
-                          {bid.auction}
-                        </span>
-                      </div>
-                      <Button
-                        variant="secondary"
-                        size="md"
-                        className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
-                      >
-                        View
-                      </Button>
-                    </div>
+            {isLoading ? (
+              <LoadingSkeleton />
+            ) : (
+              <>
+                {activeTab === "active" && (
+                  <div className="flex flex-col gap-4 w-full">
+                    {activeBids.length === 0 ? (
+                      <EmptyState message="No active bids" />
+                    ) : (
+                      activeBids.map((bid) => (
+                        <ActiveBidCard key={bid.id} bid={bid} />
+                      ))
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : null}
+                )}
 
-            {activeTab === "won" ? (
-              <div className="flex flex-col gap-4 w-full">
-                {wonBids.map((bid, index) => (
-                  <div
-                    key={`${bid.orderId}-${index}`}
-                    className="flex items-center w-full"
-                  >
-                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image
-                        src={bid.image}
-                        alt=""
-                        fill
-                        sizes="168px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
-                      <div className="flex flex-col gap-3">
-                        <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">
-                            {bid.title}
-                          </span>
-                          <span className="text-[14px] leading-[16px] text-muted">
-                            {bid.orderId}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Final Price
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.finalPrice}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Payment
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.paymentStatus}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Shipping
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.shippingStatus}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Purchase Date
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.purchaseDate}
-                        </span>
-                      </div>
-                      <Button
-                        variant="secondary"
-                        size="md"
-                        className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0 col-start-7"
-                      >
-                        Details
-                      </Button>
-                    </div>
+                {activeTab === "won" && (
+                  <div className="flex flex-col gap-4 w-full">
+                    {wonBids.length === 0 ? (
+                      <EmptyState message="No won bids yet" />
+                    ) : (
+                      wonBids.map((bid) => (
+                        <WonBidCard key={bid.id} bid={bid} />
+                      ))
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : null}
+                )}
 
-            {activeTab === "lost" ? (
-              <div className="flex flex-col gap-4 w-full">
-                {lostBids.map((bid, index) => (
-                  <div
-                    key={`${bid.lotId}-${index}`}
-                    className="flex items-center w-full"
-                  >
-                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image
-                        src={bid.image}
-                        alt=""
-                        fill
-                        sizes="168px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
-                      <div className="flex flex-col gap-3">
-                        <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">
-                            {bid.title}
-                          </span>
-                          <span className="text-[14px] leading-[16px] text-muted">
-                            {bid.lotId}
-                          </span>
-                        </div>
-                        <span className="text-[14px] leading-[16px] text-dark">
-                          {bid.endedOn}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Status
-                        </span>
-                        <span className="inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(52px,8vw,65px)] bg-error">
-                          Lost
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Winning Bid
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">
-                          {bid.winningBid}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Your Bid
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-dark">
-                          {bid.yourBid}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Difference
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-error">
-                          {bid.difference}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Auction
-                        </span>
-                        <span
-                          className={
-                            "inline-flex w-fit rounded-[4px] px-2 py-1 text-white " +
-                            (bid.auction === "IAAI"
-                              ? "bg-[#D91E1D] text-[12px] leading-[14px] font-normal"
-                              : "bg-[#0E5DB8] text-[14px] leading-[16px] font-bold")
-                          }
-                        >
-                          {bid.auction}
-                        </span>
-                      </div>
-                      <Button
-                        variant="secondary"
-                        size="md"
-                        className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
-                      >
-                        Find Similar
-                      </Button>
-                    </div>
+                {activeTab === "lost" && (
+                  <div className="flex flex-col gap-4 w-full">
+                    {lostBids.length === 0 ? (
+                      <EmptyState message="No lost bids" />
+                    ) : (
+                      lostBids.map((bid) => (
+                        <LostBidCard key={bid.id} bid={bid} />
+                      ))
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : null}
+                )}
 
-            {activeTab === "buy-now" ? (
-              <div className="flex flex-col gap-4 w-full">
-                {buyNowBids.map((bid, index) => (
-                  <div
-                    key={`${bid.lotId}-${index}`}
-                    className="flex items-center w-full"
-                  >
-                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-                      <Image
-                        src={bid.image}
-                        alt=""
-                        fill
-                        sizes="168px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
-                      <div className="flex flex-col gap-3">
-                        <div className="flex flex-col gap-2">
-                          <span className="text-[20px] leading-[24px] font-bold text-dark">
-                            {bid.title}
-                          </span>
-                          <span className="text-[14px] leading-[16px] text-muted">
-                            {bid.lotId}
-                          </span>
-                        </div>
-                        <span className="text-[14px] leading-[16px] text-dark">
-                          {bid.endedOn}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Source
-                        </span>
-                        <span className="inline-flex w-fit rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white bg-[#0E5DB8]">
-                          {bid.source}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Purchase Price
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.purchasePrice}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Purchase Date
-                        </span>
-                        <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                          {bid.purchaseDate}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Processing
-                        </span>
-                        <span
-                          className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(64px,10vw,85px)] " +
-                            toneClasses[bid.processing.tone]
-                          }
-                        >
-                          {bid.processing.label}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Payment
-                        </span>
-                        <span
-                          className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(64px,10vw,85px)] " +
-                            toneClasses[bid.payment.tone]
-                          }
-                        >
-                          {bid.payment.label}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[14px] leading-[16px] text-muted">
-                          Delivery
-                        </span>
-                        <span
-                          className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(64px,10vw,85px)] " +
-                            toneClasses[bid.delivery.tone]
-                          }
-                        >
-                          {bid.delivery.label}
-                        </span>
-                      </div>
-                    </div>
+                {activeTab === "buy-now" && (
+                  <div className="flex flex-col gap-4 w-full">
+                    {buyNowPurchases.length === 0 ? (
+                      <EmptyState message="No Buy Now purchases" />
+                    ) : (
+                      buyNowPurchases.map((purchase) => (
+                        <BuyNowCard key={purchase.id} purchase={purchase} />
+                      ))
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : null}
-
-            {activeTab === "shipping" ? (
-              <div className="flex flex-col gap-4 w-full">
-                {shippingCards.map((card, index) => {
-                  return (
-                    <div
-                      key={`${card.orderId}-${index}`}
-                      className="w-full"
-                    >
-                      {/* Product Info - layout_FO3565 */}
-                      <div className="bg-white rounded-[16px_16px_0_0]">
-                        <div className="flex items-center justify-between gap-[clamp(20px,8vw,95px)] pr-4 py-4 pl-0 min-h-[clamp(90px,12vw,112px)]">
-                          <div className="flex items-center gap-4">
-                            <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-[16px_0_16px_0] overflow-hidden">
-                              <Image
-                                src={card.image}
-                                alt=""
-                                fill
-                                sizes="168px"
-                                className="object-cover"
-                              />
-                            </div>
-                            <div className="flex flex-col justify-between gap-3 self-stretch">
-                              <div className="flex flex-col gap-2">
-                                <span className="text-[20px] leading-[24px] font-bold text-[#0F0F0F]">
-                                  {card.title}
-                                </span>
-                                <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
-                                  {card.orderId}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-col gap-2">
-                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
-                              Carrier
-                            </span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
-                              {card.carrier}
-                            </span>
-                          </div>
-                          <div className="flex flex-col gap-2">
-                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
-                              Tracking Number
-                            </span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
-                              {card.trackingNumber}
-                            </span>
-                          </div>
-                          <div className="flex flex-col gap-2">
-                            <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
-                              Estimated Delivery
-                            </span>
-                            <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
-                              {card.estimatedDelivery}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Status order - layout_IWJ937 */}
-                      <div className="relative bg-white rounded-[0_0_16px_16px] p-4 flex flex-col gap-[10px]">
-                        {/* Divider - layout_IEC78N */}
-                        <div className="absolute left-[clamp(8px,2vw,16px)] top-[38px] h-[clamp(3px,0.6vw,4px)] w-[calc(100%-clamp(16px,4vw,32px))] pointer-events-none">
-                          <div className="absolute inset-0 h-[clamp(3px,0.6vw,4px)] w-full rounded-[2px] bg-[#CCCCCC]" />
-                          <div
-                            className="absolute left-0 top-0 h-[clamp(3px,0.6vw,4px)] rounded-[2px] bg-[#00B333]"
-                            style={{ width: card.progressWidth }}
-                          />
-                        </div>
-
-                        {/* Status Steps - layout_V12HL9 */}
-                        <div className="relative flex items-start justify-between gap-[10px]">
-                          {card.steps.map((step, stepIndex) => (
-                            <div
-                              key={`${step.label}-${stepIndex}`}
-                              className="flex flex-col items-center gap-2"
-                            >
-                              <Image
-                                src={step.icon}
-                                alt=""
-                                width={48}
-                                height={48}
-                              />
-                              <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B] text-center">
-                                {step.label}
-                              </span>
-                              <span className="text-[12px] leading-[14px] font-normal text-[#7B7B7B] text-center">
-                                {step.date}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
     </main>
+  );
+}
+
+export default function DashboardHistoryPage() {
+  return (
+    <ProtectedRoute>
+      <Suspense fallback={<LoadingSkeleton />}>
+        <HistoryContent />
+      </Suspense>
+    </ProtectedRoute>
   );
 }

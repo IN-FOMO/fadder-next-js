@@ -2,9 +2,158 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "../_components/Button";
+
+import apiClient from "@/lib/api-client";
+
+function EmailVerificationRequired({
+  email,
+  onBack,
+}: {
+  email: string;
+  onBack: () => void;
+}) {
+  const [isSending, setIsSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const handleResend = async () => {
+    setIsSending(true);
+    try {
+      const { error } = await apiClient.POST("/api/v1/auth/verify/request", {
+        body: { email },
+      });
+      if (error) {
+        toast.error("Failed to send verification email");
+      } else {
+        setSent(true);
+        toast.success("Verification email sent!");
+      }
+    } catch {
+      toast.error("Failed to send verification email");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold leading-8 text-dark m-0">
+          Email Verification Required
+        </h1>
+        <p className="text-sm leading-5 text-muted m-0">
+          Please verify your email address before logging in. We sent a verification link to <strong>{email}</strong>.
+        </p>
+      </div>
+      <div className="bg-[#FFF3CD] border border-[#FFE69C] rounded-lg p-4">
+        <p className="text-sm text-[#664D03] m-0">
+          Check your inbox and spam folder for the verification email. Click the link in the email to verify your account.
+        </p>
+      </div>
+      <div className="flex flex-col gap-3">
+        {sent ? (
+          <p className="text-sm text-success text-center">
+            Verification email sent! Check your inbox.
+          </p>
+        ) : (
+          <Button
+            type="button"
+            fullWidth
+            size="md"
+            onClick={handleResend}
+            disabled={isSending}
+          >
+            {isSending ? "Sending..." : "Resend Verification Email"}
+          </Button>
+        )}
+        <Button
+          type="button"
+          variant="secondary"
+          fullWidth
+          size="md"
+          onClick={onBack}
+        >
+          Back to Login
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function TwoFactorForm({
+  onSubmit,
+  onBack,
+  isSubmitting,
+}: {
+  onSubmit: (code: string) => Promise<void>;
+  onBack: () => void;
+  isSubmitting: boolean;
+}) {
+  const [code, setCode] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (code.length !== 6) {
+      toast.error("Please enter a 6-digit code");
+      return;
+    }
+    await onSubmit(code);
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold leading-8 text-dark m-0">
+          Two-Factor Authentication
+        </h1>
+        <p className="text-sm leading-5 text-muted m-0">
+          Enter the 6-digit code from your authenticator app to continue.
+        </p>
+      </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-dark">
+          Verification Code
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={6}
+            placeholder="Enter 6-digit code"
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+            className="h-12 rounded-[10px] bg-surface px-4 text-center text-xl font-bold tracking-widest text-dark placeholder:text-muted outline-none border border-transparent"
+            autoFocus
+          />
+        </label>
+        <div className="flex flex-col gap-3">
+          <Button type="submit" fullWidth size="md" disabled={isSubmitting || code.length !== 6}>
+            {isSubmitting ? "Verifying..." : "Verify"}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            fullWidth
+            size="md"
+            onClick={onBack}
+            disabled={isSubmitting}
+          >
+            Back to Login
+          </Button>
+        </div>
+      </form>
+      <p className="text-center text-sm text-muted">
+        Lost access to your authenticator?{" "}
+        <Link href="/forgot-password" className="text-primary font-semibold">
+          Use a backup code
+        </Link>
+      </p>
+    </div>
+  );
+}
 
 const carouselImages = [
   "/figma/images/blog-1.png",
@@ -40,6 +189,11 @@ function buildSlides(source: typeof reviewPool) {
 }
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login, loginWith2FA, isAuthenticated, pendingTwoFactor } = useAuth();
+  const [show2FA, setShow2FA] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
   const defaultSlides = useMemo(() => buildSlides(reviewPool), []);
   const [slides, setSlides] = useState(defaultSlides);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -49,7 +203,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
   useEffect(() => {
     const shuffled = [...reviewPool].sort(() => Math.random() - 0.5);
     setSlides(buildSlides(shuffled));
@@ -79,6 +241,38 @@ export default function LoginPage() {
     <main className="bg-[#F5F6F8] min-h-screen">
       <section className="page-wrap py-[clamp(24px,5vw,64px)] flex items-stretch gap-[clamp(20px,4vw,32px)] max-lg:flex-col">
         <div className="w-full max-w-[clamp(320px,45vw,560px)] bg-white rounded-[16px] p-[clamp(20px,4vw,40px)] shadow-[0px_8px_24px_0px_rgba(15,15,15,0.06)] self-stretch">
+          {showEmailVerification ? (
+            <EmailVerificationRequired
+              email={pendingEmail}
+              onBack={() => {
+                setShowEmailVerification(false);
+                setPassword("");
+              }}
+            />
+          ) : show2FA ? (
+            <TwoFactorForm
+              onSubmit={async (code) => {
+                setIsSubmitting(true);
+                try {
+                  await loginWith2FA(code);
+                  toast.success("Login successful!");
+                  router.push("/dashboard");
+                } catch (error) {
+                  const message =
+                    error instanceof Error ? error.message : "Invalid 2FA code";
+                  toast.error(message);
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+              onBack={() => {
+                setShow2FA(false);
+                setPassword("");
+              }}
+              isSubmitting={isSubmitting}
+            />
+          ) : (
+          <>
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold leading-8 text-dark m-0">
               Login
@@ -90,12 +284,38 @@ export default function LoginPage() {
           <form
             className="mt-8 flex flex-col gap-6"
             noValidate
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault();
               setEmailTouched(true);
               if (!isEmailValid) {
                 toast.error("Please enter a valid email.");
                 return;
+              }
+              if (!password) {
+                toast.error("Please enter your password.");
+                return;
+              }
+
+              setIsSubmitting(true);
+              try {
+                const result = await login(email, password);
+                if (result.requiresEmailVerification) {
+                  setPendingEmail(result.email || email);
+                  setShowEmailVerification(true);
+                  toast.error("Please verify your email before logging in");
+                } else if (result.requires2FA) {
+                  setShow2FA(true);
+                  toast("Please enter your 2FA code", { icon: "🔐" });
+                } else if (result.success) {
+                  toast.success("Login successful!");
+                  router.push("/dashboard");
+                }
+              } catch (error) {
+                const message =
+                  error instanceof Error ? error.message : "Login failed";
+                toast.error(message);
+              } finally {
+                setIsSubmitting(false);
               }
             }}
           >
@@ -169,8 +389,8 @@ export default function LoginPage() {
                 Forgot password / Resend activation email?
               </Link>
             </div>
-            <Button type="submit" fullWidth size="md">
-              Login
+            <Button type="submit" fullWidth size="md" disabled={isSubmitting}>
+              {isSubmitting ? "Logging in..." : "Login"}
             </Button>
           </form>
           <p className="mt-6 text-center text-sm text-muted">
@@ -179,6 +399,8 @@ export default function LoginPage() {
               Register
             </Link>
           </p>
+          </>
+          )}
         </div>
         <div className="w-full max-w-[clamp(320px,55vw,640px)] relative rounded-[16px] overflow-hidden self-stretch flex flex-col">
           <div className="relative flex-1 w-full overflow-hidden">

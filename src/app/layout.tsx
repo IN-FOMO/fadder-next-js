@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { FooterSection } from "./_components/FooterSection";
 import { Header } from "./_components/Header";
 import { ToasterProvider } from "./_components/ToasterProvider";
@@ -60,10 +61,12 @@ export default function RootLayout({
           // biome-ignore lint/security/noDangerouslySetInnerHtml: schema.org markup
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
-        <ToasterProvider />
-        <Header />
-        {children}
-        <FooterSection />
+        <AuthProvider>
+          <ToasterProvider />
+          <Header />
+          {children}
+          <FooterSection />
+        </AuthProvider>
       </body>
     </html>
   );

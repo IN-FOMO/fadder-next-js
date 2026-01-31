@@ -17,6 +17,10 @@ export type VehicleCardData = {
   timer: string;
   auction: "IAAI" | "Copart";
   bid: string;
+  /** Provider for lot detail page routing */
+  provider?: "COPART" | "IAAI";
+  /** External lot ID for lot detail page routing */
+  externalLotId?: string;
 };
 
 type VehicleCardProps = {
@@ -68,9 +72,13 @@ export function VehicleCard({ card, className, imageBadge: _imageBadge }: Vehicl
     }
     setIsFavorite((prev) => !prev);
   };
+  const lotUrl = card.provider && card.externalLotId
+    ? `/lot/${card.provider.toLowerCase()}/${card.externalLotId}`
+    : "/vehicle";
+
   return (
     <Link
-      href="/vehicle"
+      href={lotUrl}
       className="block no-underline text-inherit cursor-pointer"
     >
       <article

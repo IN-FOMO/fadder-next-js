@@ -1,217 +1,254 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useNotifications } from "@/hooks/useNotifications";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DashboardSidebar } from "../../_components/DashboardSidebar";
 import { Pagination } from "../../_components/Pagination";
+import { Button } from "../../_components/Button";
 
-type FavoriteSpecRow = {
-  label: string;
-  value: string;
-};
-
-type FavoriteCar = {
-  title: string;
-  auction: "Copart" | "IAAI";
-  image: string;
-  specsLeft: FavoriteSpecRow[];
-  specsRight: FavoriteSpecRow[];
-  timeRemaining: string;
-  currentBid: string;
-};
-
-const cars: FavoriteCar[] = Array.from({ length: 6 }).map(() => ({
-  title: "1981 Chevrolet Corvette",
-  auction: "Copart",
-  image: "/figma/images/favorites-vehicle-1.png",
-  specsLeft: [
-    { label: "Odometer", value: "25 145 mi (40 467 km)" },
-    { label: "Engine", value: "5.7L, V8" },
-    { label: "Transmission", value: "Automatic" },
-  ],
-  specsRight: [
-    { label: "Fuel Type", value: "Gasoline" },
-    { label: "Drive Type", value: "Rear wheel drive" },
-  ],
-  timeRemaining: "1 d 21 h 23 min 00 sec",
-  currentBid: "$725",
-}));
-
-function Toggle({ state }: { state: "active" | "disabled" }) {
+function Toggle({
+  state,
+  onClick,
+  disabled,
+}: {
+  state: "active" | "disabled";
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
   const isActive = state === "active";
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
       className={
-        "w-[clamp(28px,4vw,36px)] h-[clamp(16px,3vw,20px)] rounded-[17.7778px] border-[1.111111px] box-border flex items-center " +
+        "w-[clamp(28px,4vw,36px)] h-[clamp(16px,3vw,20px)] rounded-[17.7778px] border-[1.111111px] box-border flex items-center cursor-pointer transition-all " +
         (isActive
           ? "bg-[#FFAF0E] border-[#FFAF0E] pl-[clamp(10px,2.2vw,15.6px)]"
-          : "bg-[#7B7B7B] border-[#7B7B7B] pl-[clamp(2px,0.5vw,4px)]")
+          : "bg-[#7B7B7B] border-[#7B7B7B] pl-[clamp(2px,0.5vw,4px)]") +
+        (disabled ? " opacity-50 cursor-not-allowed" : "")
       }
-      aria-hidden="true"
     >
       <div className="w-[clamp(12px,2.2vw,18px)] h-[clamp(12px,2.2vw,18px)] rounded-[17.7778px] bg-white" />
-    </div>
+    </button>
   );
 }
 
-function SpecRow({
-  label,
-  value,
-  withDivider,
-}: FavoriteSpecRow & { withDivider: boolean }) {
+function NotificationCard({
+  notification,
+  onMarkRead,
+}: {
+  notification: {
+    id: string;
+    title: string;
+    message: string;
+    type: string;
+    isRead: boolean;
+    createdAt: string;
+  };
+  onMarkRead: () => void;
+}) {
   return (
     <div
-      className={`flex items-center justify-between px-[16px] py-[8px]${
-        withDivider ? " border-b border-[#F5F6F8]" : ""
+      className={`w-full bg-white rounded-[16px] p-4 flex items-start justify-between gap-4 ${
+        !notification.isRead ? "border-l-4 border-primary" : ""
       }`}
     >
-      <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
-        {label}
-      </span>
-      <span className="text-[14px] leading-[16px] font-bold text-[#0F0F0F]">
-        {value}
-      </span>
+      <div className="flex flex-col gap-2 flex-1">
+        <div className="flex items-center gap-2">
+          <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
+            {notification.title}
+          </span>
+          <span className="text-[12px] leading-[14px] px-2 py-1 rounded bg-surface text-muted">
+            {notification.type}
+          </span>
+        </div>
+        <span className="text-[14px] leading-[16px] font-normal text-[#7B7B7B]">
+          {notification.message}
+        </span>
+        <span className="text-[12px] leading-[14px] text-muted">
+          {new Date(notification.createdAt).toLocaleString()}
+        </span>
+      </div>
+      {!notification.isRead && (
+        <Button variant="secondary" size="sm" onClick={onMarkRead}>
+          Mark as read
+        </Button>
+      )}
     </div>
   );
 }
 
-function FavoriteCard({ car }: { car: FavoriteCar }) {
-  return (
-    <div className="flex w-full min-h-[clamp(180px,20vw,236px)]">
-      <div className="relative w-[clamp(160px,30vw,340px)] h-[clamp(140px,24vw,236px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
-        <Image
-          src={car.image}
-          alt=""
-          fill
-          sizes="(max-width: 1024px) 220px, 340px"
-          className="object-cover"
-        />
-      </div>
-      <div className="flex-1 bg-white rounded-r-[16px] p-4 flex flex-col items-end gap-[13px] min-w-0">
-        <div className="flex items-center justify-between self-stretch">
-          <span className="text-[20px] leading-[24px] font-bold text-[#0F0F0F] truncate">
-            {car.title}
-          </span>
-          <span className="inline-flex items-center justify-center rounded-[8px] px-[8px] py-[4px] bg-[#0E5DB8] text-white text-[12px] leading-[14px] font-normal">
-            {car.auction}
-          </span>
-        </div>
+function NotificationsContent() {
+  const {
+    notifications,
+    preferences,
+    isLoading,
+    markAsRead,
+    markAllAsRead,
+    updatePreferences,
+  } = useNotifications();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const itemsPerPage = 10;
 
-        <div className="flex flex-col tablet:flex-row items-stretch gap-4 self-stretch min-w-0">
-          <div className="flex-1 flex flex-col gap-[3px]">
-            {car.specsLeft.map((row, idx) => (
-              <SpecRow
-                key={row.label}
-                label={row.label}
-                value={row.value}
-                withDivider={idx !== car.specsLeft.length - 1}
-              />
-            ))}
-          </div>
-          <div className="flex-1 flex flex-col gap-[3px]">
-            {car.specsRight.map((row, idx) => (
-              <SpecRow
-                key={row.label}
-                label={row.label}
-                value={row.value}
-                withDivider={idx !== car.specsRight.length - 1}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between self-stretch gap-3">
-          <span className="text-[16px] leading-[20px] font-normal text-[#00B333]">
-            {car.timeRemaining}
-          </span>
-          <div className="flex items-center gap-[8px]">
-            <div className="w-[clamp(44px,5vw,52px)] h-[clamp(44px,5vw,52px)] rounded-[14px] bg-[#F5F6F8] flex items-center justify-center">
-              <Image
-                src="/figma/icons/icon-search.svg"
-                alt=""
-                width={20}
-                height={20}
-              />
-            </div>
-            <div className="min-h-[clamp(44px,5vw,52px)] rounded-[14px] bg-[#F5F6F8] px-[clamp(16px,3vw,32px)] flex items-center justify-center gap-[10px]">
-              <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
-                Current Bid
-              </span>
-              <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
-                {car.currentBid}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  const totalPages = Math.ceil(notifications.length / itemsPerPage);
+  const paginatedNotifications = notifications.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
-}
 
-export default function DashboardNotificationsPage() {
+  const handleMarkAllRead = async () => {
+    try {
+      await markAllAsRead();
+      toast.success("All notifications marked as read");
+    } catch {
+      toast.error("Failed to mark notifications as read");
+    }
+  };
+
+  const handleTogglePreference = async (key: string, currentValue: boolean) => {
+    setIsUpdating(true);
+    try {
+      await updatePreferences({ [key]: !currentValue });
+      toast.success("Preferences updated");
+    } catch {
+      toast.error("Failed to update preferences");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const pageNumbers: (number | string)[] = [];
+  for (let i = 1; i <= Math.min(5, totalPages); i++) {
+    pageNumbers.push(i);
+  }
+  if (totalPages > 5) {
+    pageNumbers.push("...", totalPages);
+  }
+
+  const channelPrefs = [
+    { label: "E-mail", key: "emailSystem", value: preferences?.system?.email ?? false },
+    { label: "Push", key: "pushSystem", value: preferences?.system?.push ?? false },
+  ];
+
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
       <div className="page-wrap pt-4 pb-10 flex flex-col gap-4">
         <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
-          <div className="w-full flex-1 min-w-0 flex flex-col gap-16">
-            {/* Frame 432 (layout_MD08I0): Manage filter subscriptions */}
-            <div className="w-full flex flex-col tablet:flex-row items-start tablet:items-end justify-between gap-6 tablet:gap-[clamp(24px,8vw,378px)]">
+          <div className="w-full flex-1 min-w-0 flex flex-col gap-8">
+            {/* Header with Mark All Read */}
+            <div className="flex items-center justify-between">
+              <h1 className="text-[20px] leading-[24px] font-bold text-[#0A0A0A]">
+                Notifications
+              </h1>
+              {notifications.some((n) => !n.isRead) && (
+                <Button variant="secondary" size="sm" onClick={handleMarkAllRead}>
+                  Mark all as read
+                </Button>
+              )}
+            </div>
+
+            {/* Notification Preferences */}
+            <div className="w-full flex flex-col tablet:flex-row items-start tablet:items-end justify-between gap-6">
               <div className="w-full max-w-[clamp(260px,40vw,415px)] flex flex-col gap-2">
-                <span className="text-[20px] leading-[24px] font-bold text-[#0A0A0A]">
-                  Manage filter subscriptions
+                <span className="text-[16px] leading-[20px] font-bold text-[#0A0A0A]">
+                  Notification channels
                 </span>
                 <span className="text-[14px] leading-[16px] font-normal text-[#717182]">
-                  Receive notifications about new cars that match your search
-                  criteria
+                  Choose how you want to receive notifications
                 </span>
               </div>
 
               <div className="flex flex-wrap items-center gap-8">
-                {[
-                  { label: "E-mail", state: "active" as const },
-                  { label: "Telegram", state: "active" as const },
-                  { label: "WhatsApp", state: "active" as const },
-                  { label: "Viber", state: "active" as const },
-                  { label: "SMS", state: "disabled" as const },
-                ].map((c) => (
+                {channelPrefs.map((c) => (
                   <div key={c.label} className="flex items-center gap-3">
                     <span className="text-[16px] leading-[20px] font-bold text-[#0C0C0C]">
                       {c.label}
                     </span>
-                    <Toggle state={c.state} />
+                    <Toggle
+                      state={c.value ? "active" : "disabled"}
+                      onClick={() => handleTogglePreference(c.key, c.value)}
+                      disabled={isUpdating}
+                    />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Car List Container (layout_4YOMXP + layout_8SWV5N) */}
+            {/* Notifications List */}
             <section className="w-full flex flex-col gap-4">
-              <div className="flex flex-col gap-4">
-                {cars.map((car, idx) => (
-                  <FavoriteCard key={`${car.title}-${idx}`} car={car} />
-                ))}
-              </div>
-              <Pagination pages={[1, 2, 3, 4, 5, "...", 24]} current={2} />
+              {isLoading ? (
+                <div className="flex flex-col gap-4">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="h-[100px] bg-white rounded-[16px] animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : paginatedNotifications.length === 0 ? (
+                <div className="bg-white rounded-[16px] p-8 text-center">
+                  <p className="text-muted">No notifications</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4">
+                  {paginatedNotifications.map((notification) => (
+                    <NotificationCard
+                      key={notification.id}
+                      notification={notification}
+                      onMarkRead={() => markAsRead(notification.id)}
+                    />
+                  ))}
+                </div>
+              )}
+              {totalPages > 1 && (
+                <Pagination
+                  pages={pageNumbers}
+                  current={currentPage}
+                  onPageChange={setCurrentPage}
+                />
+              )}
             </section>
 
-            {/* Notification Settings (layout_IEGAE9): centered 700px inside 1144 */}
+            {/* Notification Settings */}
             <section className="w-full max-w-[clamp(320px,60vw,700px)] mx-auto flex flex-col gap-4">
+              <h2 className="text-[16px] leading-[20px] font-bold text-[#0A0A0A]">
+                Notification types
+              </h2>
               {[
                 {
-                  title: "Marketing notifications",
-                  description:
-                    "Get information about special auctions, promotions, and exclusive offers",
-                  enabled: true,
+                  title: "Bid updates",
+                  description: "Get notified when there are updates on your bids",
+                  key: "emailBidUpdate",
+                  value: preferences?.bidUpdate?.email ?? true,
                 },
                 {
-                  title: "News and updates",
-                  description:
-                    "Learn about new auction platforms, changes in bidding rules, and platform updates",
-                  enabled: true,
+                  title: "Outbid alerts",
+                  description: "Get notified when you are outbid on an auction",
+                  key: "emailOutbid",
+                  value: preferences?.outbid?.email ?? true,
+                },
+                {
+                  title: "Auction ending",
+                  description: "Get notified when auctions you're watching are ending soon",
+                  key: "emailAuctionEnding",
+                  value: preferences?.auctionEnding?.email ?? true,
+                },
+                {
+                  title: "Watchlist updates",
+                  description: "Get notified about changes to vehicles in your watchlist",
+                  key: "emailWatchlist",
+                  value: preferences?.watchlist?.email ?? true,
                 },
               ].map((row) => (
                 <div
                   key={row.title}
-                  className="w-full bg-white rounded-[16px] p-4 flex items-center justify-between gap-[95px]"
+                  className="w-full bg-white rounded-[16px] p-4 flex items-center justify-between gap-4"
                 >
                   <div className="flex flex-col gap-2">
                     <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
@@ -221,7 +258,11 @@ export default function DashboardNotificationsPage() {
                       {row.description}
                     </span>
                   </div>
-                  <Toggle state={row.enabled ? "active" : "disabled"} />
+                  <Toggle
+                    state={row.value ? "active" : "disabled"}
+                    onClick={() => handleTogglePreference(row.key, row.value)}
+                    disabled={isUpdating}
+                  />
                 </div>
               ))}
             </section>
@@ -229,5 +270,13 @@ export default function DashboardNotificationsPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function DashboardNotificationsPage() {
+  return (
+    <ProtectedRoute>
+      <NotificationsContent />
+    </ProtectedRoute>
   );
 }

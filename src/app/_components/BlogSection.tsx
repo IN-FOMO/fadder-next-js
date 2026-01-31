@@ -1,15 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export type BlogCard = {
-  title: string;
-  date: string;
-  description: string;
-  image: string;
-};
-
 type BlogSectionProps = {
-  cards?: BlogCard[];
   lang?: "en" | "ru" | "pl";
 };
 
@@ -56,23 +48,21 @@ async function getLatestNews(lang: string): Promise<NewsPost[]> {
   return data.posts ?? [];
 }
 
-export async function BlogSection({ cards, lang }: BlogSectionProps) {
+export async function BlogSection({ lang }: BlogSectionProps) {
   const resolvedLang = normalizeLang(lang);
   const apiPosts = await getLatestNews(resolvedLang);
-  const items =
-    apiPosts.length > 0
-      ? apiPosts.slice(0, 3).map((post) => ({
-          title: post.title,
-          description: post.news_lead,
-          image: post.sharing_image,
-          href: `/blog/${getPostSlug(post)}?lang=${resolvedLang}`,
-        }))
-      : (cards ?? []).map((card) => ({
-          title: card.title,
-          description: card.description,
-          image: card.image,
-          href: "/blog",
-        }));
+  
+  if (apiPosts.length === 0) {
+    return null; // No blog posts from API, don't show section
+  }
+  
+  const items = apiPosts.slice(0, 3).map((post) => ({
+    title: post.title,
+    description: post.news_lead,
+    image: post.sharing_image,
+    href: `/blog/${getPostSlug(post)}?lang=${resolvedLang}`,
+  }));
+  
   return (
     <section className="page-wrap flex flex-col gap-4">
       <div className="flex items-end justify-between gap-4">

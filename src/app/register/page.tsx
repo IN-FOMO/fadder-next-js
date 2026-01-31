@@ -2,9 +2,46 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "../_components/Button";
+
+const countryMap: Record<string, { name: string; prefix: string; placeholder: string; minDigits: number; maxDigits: number }> = {
+  pl: { name: "Poland", prefix: "+48", placeholder: "XXX XXX XXX", minDigits: 9, maxDigits: 9 },
+  de: { name: "Germany", prefix: "+49", placeholder: "XXX XXXXXXXX", minDigits: 10, maxDigits: 11 },
+  nl: { name: "Netherlands", prefix: "+31", placeholder: "X XXXXXXXX", minDigits: 9, maxDigits: 9 },
+  ua: { name: "Ukraine", prefix: "+380", placeholder: "XX XXX XXXX", minDigits: 9, maxDigits: 9 },
+};
+
+// Validate phone number format based on country
+function isValidPhoneForCountry(phone: string, countryCode: string): boolean {
+  const country = countryMap[countryCode];
+  if (!country) return false;
+
+  // Extract digits after prefix
+  const digitsOnly = phone.replace(/[\s\-\(\)]/g, "").replace(/^\+\d{1,3}/, "");
+  const digitCount = digitsOnly.length;
+
+  return digitCount >= country.minDigits && digitCount <= country.maxDigits;
+}
+
+// Format phone number with spaces for display
+function formatPhoneInput(value: string, prefix: string): string {
+  // Keep the prefix and format the rest
+  if (!value.startsWith(prefix)) {
+    return prefix + " ";
+  }
+
+  // Get the part after prefix
+  const afterPrefix = value.slice(prefix.length).replace(/[^\d]/g, "");
+
+  // Format with spaces every 3 digits
+  const formatted = afterPrefix.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+
+  return prefix + " " + formatted;
+}
 
 const carouselImages = [
   "/figma/images/blog-1.png",
@@ -40,6 +77,8 @@ function buildSlides(source: typeof reviewPool) {
 }
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { register, isAuthenticated } = useAuth();
   const defaultSlides = useMemo(() => buildSlides(reviewPool), []);
   const [slides, setSlides] = useState(defaultSlides);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -51,11 +90,39 @@ export default function RegisterPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const [country, setCountry] = useState("");
+
+  // Update phone prefix when country changes
+  const handleCountryChange = (newCountry: string) => {
+    setCountry(newCountry);
+    const countryData = countryMap[newCountry];
+    if (countryData) {
+      // If phone is empty or only has old prefix, set new prefix
+      const currentPrefix = country ? countryMap[country]?.prefix : "";
+      if (!phone || phone === currentPrefix + " " || phone.trim() === currentPrefix) {
+        setPhone(countryData.prefix + " ");
+      } else if (currentPrefix && phone.startsWith(currentPrefix)) {
+        // Replace old prefix with new one
+        setPhone(countryData.prefix + phone.slice(currentPrefix.length));
+      }
+    }
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const prefix = country ? countryMap[country]?.prefix || "" : "";
+    if (prefix && !value.startsWith(prefix)) {
+      // Don't allow removing the prefix
+      setPhone(prefix + " ");
+      return;
+    }
+    setPhone(value);
+  };
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [policies, setPolicies] = useState({
     cookies: false,
     terms: false,
@@ -64,7 +131,17 @@ export default function RegisterPage() {
     auction: false,
   });
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isPhoneValid = isValidPhoneForCountry(phone, country);
+  const phoneDigitCount = phone.replace(/[\s\-\(\)]/g, "").replace(/^\+\d{1,3}/, "").length;
+  const expectedDigits = country ? countryMap[country]?.minDigits : 9;
   const hasMinLength = password.length >= 8;
   const hasUppercase = /[A-Z]/.test(password);
   const hasLowercase = /[a-z]/.test(password);
@@ -144,23 +221,24 @@ export default function RegisterPage() {
           <form
             className="mt-6 flex flex-col gap-6"
             noValidate
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault();
               if (step === 1) {
                 setEmailTouched(true);
-              if (!isEmailValid) {
+                setPhoneTouched(true);
+                if (!isEmailValid) {
                   toast.error("Please enter a valid email address.");
                   return;
                 }
-              if (
-                !firstName.trim() ||
-                !lastName.trim() ||
-                !phone.trim() ||
-                !country
-              ) {
-                toast.error("Please fill in all required fields.");
-                return;
-              }
+                if (!firstName.trim() || !lastName.trim() || !country) {
+                  toast.error("Please fill in all required fields.");
+                  return;
+                }
+                if (!isPhoneValid) {
+                  const expected = countryMap[country]?.minDigits || 9;
+                  toast.error(`Please enter a valid phone number (${expected} digits required for ${countryMap[country]?.name}).`);
+                  return;
+                }
                 setStep(2);
                 return;
               }
@@ -177,6 +255,27 @@ export default function RegisterPage() {
               }
               if (!allPoliciesAccepted) {
                 toast.error("Please accept all required policies to continue.");
+                return;
+              }
+
+              setIsSubmitting(true);
+              try {
+                await register({
+                  email,
+                  firstName,
+                  lastName,
+                  phoneNumber: phone.replace(/\s/g, ""), // Remove spaces for API
+                  country: countryMap[country]?.name || country,
+                  password,
+                });
+                toast.success("Account created successfully!");
+                router.push("/dashboard");
+              } catch (error) {
+                const message =
+                  error instanceof Error ? error.message : "Registration failed";
+                toast.error(message);
+              } finally {
+                setIsSubmitting(false);
               }
             }}
           >
@@ -226,29 +325,42 @@ export default function RegisterPage() {
                     Phone*
                     <input
                       type="tel"
-                      placeholder="Enter your Phone Number"
+                      placeholder={country ? countryMap[country]?.prefix + " " + countryMap[country]?.placeholder : "Select country first"}
                       value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
+                      onChange={(event) => handlePhoneChange(event.target.value)}
+                      onBlur={() => setPhoneTouched(true)}
                       required
-                      className="h-12 rounded-[10px] bg-surface px-4 text-sm text-dark placeholder:text-muted outline-none border border-transparent"
+                      disabled={!country}
+                      className={`h-12 rounded-[10px] bg-surface px-4 text-sm text-dark placeholder:text-muted outline-none ${
+                        phoneTouched && !isPhoneValid
+                          ? "border border-[#D91E1D]"
+                          : "border border-transparent"
+                      } ${!country ? "opacity-50 cursor-not-allowed" : ""}`}
                     />
+                    {phoneTouched && !isPhoneValid && phone.length > 0 && (
+                      <span className="text-xs text-[#D91E1D]">
+                        {phoneDigitCount < expectedDigits
+                          ? `Enter ${expectedDigits} digits (${phoneDigitCount}/${expectedDigits})`
+                          : `Maximum ${countryMap[country]?.maxDigits} digits allowed`}
+                      </span>
+                    )}
                   </label>
                   <label className="flex flex-col gap-2 text-sm font-semibold text-dark">
                     Country*
                     <div className="relative">
                       <select
                         value={country}
-                        onChange={(event) => setCountry(event.target.value)}
+                        onChange={(event) => handleCountryChange(event.target.value)}
                         required
                         className="h-12 w-full appearance-none rounded-[10px] bg-surface px-4 pr-10 text-sm text-dark outline-none border border-transparent"
                       >
                         <option value="" disabled>
                           Select your country
                         </option>
-                        <option value="pl">Poland</option>
-                        <option value="de">Germany</option>
-                        <option value="nl">Netherlands</option>
-                        <option value="ua">Ukraine</option>
+                        <option value="pl">Poland (+48)</option>
+                        <option value="de">Germany (+49)</option>
+                        <option value="nl">Netherlands (+31)</option>
+                        <option value="ua">Ukraine (+380)</option>
                       </select>
                       <svg
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-muted"
@@ -436,8 +548,8 @@ export default function RegisterPage() {
                     </span>
                   </label>
                 </div>
-                <Button type="submit" fullWidth size="md">
-                  Create account
+                <Button type="submit" fullWidth size="md" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating account..." : "Create account"}
                 </Button>
               </>
             )}
