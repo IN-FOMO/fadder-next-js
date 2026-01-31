@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { Button } from "../_components/Button";
 import { Pagination } from "../_components/Pagination";
@@ -271,7 +271,7 @@ const defaultCollapsedState = Object.fromEntries(
   ]),
 ) as Record<string, boolean>;
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get("q") ?? "";
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
@@ -1204,5 +1204,13 @@ export default function SearchPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="px-20 py-6 text-muted">Loading...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 }
