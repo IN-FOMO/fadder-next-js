@@ -274,7 +274,7 @@ export default function VehiclePage() {
 
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-12 text-foreground">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(24px,5vw,48px)] text-foreground">
       <Breadcrumbs
         items={[
           { label: "Home page", href: "/" },
@@ -284,8 +284,8 @@ export default function VehiclePage() {
         ]}
       />
 
-      <div className="flex items-end gap-4 flex-nowrap">
-        <h1 className="m-0 text-[32px] leading-9 font-bold text-foreground w-[354px] whitespace-nowrap">
+      <div className="flex items-end gap-4 flex-wrap">
+        <h1 className="m-0 text-[32px] leading-9 font-bold text-foreground w-full max-w-[clamp(260px,40vw,520px)]">
           1982 Chevrolet Corvette
         </h1>
         <span className="self-end bg-copart text-white rounded-lg py-1 px-2 text-xs leading-[14px] font-normal">
@@ -294,20 +294,22 @@ export default function VehiclePage() {
       </div>
 
       <div className="flex flex-col gap-6">
-        <section className="flex gap-4 items-start">
-          <div className="w-[700px] flex-[0_0_700px] flex flex-col gap-4">
-            <div className="relative w-full h-[460px] rounded-lg overflow-visible">
+        <section className="flex flex-col lg:flex-row gap-4 items-start">
+          <div className="w-full lg:w-[clamp(320px,45vw,700px)] flex flex-col gap-4">
+            <div className="relative w-full h-[clamp(240px,32vw,460px)] rounded-lg overflow-hidden">
               <Image
                 src={galleryImages[activeImage]}
                 alt=""
                 width={700}
                 height={460}
-                className="w-full h-[460px] object-fill rounded-lg"
+                className="w-full h-full object-cover rounded-lg"
               />
               <button
                 type="button"
-                className={`absolute top-[204px] left-[-224px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 ${
-                  activeImage === 0 ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
+                className={`absolute left-2 top-1/2 -translate-y-1/2 w-[clamp(44px,5vw,52px)] h-[clamp(44px,5vw,52px)] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 ${
+                  activeImage === 0
+                    ? "opacity-40 cursor-not-allowed"
+                    : "cursor-pointer"
                 }`}
                 onClick={() =>
                   setActiveImage((prev) => Math.max(0, prev - 1))
@@ -323,7 +325,7 @@ export default function VehiclePage() {
               </button>
               <button
                 type="button"
-                className={`absolute top-[204px] right-[-4px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 ${
+                className={`absolute right-2 top-1/2 -translate-y-1/2 w-[clamp(44px,5vw,52px)] h-[clamp(44px,5vw,52px)] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 ${
                   activeImage === galleryImages.length - 1
                     ? "opacity-40 cursor-not-allowed"
                     : "cursor-pointer"
@@ -343,7 +345,7 @@ export default function VehiclePage() {
                 />
               </button>
             </div>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] gap-2">
               {galleryImages.map((src, index) => (
                 <Image
                   key={`${src}-${index}`}
@@ -351,7 +353,7 @@ export default function VehiclePage() {
                   alt=""
                   width={140}
                   height={72}
-                  className={`w-full h-[72px] object-fill rounded-lg border-2 cursor-pointer ${
+                  className={`w-full h-[clamp(56px,8vw,72px)] object-cover rounded-lg border-2 cursor-pointer ${
                     index === activeImage
                       ? "border-foreground"
                       : "border-transparent"
@@ -405,7 +407,7 @@ export default function VehiclePage() {
               </div>
               <div className="flex flex-col gap-4">
                 <input
-                  className="h-[52px] border-0 rounded-[14px] bg-surface py-4 px-6 text-base leading-5 text-muted placeholder:text-muted"
+                  className="min-h-[clamp(44px,5vw,52px)] border-0 rounded-[14px] bg-surface py-4 px-6 text-base leading-5 text-muted placeholder:text-muted"
                   placeholder="Email"
                   value={alertEmail}
                   onChange={(event) => setAlertEmail(event.target.value)}
@@ -414,7 +416,7 @@ export default function VehiclePage() {
                   <span className="text-base leading-5 font-normal text-foreground">
                     Select Frequency
                   </span>
-                  <div className="flex items-center gap-8 w-[212px]">
+                  <div className="flex items-center gap-8 w-full max-w-[clamp(160px,24vw,212px)]">
                     <label className="inline-flex items-center gap-2 text-base leading-5 text-foreground cursor-pointer">
                       <input
                         type="radio"
@@ -474,13 +476,13 @@ export default function VehiclePage() {
             </div>
           </div>
 
-          <div className="flex-[0_0_600px] w-[600px] flex flex-col gap-4">
+          <div className="w-full lg:w-[clamp(320px,40vw,600px)] flex flex-col gap-4">
             <div className="bg-white rounded-lg py-4 w-full">
               <div className="flex flex-col">
                 {primarySpecs.map((item) => (
                   <div
                     key={item.label}
-                    className="flex items-center justify-between gap-[172px] py-3 px-4 border-b border-surface last:border-b-0"
+                    className="flex items-center justify-between gap-[clamp(24px,10vw,172px)] py-3 px-4 border-b border-surface last:border-b-0"
                   >
                     <span className="text-base leading-5 font-normal text-muted">
                       {item.label}
@@ -566,11 +568,11 @@ export default function VehiclePage() {
             </div>
           </div>
 
-          <div className="flex-[0_0_428px] w-[428px] flex flex-col gap-4">
+          <div className="w-full lg:w-[clamp(260px,28vw,428px)] flex flex-col gap-4">
             <div className="flex items-center gap-4 w-full">
               <button
                 type="button"
-                className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer transition-colors hover:shadow-hover active:bg-surface"
+                className="w-[clamp(44px,5vw,52px)] h-[clamp(44px,5vw,52px)] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer transition-colors hover:shadow-hover active:bg-surface"
                 onClick={handleShare}
                 aria-label="Share"
               >
@@ -583,7 +585,7 @@ export default function VehiclePage() {
               </button>
               <button
                 type="button"
-                className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer transition-colors hover:shadow-hover active:bg-surface"
+                className="w-[clamp(44px,5vw,52px)] h-[clamp(44px,5vw,52px)] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer transition-colors hover:shadow-hover active:bg-surface"
                 onClick={handleFavorite}
                 aria-label="Add to favorites"
               >
@@ -616,7 +618,7 @@ export default function VehiclePage() {
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
                 <div
                   ref={shareDialogRef}
-                  className="w-full max-w-[560px] rounded-[14px] bg-white p-6 shadow-card-soft"
+                  className="w-full max-w-[clamp(320px,70vw,560px)] rounded-[14px] bg-white p-6 shadow-card-soft"
                 >
                   <div className="flex items-center justify-between">
                     <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
@@ -729,7 +731,7 @@ export default function VehiclePage() {
               <Button
                 variant="secondary"
                 size="md"
-                className="w-[278px] gap-2.5"
+                className="w-full max-w-[clamp(240px,40vw,320px)] gap-2.5"
                 onClick={handleAddToCalendar}
               >
                 <Image
@@ -935,7 +937,7 @@ export default function VehiclePage() {
                   <div
                     className={`overflow-hidden transition-[max-height,opacity] duration-[220ms] ease-[ease] ${
                       openState[item.question]
-                        ? "max-h-[320px] opacity-100"
+                        ? "max-h-[clamp(200px,30vw,320px)] opacity-100"
                         : "max-h-0 opacity-0"
                     }`}
                   >
@@ -963,7 +965,7 @@ export default function VehiclePage() {
               <VehicleCard
                 key={`${card.title}-${index}`}
                 card={card}
-                className="w-[288px] shrink-0 scroll-snap-align-start"
+                className="w-[clamp(220px,18vw,288px)] shrink-0 scroll-snap-align-start"
               />
             ))}
           </div>

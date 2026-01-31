@@ -17,7 +17,7 @@ type PopularMakesSectionProps = {
 
 export function PopularMakesSection({ makes }: PopularMakesSectionProps) {
   return (
-    <section className="flex flex-col gap-4 w-full max-w-[1760px] mx-auto px-20 max-wide:px-[60px] max-tablet:px-4">
+    <section className="page-wrap flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-2xl font-bold leading-7 m-0 text-black">
           Popular makes
@@ -31,19 +31,19 @@ export function PopularMakesSection({ makes }: PopularMakesSectionProps) {
           </div>
         </div>
       </div>
-      <div className="grid place-items-center grid-cols-[repeat(13,minmax(0,1fr))] gap-3 self-stretch max-w-[1704px] mx-auto justify-center place-items-center content-centergrid grid-cols-[repeat(13,minmax(0,1fr))] gap-3 max-w-[1704px] mx-auto justify-items-center items-centergrid grid-cols-[repeat(13,minmax(0,1fr))] gap-3 self-stretch max-w-[1704px] mx-auto justify-items-center items-center">
+      <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-[clamp(8px,1vw,12px)]">
         {makes.map((make) => (
           <Link
             key={make.name}
             href={`/search?make=${makeSlug(make.name)}`}
-            className="bg-white rounded-[16px] w-[120px] h-[120px] p-3 flex flex-col items-center justify-center gap-1 text-center hover:bg-surface hover:shadow-hover transition-shadow no-underline text-inherit"
+            className="bg-white rounded-[16px] w-full aspect-square p-3 flex flex-col items-center justify-center gap-1 text-center hover:bg-surface hover:shadow-hover transition-shadow no-underline text-inherit"
           >
             <Image
               src={make.icon}
               alt=""
               width={44}
               height={44}
-              className="w-[44px] h-[44px] object-contain"
+              className="w-[clamp(32px,3.2vw,44px)] h-[clamp(32px,3.2vw,44px)] object-contain"
             />
             <span className="text-[14px] leading-[16px] font-normal text-dark">
               {make.name}

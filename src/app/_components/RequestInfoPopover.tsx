@@ -27,7 +27,7 @@ export function RequestInfoPopover({
   submitLabel = "Send Request",
   linkValue,
   wrapperClassName = "",
-  popoverClassName = "w-[360px]",
+  popoverClassName = "w-[clamp(280px,30vw,360px)]",
   popoverAlign = "right",
 }: RequestInfoPopoverProps) {
   const [isOpen, setIsOpen] = useState(false);

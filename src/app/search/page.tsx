@@ -274,7 +274,7 @@ const defaultCollapsedState = Object.fromEntries(
 function SearchContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get("q") ?? "";
-  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(true);
   const [searchQuery, setSearchQuery] = useState(queryParam);
   const [quickState, setQuickState] = useState(
     () =>
@@ -324,6 +324,13 @@ function SearchContent() {
   const [damageSearchValue, setDamageSearchValue] = useState("");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [yearRange, setYearRange] = useState({ min: 1900, max: 2025 });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      setFiltersCollapsed(false);
+    }
+  }, []);
 
   useEffect(() => {
     setSearchQuery(queryParam);
@@ -396,13 +403,199 @@ function SearchContent() {
     );
   }, [queryParam]);
 
-  const activeTags = useMemo(
-    () =>
-      damageTypeItems
-        .map((item) => item.label)
-        .filter((tag) => conditionState[tag]),
-    [conditionState],
-  );
+  const activeTags = useMemo(() => {
+    const tags: Array<{
+      id: string;
+      label: string;
+      type:
+        | "quick"
+        | "auction"
+        | "condition"
+        | "lotStatus"
+        | "expanded"
+        | "input"
+        | "price"
+        | "year";
+      value?: string;
+      section?: string;
+    }> = [];
+
+    quickFilters.forEach((item) => {
+      if (quickState[item.label]) {
+        tags.push({
+          id: `quick:${item.label}`,
+          label: item.label,
+          type: "quick",
+          value: item.label,
+        });
+      }
+    });
+
+    if (!auctionState.All) {
+      (["Copart", "IAAI"] as const).forEach((key) => {
+        if (auctionState[key]) {
+          tags.push({
+            id: `auction:${key}`,
+            label: key,
+            type: "auction",
+            value: key,
+          });
+        }
+      });
+    }
+
+    (["Active", "Sold", "Upcoming"] as const).forEach((key) => {
+      if (lotStatusState[key]) {
+        tags.push({
+          id: `status:${key}`,
+          label: key,
+          type: "lotStatus",
+          value: key,
+        });
+      }
+    });
+
+    damageTypeItems.forEach((item) => {
+      if (conditionState[item.label]) {
+        tags.push({
+          id: `condition:${item.label}`,
+          label: item.label,
+          type: "condition",
+          value: item.label,
+        });
+      }
+    });
+
+    expandableFilters.forEach((section) => {
+      const sectionState = expandedState[section.title];
+      if (!sectionState) return;
+      (sectionState.items ?? []).forEach((item) => {
+        if (item.checked) {
+          tags.push({
+            id: `expanded:${section.title}:${item.label}`,
+            label: `${section.title}: ${item.label}`,
+            type: "expanded",
+            value: item.label,
+            section: section.title,
+          });
+        }
+      });
+      if (sectionState.input?.trim()) {
+        tags.push({
+          id: `input:${section.title}`,
+          label: `${section.title}: ${sectionState.input.trim()}`,
+          type: "input",
+          section: section.title,
+        });
+      }
+    });
+
+    if (priceRange.min > 0 || priceRange.max < 100000) {
+      tags.push({
+        id: "price",
+        label: `Price: ${priceRange.min} - ${priceRange.max}`,
+        type: "price",
+      });
+    }
+
+    if (yearRange.min > 1900 || yearRange.max < 2025) {
+      tags.push({
+        id: "year",
+        label: `Year: ${yearRange.min} - ${yearRange.max}`,
+        type: "year",
+      });
+    }
+
+    return tags;
+  }, [
+    auctionState,
+    conditionState,
+    expandedState,
+    lotStatusState,
+    priceRange.max,
+    priceRange.min,
+    quickState,
+    yearRange.max,
+    yearRange.min,
+  ]);
+
+  const handleRemoveTag = (tag: (typeof activeTags)[number]) => {
+    switch (tag.type) {
+      case "quick":
+        if (!tag.value) return;
+        {
+          const value = tag.value;
+          setQuickState((prev) => ({ ...prev, [value]: false }));
+        }
+        return;
+      case "auction":
+        if (!tag.value) return;
+        {
+          const value = tag.value as "Copart" | "IAAI";
+          setAuctionState((prev) => {
+            const next = { ...prev, [value]: false };
+            const hasAny = next.Copart || next.IAAI;
+            return { ...next, All: !hasAny };
+          });
+        }
+        return;
+      case "lotStatus":
+        if (!tag.value) return;
+        {
+          const value = tag.value as "Active" | "Sold" | "Upcoming";
+          setLotStatusState((prev) => ({ ...prev, [value]: false }));
+        }
+        return;
+      case "condition":
+        if (!tag.value) return;
+        {
+          const value = tag.value;
+          setConditionState((prev) => ({ ...prev, [value]: false }));
+        }
+        return;
+      case "expanded": {
+        const section = tag.section;
+        const value = tag.value;
+        if (!section || !value) return;
+        setExpandedState((prev) => {
+          const sectionState = prev[section];
+          if (!sectionState) return prev;
+          return {
+            ...prev,
+            [section]: {
+              ...sectionState,
+              items: sectionState.items.map((item) =>
+                item.label === value ? { ...item, checked: false } : item,
+              ),
+            },
+          };
+        });
+        return;
+      }
+      case "input": {
+        const section = tag.section;
+        if (!section) return;
+        setExpandedState((prev) => {
+          const sectionState = prev[section];
+          if (!sectionState) return prev;
+          return {
+            ...prev,
+            [section]: {
+              ...sectionState,
+              input: "",
+            },
+          };
+        });
+        return;
+      }
+      case "price":
+        setPriceRange({ min: 0, max: 100000 });
+        return;
+      case "year":
+        setYearRange({ min: 1900, max: 2025 });
+        return;
+    }
+  };
 
   const filteredCards = useMemo(() => {
     const normalized = searchQuery.trim().toLowerCase();
@@ -467,7 +660,7 @@ function SearchContent() {
   const yearMaxPct = ((yearRange.max - 1900) / (2025 - 1900)) * 100;
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-4 text-foreground">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-4 text-foreground">
       <Breadcrumbs
         items={[
           { label: "Home page", href: "/" },
@@ -478,22 +671,24 @@ function SearchContent() {
       <h1 className="text-[32px] font-bold leading-9 m-0 text-foreground">
         Repairable, Salvage and Wrecked Car Auctions
       </h1>
-      <div className="flex items-start gap-4">
-        <aside className="w-[424px] flex flex-col gap-2">
+      <div className="flex flex-col lg:flex-row items-start gap-4">
+        <aside className="w-full lg:w-[clamp(260px,30vw,424px)] flex flex-col gap-2">
           <div
             className={`bg-white rounded-2xl p-4 flex flex-col gap-[29px] relative ${
-              filtersCollapsed ? "h-[52px] gap-0 overflow-hidden" : ""
+              filtersCollapsed
+                ? "min-h-[clamp(44px,6vw,52px)] gap-0 overflow-hidden"
+                : ""
             }`}
           >
             <div
-              className={`flex items-center justify-between w-[245px] ${
-                filtersCollapsed ? "gap-[182px]" : "gap-[130px]"
+              className={`flex items-center justify-between w-full ${
+                filtersCollapsed ? "gap-[clamp(16px,10vw,182px)]" : "gap-8"
               }`}
             >
               <h2 className="text-xl font-bold m-0">Search filters</h2>
               <button
                 type="button"
-                className="border-0 bg-transparent text-sm font-semibold text-foreground cursor-pointer w-14 text-left"
+                className="border-0 bg-transparent text-sm font-semibold text-foreground cursor-pointer text-nowrap p-0"
                 onClick={resetAll}
               >
                 Reset All
@@ -501,7 +696,7 @@ function SearchContent() {
             </div>
             <button
               type="button"
-              className="absolute right-0 top-0 w-[38px] h-[52px] p-0 border-0 bg-transparent inline-flex items-center justify-center cursor-pointer"
+              className="absolute right-0 top-0 w-[clamp(32px,4vw,38px)] h-[clamp(44px,6vw,52px)] p-0 border-0 bg-transparent inline-flex items-center justify-center cursor-pointer"
               aria-label={
                 filtersCollapsed ? "Expand filters" : "Collapse filters"
               }
@@ -538,12 +733,12 @@ function SearchContent() {
                         }`}
                       >
                         {item.label === "Vehicles Only" ? (
-                          <Image
+                        <Image
                             src="/figma/images/filter-vehicles-only-235a92.png"
                             alt=""
                             width={74}
                             height={20}
-                            className="w-[74px] h-5 object-cover"
+                          className="w-[clamp(52px,8vw,74px)] h-[clamp(16px,3vw,20px)] object-cover"
                           />
                         ) : null}
                         <span>{item.label}</span>
@@ -702,7 +897,7 @@ function SearchContent() {
                   <span className="text-sm text-muted">min</span>
                   <input
                     type="number"
-                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[clamp(80px,12vw,120px)] outline-none text-center text-xl font-bold text-muted"
                     value={priceRange.min}
                     min={0}
                     max={priceRange.max}
@@ -717,7 +912,7 @@ function SearchContent() {
                   <span className="text-sm text-muted">max</span>
                   <input
                     type="number"
-                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[clamp(80px,12vw,120px)] outline-none text-center text-xl font-bold text-muted"
                     value={priceRange.max}
                     min={priceRange.min}
                     max={100000}
@@ -785,7 +980,7 @@ function SearchContent() {
                   <span className="text-sm text-muted">from</span>
                   <input
                     type="number"
-                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[clamp(80px,12vw,120px)] outline-none text-center text-xl font-bold text-muted"
                     value={yearRange.min}
                     min={1900}
                     max={yearRange.max}
@@ -800,7 +995,7 @@ function SearchContent() {
                   <span className="text-sm text-muted">to</span>
                   <input
                     type="number"
-                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[120px] outline-none text-center text-xl font-bold text-muted"
+                    className="bg-white rounded-[14px] py-2 px-3 shadow-card-soft border-0 w-full max-w-[clamp(80px,12vw,120px)] outline-none text-center text-xl font-bold text-muted"
                     value={yearRange.max}
                     min={yearRange.min}
                     max={2025}
@@ -864,7 +1059,7 @@ function SearchContent() {
                     height={24}
                   />
                 </div>
-                <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 text-base text-muted min-h-[44px]">
+                <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 text-base text-muted min-h-[clamp(40px,5vw,44px)]">
                   <input
                     placeholder="Search"
                     aria-label="Search damage type"
@@ -937,7 +1132,11 @@ function SearchContent() {
                     key={title}
                     className={`flex flex-col gap-3 ${
                       isOpen ? "bg-white rounded-2xl p-4 gap-4 w-full" : ""
-                    } ${isOpen && isScrollable ? "h-[476px] overflow-hidden" : ""}`}
+                    } ${
+                      isOpen && isScrollable
+                        ? "max-h-[clamp(280px,40vw,476px)] overflow-hidden"
+                        : ""
+                    }`}
                   >
                     <button
                       type="button"
@@ -973,7 +1172,7 @@ function SearchContent() {
                       >
                         {title === "Search near ZIP code" ? (
                           <div className="flex items-center gap-1">
-                            <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[44px]">
+                            <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[clamp(40px,5vw,44px)]">
                               <input
                                 placeholder="Zip code"
                                 value={sectionState?.input ?? ""}
@@ -1006,7 +1205,7 @@ function SearchContent() {
                           </Button>
                         ) : null}
                         {section.searchPlaceholder ? (
-                          <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[44px]">
+                          <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[clamp(40px,5vw,44px)]">
                             <input
                               placeholder={section.searchPlaceholder}
                               value={sectionState?.search ?? ""}
@@ -1031,7 +1230,7 @@ function SearchContent() {
                         ) : null}
                         {section.inputPlaceholder &&
                         title !== "Search near ZIP code" ? (
-                          <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[44px]">
+                          <label className="flex items-center gap-2.5 bg-surface rounded-[14px] p-3 min-h-[clamp(40px,5vw,44px)]">
                             <input
                               placeholder={section.inputPlaceholder}
                               value={sectionState?.input ?? ""}
@@ -1120,7 +1319,7 @@ function SearchContent() {
           )}
         </aside>
 
-        <section className="w-[1320px] flex flex-col gap-4">
+        <section className="w-full flex flex-col gap-4">
           <div className="flex items-center justify-between gap-4">
             <div className="bg-white rounded-r-2xl py-4 pl-[30px] pr-3.5 text-base font-bold leading-5">
               Results {filteredCards.length}
@@ -1128,7 +1327,7 @@ function SearchContent() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5 "
+                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-full min-w-[clamp(90px,12vw,130px)] text-base font-bold cursor-pointer leading-5 text-nowrap"
               >
                 <span>20 cards</span>
                 <Image
@@ -1140,7 +1339,7 @@ function SearchContent() {
               </button>
               <button
                 type="button"
-                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5 text-nowrap"
+                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-full min-w-[clamp(90px,12vw,130px)] text-base font-bold cursor-pointer leading-5 text-nowrap"
               >
                 <span>Sort by</span>
                 <Image
@@ -1157,17 +1356,12 @@ function SearchContent() {
           <div className="flex flex-wrap gap-2 py-2.5">
             {activeTags.map((item) => (
               <button
-                key={item}
+                key={item.id}
                 type="button"
                 className="inline-flex items-center gap-2 py-1 px-3 bg-white rounded-2xl text-sm font-bold border-0 cursor-pointer"
-                onClick={() =>
-                  setConditionState((prev) => ({
-                    ...prev,
-                    [item]: !prev[item],
-                  }))
-                }
+                onClick={() => handleRemoveTag(item)}
               >
-                <span>{item}</span>
+                <span>{item.label}</span>
                 <Image
                   src="/figma/icons/icon-cross-small.svg"
                   alt=""
@@ -1178,12 +1372,12 @@ function SearchContent() {
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-4 w-[1320px]">
+          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4">
             {filteredCards.map((card, index) => (
               <VehicleCard
                 key={`${card.title}-${index}`}
                 card={card}
-                className="w-[318px]"
+                className="w-full"
               />
             ))}
           </div>
@@ -1195,7 +1389,7 @@ function SearchContent() {
             />
           </div>
 
-          <p className="text-base text-muted mt-6 w-[986px]">
+          <p className="text-base text-muted mt-6 w-full max-w-[clamp(320px,70vw,986px)]">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -1209,7 +1403,9 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="px-20 py-6 text-muted">Loading...</div>}>
+    <Suspense
+      fallback={<div className="page-wrap py-6 text-muted">Loading...</div>}
+    >
       <SearchContent />
     </Suspense>
   );

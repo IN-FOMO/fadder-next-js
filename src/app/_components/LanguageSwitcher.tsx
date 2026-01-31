@@ -95,7 +95,7 @@ export function LanguageSwitcher({
           />
         </button>
         {isOpen ? (
-          <div className="absolute top-full left-0 mt-2 min-w-[160px] rounded-[8px] bg-white shadow-dropdown p-2 z-30 flex flex-col gap-1">
+          <div className="absolute top-full left-0 mt-2 min-w-[clamp(140px,20vw,180px)] rounded-[8px] bg-white shadow-dropdown p-2 z-30 flex flex-col gap-1">
             {LANG_OPTIONS.map((option) => (
               <Link
                 key={option.value}

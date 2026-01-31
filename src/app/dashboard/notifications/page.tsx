@@ -39,14 +39,14 @@ function Toggle({ state }: { state: "active" | "disabled" }) {
   return (
     <div
       className={
-        "w-[36px] h-[20px] rounded-[17.7778px] border-[1.111111px] box-border flex items-center " +
+        "w-[clamp(28px,4vw,36px)] h-[clamp(16px,3vw,20px)] rounded-[17.7778px] border-[1.111111px] box-border flex items-center " +
         (isActive
-          ? "bg-[#FFAF0E] border-[#FFAF0E] pl-[15.5556px]"
-          : "bg-[#7B7B7B] border-[#7B7B7B] pl-[2px]")
+          ? "bg-[#FFAF0E] border-[#FFAF0E] pl-[clamp(10px,2.2vw,15.6px)]"
+          : "bg-[#7B7B7B] border-[#7B7B7B] pl-[clamp(2px,0.5vw,4px)]")
       }
       aria-hidden="true"
     >
-      <div className="w-[17.78px] h-[17.78px] rounded-[17.7778px] bg-white" />
+      <div className="w-[clamp(12px,2.2vw,18px)] h-[clamp(12px,2.2vw,18px)] rounded-[17.7778px] bg-white" />
     </div>
   );
 }
@@ -74,8 +74,8 @@ function SpecRow({
 
 function FavoriteCard({ car }: { car: FavoriteCar }) {
   return (
-    <div className="flex w-full tablet:w-[1144px] tablet:h-[236px] max-w-[1144px]">
-      <div className="relative w-[140px] sm:w-[220px] tablet:w-[340px] h-[160px] sm:h-[200px] tablet:h-[236px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+    <div className="flex w-full min-h-[clamp(180px,20vw,236px)]">
+      <div className="relative w-[clamp(160px,30vw,340px)] h-[clamp(140px,24vw,236px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
         <Image
           src={car.image}
           alt=""
@@ -122,7 +122,7 @@ function FavoriteCard({ car }: { car: FavoriteCar }) {
             {car.timeRemaining}
           </span>
           <div className="flex items-center gap-[8px]">
-            <div className="w-[52px] h-[52px] rounded-[14px] bg-[#F5F6F8] flex items-center justify-center">
+            <div className="w-[clamp(44px,5vw,52px)] h-[clamp(44px,5vw,52px)] rounded-[14px] bg-[#F5F6F8] flex items-center justify-center">
               <Image
                 src="/figma/icons/icon-search.svg"
                 alt=""
@@ -130,7 +130,7 @@ function FavoriteCard({ car }: { car: FavoriteCar }) {
                 height={20}
               />
             </div>
-            <div className="h-[52px] rounded-[14px] bg-[#F5F6F8] px-[32px] flex items-center justify-center gap-[10px]">
+            <div className="min-h-[clamp(44px,5vw,52px)] rounded-[14px] bg-[#F5F6F8] px-[clamp(16px,3vw,32px)] flex items-center justify-center gap-[10px]">
               <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
                 Current Bid
               </span>
@@ -148,14 +148,14 @@ function FavoriteCard({ car }: { car: FavoriteCar }) {
 export default function DashboardNotificationsPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-4 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10 flex flex-col gap-4">
         <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
-          <div className="w-full tablet:w-[1144px] min-w-0 flex flex-col gap-16">
+          <div className="w-full flex-1 min-w-0 flex flex-col gap-16">
             {/* Frame 432 (layout_MD08I0): Manage filter subscriptions */}
-            <div className="w-full tablet:w-[1144px] flex flex-col tablet:flex-row items-start tablet:items-end justify-between gap-6 tablet:gap-[378px]">
-              <div className="w-full tablet:w-[415px] flex flex-col gap-2">
+            <div className="w-full flex flex-col tablet:flex-row items-start tablet:items-end justify-between gap-6 tablet:gap-[clamp(24px,8vw,378px)]">
+              <div className="w-full max-w-[clamp(260px,40vw,415px)] flex flex-col gap-2">
                 <span className="text-[20px] leading-[24px] font-bold text-[#0A0A0A]">
                   Manage filter subscriptions
                 </span>
@@ -184,7 +184,7 @@ export default function DashboardNotificationsPage() {
             </div>
 
             {/* Car List Container (layout_4YOMXP + layout_8SWV5N) */}
-            <section className="w-full tablet:w-[1144px] flex flex-col gap-4">
+            <section className="w-full flex flex-col gap-4">
               <div className="flex flex-col gap-4">
                 {cars.map((car, idx) => (
                   <FavoriteCard key={`${car.title}-${idx}`} car={car} />
@@ -194,7 +194,7 @@ export default function DashboardNotificationsPage() {
             </section>
 
             {/* Notification Settings (layout_IEGAE9): centered 700px inside 1144 */}
-            <section className="w-full tablet:w-[700px] mx-auto flex flex-col gap-4">
+            <section className="w-full max-w-[clamp(320px,60vw,700px)] mx-auto flex flex-col gap-4">
               {[
                 {
                   title: "Marketing notifications",

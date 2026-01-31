@@ -91,8 +91,8 @@ function SpecRow({
 
 function FavoriteCard({ car }: { car: FavoriteCar }) {
   return (
-    <div className="flex w-[1144px] h-[236px]">
-      <div className="relative w-[340px] h-[236px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+    <div className="flex w-full min-h-[clamp(180px,20vw,236px)]">
+      <div className="relative w-[clamp(180px,30vw,340px)] h-[clamp(180px,20vw,236px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
         <Image
           src={car.image}
           alt=""
@@ -142,7 +142,7 @@ function FavoriteCard({ car }: { car: FavoriteCar }) {
             {car.timeRemaining}
           </span>
           <div className="flex items-center gap-[8px]">
-            <div className="w-[52px] h-[52px] rounded-[14px] bg-[#F5F6F8] flex items-center justify-center">
+            <div className="w-[clamp(44px,5vw,52px)] h-[clamp(44px,5vw,52px)] rounded-[14px] bg-[#F5F6F8] flex items-center justify-center">
               <Image
                 src="/figma/icons/icon-search.svg"
                 alt=""
@@ -150,7 +150,7 @@ function FavoriteCard({ car }: { car: FavoriteCar }) {
                 height={20}
               />
             </div>
-            <div className="h-[52px] rounded-[14px] bg-[#F5F6F8] px-[32px] flex items-center justify-center gap-[10px]">
+            <div className="min-h-[clamp(44px,5vw,52px)] rounded-[14px] bg-[#F5F6F8] px-[clamp(16px,3vw,32px)] flex items-center justify-center gap-[10px]">
               <span className="text-[16px] leading-[20px] font-bold text-[#0F0F0F]">
                 Current Bid
               </span>
@@ -168,11 +168,11 @@ function FavoriteCard({ car }: { car: FavoriteCar }) {
 export default function DashboardFavoritesPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10">
         <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
           {/* Car List Container (Figma: layout_P60PP2) */}
-          <section className="w-full tablet:w-[1144px] flex flex-col gap-4">
+          <section className="w-full flex-1 flex flex-col gap-4">
             {favorites.map((car, idx) => (
               <FavoriteCard key={`${car.title}-${idx}`} car={car} />
             ))}

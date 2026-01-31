@@ -13,7 +13,7 @@ export function VehicleSlider({
   cards,
 }: VehicleSliderProps) {
   return (
-    <section className="flex flex-col gap-4 w-full max-w-[1760px] mx-auto px-20 max-wide:px-[60px] max-tablet:px-4">
+    <section className="page-wrap flex flex-col gap-4">
       <div className="flex items-end justify-between gap-6">
         <h2 className="text-2xl font-bold leading-7 m-0 text-black">{title}</h2>
         <Link
@@ -23,7 +23,7 @@ export function VehicleSlider({
           View all
         </Link>
       </div>
-      <div className="w-[calc(100%+180px)] max-wide:w-[calc(100%+60px)] max-tablet:w-full">
+      <div className="w-full">
         <div className="flex items-center gap-4 overflow-x-auto pb-1 scroll-snap-type-x-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {cards.map((card, index) => (
             <VehicleCard key={`${card.title}-${index}`} card={card} />

@@ -107,12 +107,12 @@ const recentlyViewedCards: VehicleCardData[] = [
 export default function DashboardPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-4 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10 flex flex-col gap-4">
         <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
           {/* Main content (x=236, width 1144) */}
-          <div className="flex-1 min-w-0 flex flex-col gap-4 tablet:w-[1144px]">
+          <div className="flex-1 min-w-0 flex flex-col gap-4">
             {/* Greeting */}
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold m-0 text-dark">
@@ -147,7 +147,7 @@ export default function DashboardPage() {
                   </Button>
                 </div>
               </div>
-              <div className="w-full tablet:w-[384px] bg-white rounded-lg p-4 flex flex-col gap-4">
+              <div className="w-full tablet:w-[clamp(260px,28vw,384px)] bg-white rounded-lg p-4 flex flex-col gap-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-dark">
                     Bid Limits
@@ -189,7 +189,7 @@ export default function DashboardPage() {
                     key={`${bid.lotId}-${i}`}
                     className="flex items-center w-full"
                   >
-                    <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[14px] overflow-hidden bg-surface">
+                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[14px] overflow-hidden bg-surface">
                       <Image
                         src={bid.image}
                         alt=""
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 h-[112px] bg-surface rounded-r-[14px] p-4 flex items-center justify-between gap-6">
+                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-surface rounded-r-[14px] p-4 flex items-center justify-between gap-6">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
                           <span className="text-base font-bold text-dark">
@@ -266,7 +266,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Recently Viewed (full width) */}
-        <section className="w-full max-w-[1320px] mx-auto flex flex-col gap-4">
+        <section className="w-full max-w-[clamp(320px,85vw,1320px)] mx-auto flex flex-col gap-4">
           <div className="flex items-end justify-between gap-6">
             <h2 className="text-2xl font-bold m-0 text-dark">
               Recently Viewed

@@ -10,7 +10,7 @@ export function Pagination({ pages, current }: PaginationProps) {
   let ellipsisIndex = 0;
   return (
     <nav
-      className="flex items-center justify-center gap-4"
+      className="flex flex-wrap items-center justify-center gap-[clamp(8px,1.5vw,16px)]"
       aria-label="Pagination"
     >
       <Button variant="white" size="md" className="gap-2 min-w-0">

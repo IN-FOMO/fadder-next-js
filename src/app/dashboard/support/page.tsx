@@ -48,15 +48,15 @@ export default function DashboardSupportPage() {
 
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-4 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10 flex flex-col gap-4">
         <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
-          <div className="w-full tablet:w-[1144px] min-w-0">
-            <div className="w-full tablet:w-[1144px] flex flex-col items-center gap-4">
+          <div className="w-full flex-1 min-w-0">
+            <div className="w-full flex flex-col items-center gap-4">
               {/* FAQ card (h=548, py=16, title px=16) */}
-              <section className="w-full tablet:h-[548px] bg-white rounded-[16px] py-4 flex flex-col gap-4">
-                <div className="px-4 flex items-center justify-between gap-[213px]">
+              <section className="w-full tablet:min-h-[clamp(360px,55vw,548px)] bg-white rounded-[16px] py-4 flex flex-col gap-4">
+                <div className="px-4 flex items-center justify-between gap-[clamp(24px,12vw,213px)]">
                   <h2 className="m-0 text-[20px] leading-[24px] font-bold text-[#0A0A0A]">
                     Frequently Asked Questions
                   </h2>
@@ -105,7 +105,7 @@ export default function DashboardSupportPage() {
                           className={
                             "overflow-hidden transition-[max-height,opacity] duration-[220ms] ease-[ease] " +
                             (isOpen
-                              ? "max-h-[220px] opacity-100"
+                              ? "max-h-[clamp(160px,25vw,220px)] opacity-100"
                               : "max-h-0 opacity-0")
                           }
                         >
@@ -122,8 +122,8 @@ export default function DashboardSupportPage() {
               </section>
 
               {/* Write to support (564x390) */}
-              <section className="w-full max-w-[564px] tablet:h-[390px] bg-white rounded-[16px] p-4 flex flex-col gap-6">
-                <div className="flex items-center gap-2 h-[16px]">
+              <section className="w-full max-w-[clamp(320px,60vw,564px)] tablet:min-h-[clamp(260px,40vw,390px)] bg-white rounded-[16px] p-4 flex flex-col gap-6">
+                <div className="flex items-center gap-2 min-h-[clamp(14px,2vw,16px)]">
                   <span className="text-[14px] leading-[16px] font-bold text-[#0F0F0F]">
                     Write to support
                   </span>
@@ -135,13 +135,13 @@ export default function DashboardSupportPage() {
                 >
                   <div className="flex gap-4 w-full">
                     <input
-                      className="w-full h-[40px] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
+                      className="w-full min-h-[clamp(36px,4.5vw,40px)] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
                       type="text"
                       name="lastName"
                       placeholder="Last Name"
                     />
                     <input
-                      className="w-full h-[40px] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
+                      className="w-full min-h-[clamp(36px,4.5vw,40px)] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
                       type="text"
                       name="firstName"
                       placeholder="First Name"
@@ -149,20 +149,20 @@ export default function DashboardSupportPage() {
                   </div>
 
                   <input
-                    className="w-full h-[40px] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
+                    className="w-full min-h-[clamp(36px,4.5vw,40px)] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
                     type="email"
                     name="email"
                     placeholder="Email"
                   />
                   <input
-                    className="w-full h-[40px] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
+                    className="w-full min-h-[clamp(36px,4.5vw,40px)] px-6 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B]"
                     type="tel"
                     name="phone"
                     placeholder="Phone Number"
                   />
 
                   <textarea
-                    className="w-full min-h-[120px] px-6 py-4 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B] resize-none"
+                    className="w-full min-h-[clamp(100px,18vw,120px)] px-6 py-4 bg-[#F5F6F8] rounded-[14px] border-0 outline-none text-[12px] leading-[14px] text-[#0F0F0F] placeholder:text-[#7B7B7B] resize-none"
                     name="message"
                     placeholder="Message"
                     rows={4}
@@ -171,13 +171,13 @@ export default function DashboardSupportPage() {
                   <div className="flex gap-4 w-full">
                     <button
                       type="submit"
-                      className="flex-1 h-[40px] rounded-[14px] bg-[#FFAF0E] text-[#0F0F0F] text-[14px] leading-[16px] font-semibold"
+                      className="flex-1 min-h-[clamp(36px,4.5vw,40px)] rounded-[14px] bg-[#FFAF0E] text-[#0F0F0F] text-[14px] leading-[16px] font-semibold"
                     >
                       Send Message
                     </button>
                     <button
                       type="button"
-                      className="flex-1 h-[40px] rounded-[14px] bg-white border-2 border-[#FFAF0E] text-[#0F0F0F] text-[14px] leading-[16px] font-semibold"
+                      className="flex-1 min-h-[clamp(36px,4.5vw,40px)] rounded-[14px] bg-white border-2 border-[#FFAF0E] text-[#0F0F0F] text-[14px] leading-[16px] font-semibold"
                     >
                       Ask to chat
                     </button>

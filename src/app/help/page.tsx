@@ -147,7 +147,7 @@ export default function HelpPage() {
   });
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(16px,3vw,24px)] text-foreground">
       <Breadcrumbs
         items={[{ label: "Home page", href: "/" }, { label: "Help" }]}
       />
@@ -156,7 +156,7 @@ export default function HelpPage() {
         subtitle="Find answers to common questions and get the help you need"
       />
 
-      <section className="w-full max-w-[1760px] mx-auto grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
+      <section className="w-full grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
         {faqSections.map((section) => (
           <div
             key={section.title}
@@ -202,7 +202,7 @@ export default function HelpPage() {
                   <div
                     className={`overflow-hidden transition-[max-height,opacity] duration-[220ms] ease-[ease] ${
                       openState[`${section.title}:${item.question}`]
-                        ? "max-h-[220px] opacity-100"
+                        ? "max-h-[clamp(160px,25vw,220px)] opacity-100"
                         : "max-h-0 opacity-0"
                     }`}
                   >

@@ -59,12 +59,38 @@
   --breakpoint-narrow: 699px;
   --breakpoint-tablet: 1279px;
   --breakpoint-wide: 1679px;
+
+  /* Fluid layout (design width 1920px) */
+  --app-max-width: 1920px;
+  --page-side-pad: clamp(16px, 3vw, 80px);
+  --section-gap: clamp(24px, 4vw, 80px);
 }
 
 body {
   background: var(--color-surface);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+}
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.page-wrap {
+  width: 100%;
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  padding-left: var(--page-side-pad);
+  padding-right: var(--page-side-pad);
 }
 
 input:focus-visible,

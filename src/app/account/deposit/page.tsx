@@ -113,13 +113,13 @@ const paymentMethods = [
 export default function AccountDepositPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-surface">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-6 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10 flex flex-col gap-6">
         <div className="flex gap-4 flex-col tablet:flex-row">
           <DashboardSidebar />
 
           <div className="flex-1 min-w-0 flex flex-col tablet:flex-row gap-4">
             {/* Left column */}
-            <div className="flex flex-col gap-4 w-full tablet:w-[652px]">
+            <div className="flex flex-col gap-4 w-full tablet:w-[clamp(320px,55vw,652px)]">
               <section className="bg-white rounded-lg p-4 flex flex-col gap-6">
                 <div className="flex items-center gap-2">
                   <span className="text-sm leading-4 font-bold text-dark">
@@ -139,7 +139,7 @@ export default function AccountDepositPage() {
                   {depositSummary.map((item) => (
                     <div
                       key={item.title}
-                      className="flex flex-col gap-2 min-w-[91px]"
+                      className="flex flex-col gap-2 min-w-[clamp(80px,12vw,110px)]"
                     >
                       <span className="text-sm leading-4 text-muted">
                         {item.title}
@@ -155,7 +155,7 @@ export default function AccountDepositPage() {
                 </div>
               </section>
 
-              <section className="bg-white rounded-lg p-4 flex flex-col gap-4 min-h-[616px]">
+              <section className="bg-white rounded-lg p-4 flex flex-col gap-4 min-h-[clamp(360px,50vw,616px)]">
                 <div className="flex items-center gap-2">
                   <span className="text-sm leading-4 font-bold text-dark">
                     Transaction History
@@ -195,7 +195,7 @@ export default function AccountDepositPage() {
             </div>
 
             {/* Right column: Top Up Balance */}
-            <section className="w-full tablet:w-[476px] bg-white rounded-lg p-4 flex flex-col gap-6">
+            <section className="w-full tablet:w-[clamp(280px,40vw,476px)] bg-white rounded-lg p-4 flex flex-col gap-6">
               <div className="flex flex-col gap-2">
                 <span className="text-sm leading-4 font-bold text-dark">
                   Top Up Balance

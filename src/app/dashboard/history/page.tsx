@@ -357,13 +357,13 @@ export default async function DashboardHistoryPage({
 
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10">
         <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
-          <div className="flex-1 min-w-0 flex flex-col gap-12 tablet:w-[1144px]">
+          <div className="flex-1 min-w-0 flex flex-col gap-12">
             {/* History tabs (Figma: 2983-61459 Menu History) */}
-            <div className="inline-flex w-[666px] shrink-0 items-center gap-[4px] bg-[#FFFFFF] rounded-[16px] self-start">
+            <div className="inline-flex w-full max-w-[clamp(320px,70vw,666px)] shrink-0 items-center gap-[4px] bg-[#FFFFFF] rounded-[16px] self-start">
               {historyTabs.map((tab) => {
                 const isActive = tab.value === activeTab;
                 return (
@@ -375,7 +375,7 @@ export default async function DashboardHistoryPage({
                         : `/dashboard/history?tab=${tab.value}`
                     }
                     className={
-                      "flex items-center justify-center gap-[14px] w-[130px] px-[24px] py-[8px] rounded-[16px] text-[14px] leading-[16px] font-bold text-[#0F0F0F] border-[1.5px] box-border " +
+                      "flex items-center justify-center gap-[14px] w-full min-w-[clamp(70px,10vw,90px)] px-[24px] py-[8px] rounded-[16px] text-[14px] leading-[16px] font-bold text-[#0F0F0F] border-[1.5px] box-border " +
                       (isActive ? "border-[#FFAF0E]" : "border-transparent")
                     }
                   >
@@ -392,7 +392,7 @@ export default async function DashboardHistoryPage({
                     key={`${bid.lotId}-${index}`}
                     className="flex items-center w-full"
                   >
-                    <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
                       <Image
                         src={bid.image}
                         alt=""
@@ -401,7 +401,7 @@ export default async function DashboardHistoryPage({
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
+                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
                           <span className="text-[20px] leading-[24px] font-bold text-dark">
@@ -422,7 +422,7 @@ export default async function DashboardHistoryPage({
                         </span>
                         <span
                           className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[65px] " +
+                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(52px,8vw,65px)] " +
                             (bid.status === "Leading"
                               ? "bg-success"
                               : "bg-error")
@@ -474,7 +474,7 @@ export default async function DashboardHistoryPage({
                       <Button
                         variant="secondary"
                         size="md"
-                        className="rounded-[14px] w-[101px] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
+                        className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
                       >
                         View
                       </Button>
@@ -491,7 +491,7 @@ export default async function DashboardHistoryPage({
                     key={`${bid.orderId}-${index}`}
                     className="flex items-center w-full"
                   >
-                    <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
                       <Image
                         src={bid.image}
                         alt=""
@@ -500,7 +500,7 @@ export default async function DashboardHistoryPage({
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
+                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
                           <span className="text-[20px] leading-[24px] font-bold text-dark">
@@ -546,7 +546,7 @@ export default async function DashboardHistoryPage({
                       <Button
                         variant="secondary"
                         size="md"
-                        className="rounded-[14px] w-[101px] px-0 py-[14px] text-[14px] leading-[16px] min-h-0 col-start-7"
+                        className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0 col-start-7"
                       >
                         Details
                       </Button>
@@ -563,7 +563,7 @@ export default async function DashboardHistoryPage({
                     key={`${bid.lotId}-${index}`}
                     className="flex items-center w-full"
                   >
-                    <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
                       <Image
                         src={bid.image}
                         alt=""
@@ -572,7 +572,7 @@ export default async function DashboardHistoryPage({
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
+                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
                           <span className="text-[20px] leading-[24px] font-bold text-dark">
@@ -591,7 +591,7 @@ export default async function DashboardHistoryPage({
                         <span className="text-[14px] leading-[16px] text-muted">
                           Status
                         </span>
-                        <span className="inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[65px] bg-error">
+                        <span className="inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(52px,8vw,65px)] bg-error">
                           Lost
                         </span>
                       </div>
@@ -638,7 +638,7 @@ export default async function DashboardHistoryPage({
                       <Button
                         variant="secondary"
                         size="md"
-                        className="rounded-[14px] w-[101px] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
+                        className="rounded-[14px] w-[clamp(80px,12vw,101px)] px-0 py-[14px] text-[14px] leading-[16px] min-h-0"
                       >
                         Find Similar
                       </Button>
@@ -655,7 +655,7 @@ export default async function DashboardHistoryPage({
                     key={`${bid.lotId}-${index}`}
                     className="flex items-center w-full"
                   >
-                    <div className="relative w-[168px] h-[112px] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
+                    <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-l-[16px] overflow-hidden bg-surface">
                       <Image
                         src={bid.image}
                         alt=""
@@ -664,7 +664,7 @@ export default async function DashboardHistoryPage({
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 h-[112px] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[339px_80px_90px_90px_100px_80px_101px]">
+                    <div className="flex-1 min-h-[clamp(90px,12vw,112px)] bg-white rounded-r-[16px] p-4 grid items-center gap-x-4 grid-cols-[minmax(0,1.8fr)_repeat(6,minmax(60px,1fr))]">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-2">
                           <span className="text-[20px] leading-[24px] font-bold text-dark">
@@ -709,7 +709,7 @@ export default async function DashboardHistoryPage({
                         </span>
                         <span
                           className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[85px] " +
+                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(64px,10vw,85px)] " +
                             toneClasses[bid.processing.tone]
                           }
                         >
@@ -722,7 +722,7 @@ export default async function DashboardHistoryPage({
                         </span>
                         <span
                           className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[85px] " +
+                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(64px,10vw,85px)] " +
                             toneClasses[bid.payment.tone]
                           }
                         >
@@ -735,7 +735,7 @@ export default async function DashboardHistoryPage({
                         </span>
                         <span
                           className={
-                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[85px] " +
+                            "inline-flex items-center justify-center rounded-[4px] px-2 py-1 text-[14px] leading-[16px] font-bold text-white w-[clamp(64px,10vw,85px)] " +
                             toneClasses[bid.delivery.tone]
                           }
                         >
@@ -749,18 +749,18 @@ export default async function DashboardHistoryPage({
             ) : null}
 
             {activeTab === "shipping" ? (
-              <div className="flex flex-col gap-4 w-[1144px]">
+              <div className="flex flex-col gap-4 w-full">
                 {shippingCards.map((card, index) => {
                   return (
                     <div
                       key={`${card.orderId}-${index}`}
-                      className="w-[1144px]"
+                      className="w-full"
                     >
                       {/* Product Info - layout_FO3565 */}
                       <div className="bg-white rounded-[16px_16px_0_0]">
-                        <div className="flex items-center justify-between gap-[95px] pr-4 py-4 pl-0 h-[112px]">
+                        <div className="flex items-center justify-between gap-[clamp(20px,8vw,95px)] pr-4 py-4 pl-0 min-h-[clamp(90px,12vw,112px)]">
                           <div className="flex items-center gap-4">
-                            <div className="relative w-[168px] h-[112px] shrink-0 rounded-[16px_0_16px_0] overflow-hidden">
+                            <div className="relative w-[clamp(120px,16vw,168px)] h-[clamp(90px,12vw,112px)] shrink-0 rounded-[16px_0_16px_0] overflow-hidden">
                               <Image
                                 src={card.image}
                                 alt=""
@@ -811,10 +811,10 @@ export default async function DashboardHistoryPage({
                       {/* Status order - layout_IWJ937 */}
                       <div className="relative bg-white rounded-[0_0_16px_16px] p-4 flex flex-col gap-[10px]">
                         {/* Divider - layout_IEC78N */}
-                        <div className="absolute left-[16px] top-[38px] h-[4px] w-[1112px] pointer-events-none">
-                          <div className="absolute inset-0 h-[4px] w-full rounded-[2px] bg-[#CCCCCC]" />
+                        <div className="absolute left-[clamp(8px,2vw,16px)] top-[38px] h-[clamp(3px,0.6vw,4px)] w-[calc(100%-clamp(16px,4vw,32px))] pointer-events-none">
+                          <div className="absolute inset-0 h-[clamp(3px,0.6vw,4px)] w-full rounded-[2px] bg-[#CCCCCC]" />
                           <div
-                            className="absolute left-0 top-0 h-[4px] rounded-[2px] bg-[#00B333]"
+                            className="absolute left-0 top-0 h-[clamp(3px,0.6vw,4px)] rounded-[2px] bg-[#00B333]"
                             style={{ width: card.progressWidth }}
                           />
                         </div>

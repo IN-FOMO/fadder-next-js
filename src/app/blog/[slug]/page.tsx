@@ -122,7 +122,7 @@ export default async function BlogPostPage({
 
   if (!post) {
     return (
-      <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] max-wide:px-[60px] max-tablet:px-8 max-narrow:px-4">
+      <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)]">
         <Breadcrumbs
           items={[
             { label: "Home page", href: "/" },
@@ -146,7 +146,7 @@ export default async function BlogPostPage({
   }
 
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-10 text-foreground max-wide:px-[60px] max-tablet:px-8 max-narrow:px-4">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(20px,4vw,40px)] text-foreground">
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: schema.org markup
@@ -177,13 +177,13 @@ export default async function BlogPostPage({
           { label: post.title },
         ]}
       />
-      <header className="flex flex-col gap-4 max-w-[960px] mx-auto w-full">
+      <header className="mx-auto flex flex-col gap-4 max-w-[clamp(320px,80vw,960px)] w-full">
         <h1 className="text-[32px] leading-[38px] font-bold m-0 text-foreground">
           {post.title}
         </h1>
         <p className="text-base leading-5 text-muted m-0">{post.news_lead}</p>
         {post.sharing_image ? (
-          <div className="relative h-[420px] rounded-[16px] overflow-hidden">
+          <div className="relative h-[clamp(240px,30vw,420px)] rounded-[16px] overflow-hidden">
             <Image
               src={post.sharing_image}
               alt=""
@@ -196,7 +196,7 @@ export default async function BlogPostPage({
         ) : null}
       </header>
 
-      <article className="flex flex-col gap-6 max-w-[960px] mx-auto w-full">
+      <article className="mx-auto flex flex-col gap-6 max-w-[clamp(320px,80vw,960px)] w-full">
         {post.content_factory.map((block) => {
           if (block.type === "text") {
             const key = `text-${block.value.slice(0, 48)}`;
@@ -242,7 +242,7 @@ export default async function BlogPostPage({
         })}
       </article>
 
-      <div className="max-w-[960px] mx-auto w-full">
+      <div className="max-w-[clamp(320px,80vw,960px)] mx-auto w-full">
         <Button
           href={`/blog?lang=${lang}`}
           variant="primary"
@@ -254,7 +254,7 @@ export default async function BlogPostPage({
       </div>
 
       {relatedPosts.length > 0 ? (
-        <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-6">
+        <section className="w-full flex flex-col gap-6">
           <h2 className="text-2xl font-bold leading-7 m-0 text-foreground">
             Other articles
           </h2>
@@ -264,7 +264,7 @@ export default async function BlogPostPage({
                 key={item.id}
                 className="bg-white rounded-[16px] overflow-hidden flex flex-col shadow-card-soft"
               >
-                <div className="relative h-[180px] bg-surface rounded-t-[16px] overflow-hidden">
+                <div className="relative h-[clamp(160px,16vw,200px)] bg-surface rounded-t-[16px] overflow-hidden">
                   <Image
                     src={item.sharing_image}
                     alt=""

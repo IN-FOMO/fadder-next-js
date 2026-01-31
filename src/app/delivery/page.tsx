@@ -49,7 +49,7 @@ const requiredDocs = [
 
 export default function DeliveryPage() {
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(16px,3vw,24px)] text-foreground">
       <Breadcrumbs
         items={[{ label: "Home page", href: "/" }, { label: "Delivery" }]}
       />
@@ -58,8 +58,8 @@ export default function DeliveryPage() {
         subtitle="Professional car delivery throughout Poland with full cargo insurance"
       />
 
-      <section className="w-full max-w-[1760px] mx-auto flex flex-col items-center gap-[74px]">
-        <div className="w-full h-[587px] rounded-lg overflow-hidden bg-white relative">
+      <section className="w-full flex flex-col items-center gap-[clamp(24px,5vw,74px)]">
+        <div className="w-full h-[clamp(240px,30vw,587px)] rounded-lg overflow-hidden bg-white relative">
           <Image
             src="/figma/images/delivery-hero.png"
             alt=""
@@ -102,16 +102,17 @@ export default function DeliveryPage() {
         </div>
       </section>
 
-      <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-4">
-        <div className="w-full flex items-stretch">
+      <section className="w-full flex flex-col gap-4">
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[560px] flex items-stretch">
           <div className="flex-1 flex flex-col">
-            <div className="p-4 border border-border text-base leading-5 font-bold text-foreground min-h-[52px] flex items-center justify-center rounded-tl-lg bg-table-header">
+            <div className="p-4 border border-border text-base leading-5 font-bold text-foreground min-h-[clamp(44px,5vw,52px)] flex items-center justify-center rounded-tl-lg bg-table-header">
               Route
             </div>
             {pricingRows.map((row, index) => (
               <div
                 key={row.route}
-                className={`p-4 border border-t-0 border-border text-base leading-5 text-foreground min-h-[52px] flex justify-center items-center ${
+                className={`p-4 border border-t-0 border-border text-base leading-5 text-foreground min-h-[clamp(44px,5vw,52px)] flex justify-center items-center ${
                   index === pricingRows.length - 1 ? "rounded-bl-lg" : ""
                 }`}
               >
@@ -120,32 +121,33 @@ export default function DeliveryPage() {
             ))}
           </div>
           <div className="flex-1 flex flex-col items-end">
-            <div className="p-4 border border-border text-base leading-5 font-bold text-foreground min-h-[52px] flex items-center bg-table-header w-full justify-center">
+            <div className="p-4 border border-border text-base leading-5 font-bold text-foreground min-h-[clamp(44px,5vw,52px)] flex items-center bg-table-header w-full justify-center">
               Price
             </div>
             {pricingRows.map((row) => (
               <div
                 key={row.route}
-                className="p-4 border border-t-0 border-l-0 border-r-0 border-border text-base leading-5 text-foreground min-h-[52px] flex items-center w-full justify-center"
+                className="p-4 border border-t-0 border-l-0 border-r-0 border-border text-base leading-5 text-foreground min-h-[clamp(44px,5vw,52px)] flex items-center w-full justify-center"
               >
                 {row.price}
               </div>
             ))}
           </div>
           <div className="flex-1 flex flex-col">
-            <div className="p-4 border border-l border-border text-base leading-5 font-bold text-foreground min-h-[52px] flex items-center rounded-tr-lg justify-center bg-table-header">
+            <div className="p-4 border border-l border-border text-base leading-5 font-bold text-foreground min-h-[clamp(44px,5vw,52px)] flex items-center rounded-tr-lg justify-center bg-table-header">
               Delivery Time
             </div>
             {pricingRows.map((row, index) => (
               <div
                 key={row.route}
-                className={`p-4 border border-t-0 border-border text-base leading-5 text-foreground min-h-[52px] flex items-center border-l border-border justify-center ${
+                className={`p-4 border border-t-0 border-border text-base leading-5 text-foreground min-h-[clamp(44px,5vw,52px)] flex items-center border-l border-border justify-center ${
                   index === pricingRows.length - 1 ? "rounded-br-lg" : ""
                 }`}
               >
                 {row.time}
               </div>
             ))}
+          </div>
           </div>
         </div>
         <p className="m-0 text-base leading-5 font-normal text-foreground">
@@ -155,7 +157,7 @@ export default function DeliveryPage() {
         </p>
       </section>
 
-      <section className="w-full max-w-[1320px] mx-auto flex gap-4 max-narrow:flex-col">
+      <section className="w-full flex gap-4 max-narrow:flex-col">
         <article className="flex-1 bg-white rounded-lg p-4 flex flex-col gap-6">
           <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
             What's Included
@@ -188,7 +190,7 @@ export default function DeliveryPage() {
         </article>
       </section>
 
-      <section className="w-full max-w-[700px] mx-auto bg-white rounded-lg p-4 flex flex-col items-center gap-6">
+      <section className="w-full max-w-[clamp(320px,70vw,800px)] mx-auto bg-white rounded-lg p-4 flex flex-col items-center gap-6">
         <div className="w-full flex items-center justify-between gap-6">
           <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
             Full Car History

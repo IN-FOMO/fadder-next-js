@@ -265,7 +265,7 @@ const vehicleCards: MarketplaceVehicle[] = [
 
 export default function MarketplacePage() {
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-wide:max-w-[1440px] max-wide:px-[60px] max-tablet:max-w-[834px] max-tablet:py-[72px] max-tablet:px-4 max-tablet:pb-24 max-narrow:max-w-[320px] max-narrow:py-14 max-narrow:gap-4">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(16px,3vw,24px)] text-foreground">
       <Breadcrumbs
         items={[{ label: "Home page", href: "/" }, { label: "Marketplace" }]}
       />

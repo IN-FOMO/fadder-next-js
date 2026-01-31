@@ -100,7 +100,7 @@ const privacyText =
 
 export default function TermsPage() {
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(16px,3vw,24px)] text-foreground">
       <Breadcrumbs
         items={[{ label: "Home page", href: "/" }, { label: "Terms" }]}
       />
@@ -109,7 +109,7 @@ export default function TermsPage() {
         subtitle="Please read our terms and conditions carefully before using our services"
       />
 
-      <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-[74px]">
+      <section className="w-full flex flex-col gap-[clamp(24px,5vw,74px)]">
         <div className="w-full bg-info-bg rounded-[14px] p-4 flex flex-col gap-3">
           <h3 className="m-0 text-xl leading-6 font-bold text-info">
             Important Notice
@@ -145,30 +145,31 @@ export default function TermsPage() {
           ))}
         </div>
 
-        <div className="w-full grid grid-cols-[1fr_170px_1fr] gap-0 max-narrow:grid-cols-1">
-          <div className="p-4 border border-border min-h-[52px] flex items-center font-bold bg-table-header rounded-tl-lg">
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[600px] grid grid-cols-[minmax(0,1fr)_minmax(120px,180px)_minmax(0,1fr)] gap-0">
+          <div className="p-4 border border-border min-h-[clamp(44px,5vw,52px)] flex items-center font-bold bg-table-header rounded-tl-lg">
             Service
           </div>
-          <div className="p-4 border border-l-0 border-border min-h-[52px] flex items-center justify-center font-bold bg-table-header">
+          <div className="p-4 border border-l-0 border-border min-h-[clamp(44px,5vw,52px)] flex items-center justify-center font-bold bg-table-header">
             Timeline
           </div>
-          <div className="p-4 border border-l-0 border-border min-h-[52px] flex items-center font-bold bg-table-header rounded-tr-lg">
+          <div className="p-4 border border-l-0 border-border min-h-[clamp(44px,5vw,52px)] flex items-center font-bold bg-table-header rounded-tr-lg">
             Terms
           </div>
           {serviceRows.map((row, index) => (
             <div key={`${row.service}-${index}`} className="contents">
               <div
-                className={`p-4 border border-t-0 border-border min-h-[52px] flex items-center text-base leading-5 text-foreground ${
+                className={`p-4 border border-t-0 border-border min-h-[clamp(44px,5vw,52px)] flex items-center text-base leading-5 text-foreground ${
                   index === serviceRows.length - 1 ? "rounded-bl-lg" : ""
                 }`}
               >
                 {row.service}
               </div>
-              <div className="p-4 border border-t-0 border-l-0 border-border min-h-[52px] flex items-center justify-center text-base leading-5 text-foreground">
+              <div className="p-4 border border-t-0 border-l-0 border-border min-h-[clamp(44px,5vw,52px)] flex items-center justify-center text-base leading-5 text-foreground">
                 {row.timeline}
               </div>
               <div
-                className={`p-4 border border-t-0 border-l-0 border-border min-h-[52px] flex items-center text-base leading-5 text-foreground ${
+                className={`p-4 border border-t-0 border-l-0 border-border min-h-[clamp(44px,5vw,52px)] flex items-center text-base leading-5 text-foreground ${
                   index === serviceRows.length - 1 ? "rounded-br-lg" : ""
                 }`}
               >
@@ -176,6 +177,7 @@ export default function TermsPage() {
               </div>
             </div>
           ))}
+          </div>
         </div>
 
         <article className="w-full bg-white rounded-lg p-4 flex flex-col gap-6">

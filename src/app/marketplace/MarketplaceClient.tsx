@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../_components/Button";
 import { Pagination } from "../_components/Pagination";
 
@@ -58,6 +58,10 @@ export function MarketplaceClient({
   const [availabilityValue, setAvailabilityValue] = useState<
     (typeof availabilityOptions)[number]
   >(availabilityOptions[0]);
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
+  const availabilityRef = useRef<HTMLDivElement>(null);
 
   const filteredVehicles = useMemo(() => {
     const normalized = searchValue.trim().toLowerCase();
@@ -102,8 +106,35 @@ export function MarketplaceClient({
     availabilityValue !== "All" ||
     searchValue.trim().length > 0;
 
+  useEffect(() => {
+    if (!isSortOpen && !isAvailabilityOpen) return;
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (sortRef.current && sortRef.current.contains(target)) return;
+      if (
+        availabilityRef.current &&
+        availabilityRef.current.contains(target)
+      )
+        return;
+      setIsSortOpen(false);
+      setIsAvailabilityOpen(false);
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSortOpen(false);
+        setIsAvailabilityOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [isAvailabilityOpen, isSortOpen]);
+
   return (
-    <section className="w-full flex flex-col gap-8">
+    <section className="w-full flex flex-col gap-[clamp(20px,3vw,32px)]">
       <div className="flex items-center justify-between gap-4 flex-wrap max-tablet:items-start">
         <div
           className="flex items-center gap-3"
@@ -126,41 +157,99 @@ export function MarketplaceClient({
           ))}
         </div>
         <div className="flex items-center gap-3 flex-wrap">
-          <input
-            className="w-80 flex-1 min-w-[240px] h-10 border-0 rounded-[14px] py-3 px-4 bg-surface text-xs leading-[14px] text-foreground placeholder:text-muted max-tablet:w-full"
-            placeholder="Search make, model, or stock ID"
-            value={searchValue}
-            onChange={(event) => setSearchValue(event.target.value)}
-            type="search"
-          />
-          <select
-            className="h-10 border-0 rounded-[14px] px-[14px] bg-surface text-xs text-foreground min-w-[160px] flex-[0_1_160px]"
-            value={availabilityValue}
-            onChange={(event) =>
-              setAvailabilityValue(
-                event.target.value as (typeof availabilityOptions)[number],
-              )
-            }
-            aria-label="Availability"
-          >
-            {availabilityOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <select
-            className="h-10 border-0 rounded-[14px] px-[14px] bg-surface text-xs text-foreground min-w-[180px] flex-[0_1_200px]"
-            value={sortValue}
-            onChange={(event) => setSortValue(event.target.value)}
-            aria-label="Sort vehicles"
-          >
-            {sortOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <label className="flex items-center gap-2 rounded-[14px] bg-white px-4 py-2 shadow-card-soft border border-surface min-w-[clamp(220px,30vw,340px)]">
+            <Image
+              src="/figma/icons/icon-search.svg"
+              alt=""
+              width={18}
+              height={18}
+            />
+            <input
+              className="no-focus-ring w-full border-0 bg-transparent outline-none text-sm font-semibold text-foreground placeholder:text-muted"
+              placeholder="Search make, model, or stock ID"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+              type="search"
+            />
+          </label>
+          <div ref={availabilityRef} className="relative">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center gap-2 rounded-sm py-2 px-3.5 text-xs font-semibold min-h-9 bg-surface text-foreground border-0"
+              onClick={() => {
+                setIsAvailabilityOpen((prev) => !prev);
+                setIsSortOpen(false);
+              }}
+              aria-expanded={isAvailabilityOpen}
+              aria-label="Availability"
+            >
+              <span>{availabilityValue}</span>
+              <Image
+                src="/figma/icons/icon-arrow-down.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
+            </button>
+            {isAvailabilityOpen ? (
+              <div className="absolute top-full left-0 mt-2 min-w-[clamp(140px,20vw,180px)] rounded-[8px] bg-white shadow-dropdown p-2 z-30 flex flex-col gap-1">
+                {availabilityOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`block rounded-[8px] px-3 py-2 text-sm font-medium text-foreground text-left hover:bg-surface ${
+                      option === availabilityValue ? "bg-surface" : ""
+                    }`}
+                    onClick={() => {
+                      setAvailabilityValue(option);
+                      setIsAvailabilityOpen(false);
+                    }}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <div ref={sortRef} className="relative">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center gap-2 rounded-sm py-2 px-3.5 text-xs font-semibold min-h-9 bg-surface text-foreground border-0"
+              onClick={() => {
+                setIsSortOpen((prev) => !prev);
+                setIsAvailabilityOpen(false);
+              }}
+              aria-expanded={isSortOpen}
+              aria-label="Sort vehicles"
+            >
+              <span>{sortValue}</span>
+              <Image
+                src="/figma/icons/icon-arrow-down.svg"
+                alt=""
+                width={24}
+                height={24}
+              />
+            </button>
+            {isSortOpen ? (
+              <div className="absolute top-full left-0 mt-2 min-w-[clamp(160px,24vw,220px)] rounded-[8px] bg-white shadow-dropdown p-2 z-30 flex flex-col gap-1">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className={`block rounded-[8px] px-3 py-2 text-sm font-medium text-foreground text-left hover:bg-surface ${
+                      option === sortValue ? "bg-surface" : ""
+                    }`}
+                    onClick={() => {
+                      setSortValue(option);
+                      setIsSortOpen(false);
+                    }}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
           <button
             type="button"
             className="h-10 border-0 rounded-[14px] px-5 bg-primary hover:bg-primary-hover active:bg-primary-pressed text-foreground text-sm font-semibold cursor-pointer"
@@ -215,7 +304,7 @@ export function MarketplaceClient({
       </div> */}
 
       <article className="bg-white rounded-lg p-4 grid grid-cols-[1.2fr_1fr] gap-6 shadow-card-soft max-tablet:grid-cols-1">
-        <div className="relative h-100 rounded-[14px] overflow-hidden bg-surface max-tablet:h-[260px] max-narrow:h-[220px]">
+        <div className="relative h-[clamp(220px,28vw,360px)] rounded-[14px] overflow-hidden bg-surface">
           <Image
             src={featuredLot.image}
             alt=""
@@ -291,7 +380,7 @@ export function MarketplaceClient({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-4 gap-4 items-stretch max-wide:grid-cols-3 max-tablet:grid-cols-2 max-narrow:grid-cols-1">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4 items-stretch">
           {filteredVehicles.map((card) => (
             <Link
               key={`${card.title}-${card.lotId}`}
@@ -299,7 +388,7 @@ export function MarketplaceClient({
               className="block w-full min-w-0 no-underline text-inherit cursor-pointer"
             >
               <article className="bg-white rounded-lg overflow-hidden flex flex-col items-stretch w-full min-w-0 max-w-none h-full">
-                <div className="relative h-[236px] w-full bg-surface">
+                <div className="relative h-[clamp(180px,18vw,236px)] w-full bg-surface">
                   <Image
                     src={card.image}
                     alt=""

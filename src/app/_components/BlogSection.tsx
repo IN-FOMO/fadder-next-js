@@ -74,7 +74,7 @@ export async function BlogSection({ cards, lang }: BlogSectionProps) {
           href: "/blog",
         }));
   return (
-    <section className="flex flex-col gap-4 w-full max-w-[1760px] mx-auto px-20 max-wide:px-[60px] max-tablet:px-4">
+    <section className="page-wrap flex flex-col gap-4">
       <div className="flex items-end justify-between gap-4">
         <h2 className="text-2xl font-bold leading-7 m-0 text-black">
           Latest Insights from Our Blog
@@ -86,13 +86,13 @@ export async function BlogSection({ cards, lang }: BlogSectionProps) {
           View all
         </Link>
       </div>
-      <div className="flex items-stretch gap-4 max-tablet:flex-col">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4">
         {items.map((card) => (
           <article
             key={card.title}
             className="bg-white rounded-[16px] overflow-hidden flex flex-col flex-1"
           >
-            <div className="relative h-[180px] bg-surface rounded-t-[16px] overflow-hidden">
+            <div className="relative h-[clamp(160px,16vw,200px)] bg-surface rounded-t-[16px] overflow-hidden">
               <Image
                 src={card.image}
                 alt=""
@@ -115,7 +115,7 @@ export async function BlogSection({ cards, lang }: BlogSectionProps) {
               </div>
               <Link
                 href={card.href}
-                className="flex items-center justify-center gap-2.5 px-8 h-[52px] bg-surface rounded-[14px] text-base leading-5 font-bold text-black no-underline"
+                className="flex items-center justify-center gap-2.5 px-[clamp(12px,2vw,32px)] min-h-[clamp(40px,4vw,52px)] bg-surface rounded-[14px] text-base leading-5 font-bold text-black no-underline"
               >
                 Read more
               </Link>

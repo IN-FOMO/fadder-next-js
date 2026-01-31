@@ -87,7 +87,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const data = await getNews(lang, page);
   const pages = buildPagination(data.total_pages, page);
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-16 text-foreground max-wide:px-[60px] max-tablet:px-8 max-tablet:pb-24 max-narrow:px-4">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(24px,5vw,64px)] text-foreground">
       <Breadcrumbs
         items={[{ label: "Home page", href: "/" }, { label: "Blog" }]}
       />
@@ -95,13 +95,13 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         title="Blog"
         subtitle="Latest insights and articles about car auctions, inspections, and market trends"
       />
-      <section className="grid grid-cols-3 gap-6 max-wide:grid-cols-2 max-tablet:grid-cols-1 w-full max-w-[1760px] mx-auto">
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6 w-full">
         {data.posts.map((post) => (
           <article
             key={post.id}
             className="bg-white rounded-[16px] overflow-hidden flex flex-col shadow-card-soft"
           >
-            <div className="relative h-[180px] bg-surface">
+            <div className="relative h-[clamp(160px,16vw,200px)] bg-surface">
               <Image
                 src={post.sharing_image}
                 alt=""

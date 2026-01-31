@@ -77,8 +77,8 @@ export default function LoginPage() {
 
   return (
     <main className="bg-[#F5F6F8] min-h-screen">
-      <section className="max-w-[1240px] mx-auto px-6 py-16 flex items-stretch gap-8 max-lg:flex-col">
-        <div className="w-full max-w-[560px] bg-white rounded-[16px] p-10 shadow-[0px_8px_24px_0px_rgba(15,15,15,0.06)] self-stretch">
+      <section className="page-wrap py-[clamp(24px,5vw,64px)] flex items-stretch gap-[clamp(20px,4vw,32px)] max-lg:flex-col">
+        <div className="w-full max-w-[clamp(320px,45vw,560px)] bg-white rounded-[16px] p-[clamp(20px,4vw,40px)] shadow-[0px_8px_24px_0px_rgba(15,15,15,0.06)] self-stretch">
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold leading-8 text-dark m-0">
               Login
@@ -180,7 +180,7 @@ export default function LoginPage() {
             </Link>
           </p>
         </div>
-        <div className="w-full max-w-[640px] relative rounded-[16px] overflow-hidden self-stretch flex flex-col">
+        <div className="w-full max-w-[clamp(320px,55vw,640px)] relative rounded-[16px] overflow-hidden self-stretch flex flex-col">
           <div className="relative flex-1 w-full overflow-hidden">
             <div
               className="flex h-full w-full transition-transform duration-700 ease-in-out"

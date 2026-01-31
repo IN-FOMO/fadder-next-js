@@ -5,14 +5,14 @@ function SecurityToggle({ state }: { state: "active" | "disabled" }) {
   return (
     <div
       className={
-        "h-[20px] w-[36px] rounded-[17.7778px] border-[1.111111px] box-border flex items-center " +
+        "h-[clamp(16px,3vw,20px)] w-[clamp(28px,4vw,36px)] rounded-[17.7778px] border-[1.111111px] box-border flex items-center " +
         (isActive
-          ? "bg-[#FFAF0E] border-[#FFAF0E] pl-[15.5556px]"
-          : "bg-[#7B7B7B] border-[#7B7B7B] pl-[2px]")
+          ? "bg-[#FFAF0E] border-[#FFAF0E] pl-[clamp(10px,2.2vw,15.6px)]"
+          : "bg-[#7B7B7B] border-[#7B7B7B] pl-[clamp(2px,0.5vw,4px)]")
       }
       aria-hidden="true"
     >
-      <div className="h-[17.78px] w-[17.78px] rounded-[17.7778px] bg-white" />
+      <div className="h-[clamp(12px,2.2vw,18px)] w-[clamp(12px,2.2vw,18px)] rounded-[17.7778px] bg-white" />
     </div>
   );
 }
@@ -49,16 +49,16 @@ function PasswordField({
 export default function DashboardSecurityPage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-4 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10 flex flex-col gap-4">
         <div className="flex flex-col gap-4 tablet:flex-row">
           <DashboardSidebar />
 
           {/* Content column (Figma: 700px centered inside 1144px) */}
-          <div className="w-full tablet:w-[1144px] min-w-0 flex">
-            <div className="w-full tablet:w-[700px] mx-auto flex flex-col gap-8">
+          <div className="w-full flex-1 min-w-0 flex">
+            <div className="w-full max-w-[clamp(320px,60vw,700px)] mx-auto flex flex-col gap-8">
               {/* Change Password card (700x396, p=16, gap=24) */}
-              <section className="w-full h-[396px] bg-white rounded-[16px] p-4 flex flex-col gap-6">
-                <div className="flex items-center gap-2 h-[16px]">
+              <section className="w-full min-h-[clamp(280px,35vw,396px)] bg-white rounded-[16px] p-4 flex flex-col gap-6">
+                <div className="flex items-center gap-2 min-h-[clamp(14px,2vw,16px)]">
                   <span className="text-[14px] leading-[16px] font-bold text-[#0F0F0F]">
                     Change Password
                   </span>

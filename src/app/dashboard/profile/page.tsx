@@ -36,13 +36,13 @@ function Field({ label, value, icon, iconOpacity }: FieldProps) {
 export default function DashboardProfilePage() {
   return (
     <main className="min-h-[calc(100vh-200px)] bg-[#F5F6F8]">
-      <div className="max-w-[1440px] mx-auto px-[60px] pt-4 pb-10 flex flex-col gap-4 max-tablet:px-8 max-narrow:px-4">
+      <div className="page-wrap pt-4 pb-10 flex flex-col gap-4">
         <div className="flex flex-col gap-4 tablet:flex-row">
           {/* Sidebar */}
           <DashboardSidebar />
 
           {/* Profile Container */}
-          <section className="w-full tablet:w-[1144px] min-w-0 bg-white rounded-lg p-4 flex flex-col gap-6">
+          <section className="w-full flex-1 min-w-0 bg-white rounded-lg p-4 flex flex-col gap-6">
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-dark">Profile Data</span>
             </div>

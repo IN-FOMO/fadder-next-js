@@ -71,10 +71,10 @@ const footerColumns: {
 
 export function FooterSection() {
   return (
-    <footer className="flex flex-col items-center gap-2.5 bg-footer px-20 pt-12 pb-4 max-wide:px-[60px] max-tablet:px-4">
-      <div className="flex flex-col items-center gap-8 w-full max-w-[1920px]">
-        <div className="flex gap-[60px] w-full">
-          <div className="flex flex-col gap-8 w-[318px] shrink-0 text-white">
+    <footer className="bg-footer pt-12 pb-4">
+      <div className="page-wrap flex flex-col items-center gap-8">
+        <div className="flex w-full flex-wrap gap-[clamp(20px,4vw,60px)]">
+          <div className="flex flex-col gap-8 w-[clamp(220px,25vw,318px)] shrink-0 text-white">
             <Suspense
               fallback={
                 <div className="inline-flex items-center justify-center gap-3 rounded-sm py-3 px-5 text-sm font-semibold min-h-10 bg-surface text-dark">
@@ -102,14 +102,14 @@ export function FooterSection() {
               alt=""
               width={176}
               height={32}
-              className="h-8 w-[176px]"
+              className="h-auto w-[clamp(140px,12vw,176px)]"
             />
           </div>
-          <div className="flex justify-between gap-8 w-full">
+          <div className="flex flex-wrap justify-between gap-8 w-full min-w-0">
             {footerColumns.map((column) => (
               <div
                 key={column.title}
-                className="flex flex-col gap-4 w-[170px] text-white"
+                className="flex flex-col gap-4 w-[clamp(160px,16vw,200px)] text-white"
               >
                 <h4 className="text-xl font-bold leading-6 m-0">
                   {column.title}
@@ -129,7 +129,7 @@ export function FooterSection() {
             ))}
           </div>
         </div>
-        <div className="relative w-full h-[300px] rounded-lg overflow-hidden">
+        <div className="relative w-full h-[clamp(200px,20vw,300px)] rounded-lg overflow-hidden">
           <iframe
             className="w-full h-full border-0 grayscale"
             title="Silicon Valley map"
@@ -184,12 +184,7 @@ export function FooterSection() {
           >
             Delivery
           </Link>
-          <Link
-            href="/marketplace"
-            className="text-inherit no-underline hover:underline active:underline"
-          >
-            Marketplace
-          </Link>
+          
         </nav>
       </div>
     </footer>

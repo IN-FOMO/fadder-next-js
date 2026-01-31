@@ -245,7 +245,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const lang = normalizeLang(resolvedSearchParams?.lang);
   return (
     <main className="bg-[#F5F6F8] overflow-x-hidden">
-      <div className="flex flex-col gap-[74px] pb-20">
+      <div className="flex flex-col gap-[clamp(24px,5vw,74px)] pb-[clamp(24px,5vw,80px)]">
         <HeroSection />
         <HomeNewArrivalsSection cards={vehicleCards} />
         <PopularMakesSection makes={popularMakes} />

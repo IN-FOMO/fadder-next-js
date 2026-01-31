@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./Button";
 
@@ -60,6 +61,10 @@ function useDropdown(initial: string) {
   return { value, setValue };
 }
 
+function getValueFromLabel(options: Option[], label: string) {
+  return options.find((option) => option.label === label)?.value ?? "";
+}
+
 const dropdownButton =
   "w-full border-none bg-surface rounded-sm py-2 px-3.5 flex items-center justify-between text-xs text-muted cursor-pointer";
 const dropdownList =
@@ -68,6 +73,7 @@ const dropdownOption =
   "w-full text-left border-none bg-transparent py-2 px-2.5 rounded-sm cursor-pointer text-xs text-dark hover:bg-border/20 active:bg-border/30";
 
 export function FilterPanel({ className }: FilterPanelProps) {
+  const router = useRouter();
   const panelRef = useRef<HTMLDivElement>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const selectType = useDropdown(selectTypeOptions[0].label);
@@ -83,6 +89,31 @@ export function FilterPanel({ className }: FilterPanelProps) {
 
   const toggle = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));
+  };
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    const typeValue = getValueFromLabel(selectTypeOptions, selectType.value);
+    const makeValue = getValueFromLabel(selectMakeOptions, selectMake.value);
+    const modelValue = getValueFromLabel(selectModelOptions, selectModel.value);
+    const yearFromValue = getValueFromLabel(yearOptions, yearFrom.value);
+    const yearToValue = getValueFromLabel(yearOptions, yearTo.value);
+    const minPriceValue = getValueFromLabel(priceOptions, minPrice.value);
+    const maxPriceValue = getValueFromLabel(maxPriceOptions, maxPrice.value);
+    const vinValue = vin.trim();
+
+    if (typeValue) params.set("type", typeValue);
+    if (makeValue) params.set("make", makeValue);
+    if (modelValue) params.set("model", modelValue);
+    if (yearFromValue) params.set("yearFrom", yearFromValue);
+    if (yearToValue) params.set("yearTo", yearToValue);
+    if (minPriceValue) params.set("minPrice", minPriceValue);
+    if (maxPriceValue) params.set("maxPrice", maxPriceValue);
+    if (vinValue) params.set("vin", vinValue);
+    if (copart) params.set("auction", "copart");
+    if (iaai) params.set("auction", copart ? "copart,iaai" : "iaai");
+
+    router.push(`/search${params.toString() ? `?${params.toString()}` : ""}`);
   };
 
   useEffect(() => {
@@ -107,11 +138,11 @@ export function FilterPanel({ className }: FilterPanelProps) {
     <div
       ref={panelRef}
       className={
-        "bg-white rounded-[16px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.2)] p-6 flex flex-col gap-4 w-full items-center " +
+        "bg-white rounded-[16px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.2)] p-6 flex flex-col gap-4 w-full " +
         (className ?? "")
       }
     >
-      <div className="flex gap-4 items-center w-full max-w-[515px]">
+      <div className="flex flex-wrap gap-4 items-center w-full">
         <div className="relative flex-1">
           <button
             type="button"
@@ -146,7 +177,7 @@ export function FilterPanel({ className }: FilterPanelProps) {
             </ul>
           )}
         </div>
-        <div className="relative flex-1">
+        <div className="relative flex-1 min-w-[clamp(120px,16vw,160px)]">
           <button
             type="button"
             className={dropdownButton}
@@ -180,7 +211,7 @@ export function FilterPanel({ className }: FilterPanelProps) {
             </ul>
           )}
         </div>
-        <div className="relative flex-1">
+        <div className="relative flex-1 min-w-[clamp(120px,16vw,160px)]">
           <button
             type="button"
             className={dropdownButton}
@@ -215,9 +246,9 @@ export function FilterPanel({ className }: FilterPanelProps) {
           )}
         </div>
       </div>
-      <div className="flex gap-4 items-center w-full">
-        <div className="flex gap-1 flex-1 w-[250px] shrink-0">
-          <div className="relative flex-1">
+      <div className="flex flex-wrap gap-4 items-center w-full">
+        <div className="flex gap-1 flex-1 min-w-[clamp(200px,30vw,280px)]">
+          <div className="relative flex-1 min-w-[clamp(100px,14vw,140px)]">
             <button
               type="button"
               className={dropdownButton}
@@ -251,7 +282,7 @@ export function FilterPanel({ className }: FilterPanelProps) {
               </ul>
             )}
           </div>
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-[clamp(100px,14vw,140px)]">
             <button
               type="button"
               className={dropdownButton}
@@ -286,8 +317,8 @@ export function FilterPanel({ className }: FilterPanelProps) {
             )}
           </div>
         </div>
-        <div className="flex gap-1 flex-1">
-          <div className="relative flex-1">
+        <div className="flex gap-1 flex-1 min-w-[clamp(200px,30vw,280px)]">
+          <div className="relative flex-1 min-w-[clamp(100px,14vw,140px)]">
             <button
               type="button"
               className={dropdownButton}
@@ -321,7 +352,7 @@ export function FilterPanel({ className }: FilterPanelProps) {
               </ul>
             )}
           </div>
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-[clamp(100px,14vw,140px)]">
             <button
               type="button"
               className={dropdownButton}
@@ -408,7 +439,7 @@ export function FilterPanel({ className }: FilterPanelProps) {
             </span>
           </button>
         </div>
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" onClick={handleSearch}>
           Search Vehicles (1,999,999 results)
         </Button>
       </div>

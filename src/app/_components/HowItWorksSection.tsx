@@ -15,37 +15,29 @@ type HowItWorksSectionProps = {
 
 export function HowItWorksSection({ steps }: HowItWorksSectionProps) {
   return (
-    <section className="flex flex-col gap-6 w-full max-w-[1760px] mx-auto px-20 max-wide:px-[60px] max-narrow:px-4">
+    <section className="page-wrap flex flex-col gap-[clamp(20px,3vw,32px)]">
       {steps.map((step, index) => {
         const isAlt = index === 1;
         return (
           <article
             key={step.title}
-            className={
-              "relative w-full h-[400px] flex items-center self-stretch max-narrow:flex-col max-narrow:items-stretch max-narrow:h-auto " +
-              (isAlt ? "flex-row-reverse" : "")
-            }
+            className={`relative w-full flex flex-col lg:flex-row items-stretch gap-[clamp(16px,3vw,40px)] ${
+              isAlt ? "lg:flex-row-reverse" : ""
+            }`}
           >
             <div
-              className={
-                "relative w-[600px] h-[400px] shrink-0 rounded-[16px] overflow-hidden max-narrow:w-full max-narrow:h-[240px]"
-              }
+              className="relative w-full lg:w-[clamp(360px,32vw,600px)] h-[clamp(220px,28vw,400px)] shrink-0 rounded-[16px] overflow-hidden"
             >
               <Image
                 src={step.image}
                 alt=""
                 fill
-                sizes="600px"
+                sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-cover"
               />
             </div>
             <div
-              className={
-                "flex flex-col justify-between items-start p-4 bg-white rounded-[16px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.2)] h-[280px] z-[1] max-narrow:w-full max-narrow:h-auto max-narrow:ml-0 max-narrow:mr-0 max-narrow:mt-[-40px] " +
-                (isAlt
-                  ? "w-[1220px] mr-[-60px] mt-[60px]"
-                  : "flex-1 -ml-[60px] mt-[60px]")
-              }
+              className="flex flex-col justify-between items-start p-4 bg-white rounded-[16px] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.2)] min-h-[clamp(220px,22vw,280px)] w-full lg:flex-1"
             >
               <div className="flex flex-col gap-4">
                 <h3 className="text-2xl font-bold leading-7 m-0 text-dark">

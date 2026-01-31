@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Button } from "./Button";
 
 const menuItems: { label: string; href: string; icon: string }[] = [
   {
@@ -51,26 +52,23 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full tablet:w-[176px] shrink-0">
-      <nav className="flex flex-col gap-1">
+    <aside className="w-full tablet:w-[clamp(160px,16vw,220px)] shrink-0">
+      <nav className="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden tablet:flex-col tablet:items-stretch tablet:gap-1 tablet:overflow-visible tablet:pb-0 tablet:mx-0 tablet:px-0">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link
+            <Button
               key={item.href}
               href={item.href}
-              className={
-                // Figma (Tab profile / Menu profile vertical): Default = white, Press = Accented fill,
-                // Hover = white + Accented stroke 1.5px
-                "flex items-center justify-center tablet:justify-start gap-[14px] py-[8px] px-[24px] rounded-[16px] bg-white text-[14px] leading-[16px] font-bold no-underline transition-colors border-[1.5px] box-border " +
-                (isActive
-                  ? "bg-[#FFAF0E] border-transparent text-[#0F0F0F]"
-                  : "border-transparent text-[#0F0F0F] hover:border-[#FFAF0E]")
-              }
+              variant={isActive ? "primary" : "outlineInactive"}
+              size="sm"
+              className={`justify-center tablet:justify-start gap-[14px] py-[8px] px-[16px] min-w-max rounded-[16px] text-[14px] leading-[16px] font-bold tablet:px-[24px] ${
+                isActive ? "" : "hover:bg-primary-hover active:bg-primary-pressed"
+              }`}
             >
               <Image src={item.icon} alt="" width={16} height={16} />
               {item.label}
-            </Link>
+            </Button>
           );
         })}
       </nav>

@@ -75,16 +75,16 @@ export function VehicleCard({ card, className, imageBadge: _imageBadge }: Vehicl
     >
       <article
         className={
-          "bg-white rounded-[16px] overflow-hidden w-[288px] min-w-[288px] max-w-[318px] flex flex-col items-stretch snap-start " +
+          "bg-white rounded-[16px] overflow-hidden w-[clamp(220px,18vw,288px)] min-w-[clamp(220px,18vw,288px)] max-w-[clamp(240px,20vw,318px)] flex flex-col items-stretch snap-start " +
           (className ?? "")
         }
       >
-        <div className="relative h-[236px] w-full bg-surface rounded-t-[16px] overflow-visible">
+        <div className="relative h-[clamp(180px,15vw,236px)] w-full bg-surface rounded-t-[16px] overflow-hidden">
           <Image
             src={activeImage}
             alt=""
             fill
-            sizes="288px"
+            sizes="(max-width: 768px) 80vw, 288px"
             className="object-cover"
           />
           <Button
@@ -93,7 +93,7 @@ export function VehicleCard({ card, className, imageBadge: _imageBadge }: Vehicl
             onClick={handlePrev}
             variant="ghost"
             size="icon"
-            className="absolute left-0 top-[196px] h-10 w-10 bg-white/60 hover:bg-white/80 active:bg-white/60 rounded-tr-[14px] rounded-bl-none rounded-tl-none rounded-br-none z-10"
+            className="absolute left-0 bottom-0 h-10 w-10 bg-white/60 hover:bg-white/80 active:bg-white/60 rounded-tr-[14px] rounded-bl-none rounded-tl-none rounded-br-none z-10"
           >
             <Image
               src="/figma/icons/icon-arrow-left.svg"
@@ -108,7 +108,7 @@ export function VehicleCard({ card, className, imageBadge: _imageBadge }: Vehicl
             onClick={handleNext}
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-[196px] h-10 w-10 bg-white/60 hover:bg-white/80 active:bg-white/60 rounded-tl-[16px] rounded-tr-none rounded-bl-none rounded-br-none z-10"
+            className="absolute right-0 bottom-0 h-10 w-10 bg-white/60 hover:bg-white/80 active:bg-white/60 rounded-tl-[16px] rounded-tr-none rounded-bl-none rounded-br-none z-10"
           >
             <Image
               src="/figma/icons/icon-arrow-right.svg"
@@ -177,7 +177,7 @@ export function VehicleCard({ card, className, imageBadge: _imageBadge }: Vehicl
                 {card.auction}
               </span>
             </div>
-            <div className="flex items-center justify-center gap-2.5 px-8 h-[52px] bg-surface rounded-[14px] text-sm leading-4 font-bold w-full box-border">
+            <div className="flex items-center justify-center gap-2.5 px-[clamp(12px,2vw,32px)] min-h-[clamp(40px,4vw,52px)] bg-surface rounded-[14px] text-sm leading-4 font-bold w-full box-border">
               <span>Current Bid</span>
               <strong>{card.bid}</strong>
             </div>

@@ -61,7 +61,7 @@ const timeline = [
 
 export default function AboutPage() {
   return (
-    <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-6 text-foreground max-tablet:px-8 max-narrow:px-4">
+    <main className="page-wrap py-[clamp(16px,2vw,24px)] pb-[clamp(48px,6vw,120px)] flex flex-col gap-[clamp(16px,3vw,24px)] text-foreground">
       <Breadcrumbs
         items={[{ label: "Home page", href: "/" }, { label: "About" }]}
       />
@@ -70,7 +70,7 @@ export default function AboutPage() {
         subtitle="Helping individuals and companies purchase quality vehicles from abroad since 2014"
       />
 
-      <section className="w-full max-w-[1760px] mx-auto flex flex-col gap-[74px] max-tablet:w-[calc(100%-0px)]">
+      <section className="w-full flex flex-col gap-[clamp(24px,5vw,74px)]">
         <div className="grid grid-cols-2 gap-4 max-narrow:grid-cols-1">
           {missionVision.map((item) => (
             <article
@@ -111,7 +111,7 @@ export default function AboutPage() {
                   {item.year}
                 </div>
                 <span
-                  className="w-0.5 flex-1 bg-black min-h-[20px]"
+                  className="w-0.5 flex-1 bg-black min-h-[clamp(16px,2vw,20px)]"
                   aria-hidden="true"
                 />
               </div>
