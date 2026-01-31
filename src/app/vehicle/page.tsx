@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { Button } from "../_components/Button";
+import { RequestInfoPopover } from "../_components/RequestInfoPopover";
 import { VehicleCard, type VehicleCardData } from "../_components/VehicleCard";
 
 const primarySpecs = [
@@ -29,7 +32,13 @@ const secondarySpecs = [
   { label: "Drive Type", value: "Rear wheel drive" },
 ];
 
-const thumbKeys = Array.from({ length: 15 }, (_, i) => `thumb-${i + 1}`);
+const galleryImages = [
+  "/figma/images/vehicle-detail-main-22d215.png",
+  "/figma/images/vehicle-1.png",
+  "/figma/images/vehicle-2.png",
+  "/figma/images/vehicle-3.png",
+  "/figma/images/vehicle-4.png",
+];
 
 const calculatorRows = [
   { label: "Lot Price", value: "$6,000" },
@@ -133,6 +142,14 @@ const similarCards: VehicleCardData[] = [
 ];
 
 export default function VehiclePage() {
+  const router = useRouter();
+  const [activeImage, setActiveImage] = useState(0);
+  const [alertEmail, setAlertEmail] = useState("");
+  const [bidAmount, setBidAmount] = useState(525);
+  const [bidInput, setBidInput] = useState("525");
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+  const shareDialogRef = useRef<HTMLDivElement>(null);
   const [openState, setOpenState] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     faqItems.forEach((item) => {
@@ -140,6 +157,121 @@ export default function VehiclePage() {
     });
     return initial;
   });
+  const timeLeftLabel = "1 d 21 h 23 min 00 sec";
+  const timeZoneLabel = "(GMT-5)";
+  const countdownMs = (() => {
+    const days = Number(timeLeftLabel.match(/(\d+)\s*d/)?.[1] ?? 0);
+    const hours = Number(timeLeftLabel.match(/(\d+)\s*h/)?.[1] ?? 0);
+    const minutes = Number(timeLeftLabel.match(/(\d+)\s*min/)?.[1] ?? 0);
+    const seconds = Number(timeLeftLabel.match(/(\d+)\s*sec/)?.[1] ?? 0);
+    return (
+      days * 24 * 60 * 60 * 1000 +
+      hours * 60 * 60 * 1000 +
+      minutes * 60 * 1000 +
+      seconds * 1000
+    );
+  })();
+
+  const handleAddToCalendar = () => {
+    if (!countdownMs) return;
+    const eventStart = new Date(Date.now() + countdownMs);
+    const eventEnd = new Date(eventStart.getTime() + 30 * 60 * 1000);
+    const title = "Auction ends: 1982 Chevrolet Corvette";
+    const description = "Reminder for auction end time.";
+    const durationSeconds = Math.round(
+      (eventEnd.getTime() - eventStart.getTime()) / 1000,
+    );
+    const calendarUrl = `${window.location.origin}/calendar?start=${eventStart.getTime()}&duration=${durationSeconds}&title=${encodeURIComponent(
+      title,
+    )}&description=${encodeURIComponent(description)}`;
+    const webcalUrl = calendarUrl.replace(/^https?/, "webcal");
+
+    window.location.href = webcalUrl;
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setShareUrl(window.location.href);
+  }, []);
+
+  useEffect(() => {
+    if (!isShareOpen) return;
+    const handleClick = (event: MouseEvent) => {
+      if (!shareDialogRef.current) return;
+      if (!shareDialogRef.current.contains(event.target as Node)) {
+        setIsShareOpen(false);
+      }
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsShareOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [isShareOpen]);
+
+
+  const handleCopy = async (value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      toast.success("Copied to clipboard.");
+    } catch {
+      toast.error("Unable to copy. Please try again.");
+    }
+  };
+
+  const handleShare = () => {
+    setIsShareOpen(true);
+  };
+
+  const handleCopyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied.");
+    } catch {
+      toast.error("Unable to copy. Please try again.");
+    }
+  };
+
+  const handleShareAction = (type: "whatsapp" | "x" | "gmail") => {
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const text = encodeURIComponent("Check this vehicle on Fadder.");
+    const subject = encodeURIComponent("Vehicle listing");
+    const mailBody = encodeURIComponent(
+      `Check this vehicle on Fadder:\n${shareUrl}`,
+    );
+
+    const urls = {
+      whatsapp: `https://wa.me/?text=${text}%20${encodedUrl}`,
+      x: `https://x.com/intent/tweet?text=${text}%20${encodedUrl}`,
+      gmail: `mailto:?subject=${subject}&body=${mailBody}`,
+    };
+
+    window.open(urls[type], "_blank", "noopener,noreferrer");
+  };
+
+  const handleFavorite = () => {
+    router.push("/login");
+  };
+
+  const handleSetAlert = () => {
+    const trimmed = alertEmail.trim();
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+    if (!isEmailValid) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    toast.success("Alert saved. We'll notify you by email.");
+    setAlertEmail("");
+  };
+
+  const formatBid = (value: number) => value.toLocaleString("en-US");
+
 
   return (
     <main className="max-w-[1920px] mx-auto py-[16px] px-20 pb-[120px] flex flex-col gap-12 text-foreground">
@@ -166,7 +298,7 @@ export default function VehiclePage() {
           <div className="w-[700px] flex-[0_0_700px] flex flex-col gap-4">
             <div className="relative w-full h-[460px] rounded-lg overflow-visible">
               <Image
-                src="/figma/images/vehicle-detail-main-22d215.png"
+                src={galleryImages[activeImage]}
                 alt=""
                 width={700}
                 height={460}
@@ -174,7 +306,13 @@ export default function VehiclePage() {
               />
               <button
                 type="button"
-                className="absolute top-[204px] left-[-224px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 cursor-pointer"
+                className={`absolute top-[204px] left-[-224px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 ${
+                  activeImage === 0 ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
+                }`}
+                onClick={() =>
+                  setActiveImage((prev) => Math.max(0, prev - 1))
+                }
+                disabled={activeImage === 0}
               >
                 <Image
                   src="/figma/icons/icon-arrow-left.svg"
@@ -185,7 +323,17 @@ export default function VehiclePage() {
               </button>
               <button
                 type="button"
-                className="absolute top-[204px] right-[-4px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 cursor-pointer"
+                className={`absolute top-[204px] right-[-4px] w-[52px] h-[52px] rounded-lg border-0 bg-white/60 inline-flex items-center justify-center p-3.5 ${
+                  activeImage === galleryImages.length - 1
+                    ? "opacity-40 cursor-not-allowed"
+                    : "cursor-pointer"
+                }`}
+                onClick={() =>
+                  setActiveImage((prev) =>
+                    Math.min(galleryImages.length - 1, prev + 1),
+                  )
+                }
+                disabled={activeImage === galleryImages.length - 1}
               >
                 <Image
                   src="/figma/icons/icon-arrow-right.svg"
@@ -196,16 +344,19 @@ export default function VehiclePage() {
               </button>
             </div>
             <div className="grid grid-cols-5 gap-2">
-              {thumbKeys.map((key, index) => (
+              {galleryImages.map((src, index) => (
                 <Image
-                  key={key}
-                  src="/figma/images/vehicle-detail-thumb-22d215.png"
+                  key={`${src}-${index}`}
+                  src={src}
                   alt=""
                   width={140}
                   height={72}
-                  className={`w-full h-[72px] object-fill rounded-lg border-2 ${
-                    index === 0 ? "border-foreground" : "border-transparent"
+                  className={`w-full h-[72px] object-fill rounded-lg border-2 cursor-pointer ${
+                    index === activeImage
+                      ? "border-foreground"
+                      : "border-transparent"
                   }`}
+                  onClick={() => setActiveImage(index)}
                 />
               ))}
             </div>
@@ -225,9 +376,20 @@ export default function VehiclePage() {
                 Get a comprehensive report (similar to Carfax) including
                 accident history, service records, and more.
               </p>
-              <Button variant="primary" size="lg" fullWidth>
-                Request Full History (Carfax)
-              </Button>
+              <RequestInfoPopover
+                title="Request Full History (Carfax)"
+                description="Fill out the form to request information about this vehicle:"
+                submitLabel="Send Request"
+                linkValue={shareUrl}
+                wrapperClassName="w-full"
+                popoverClassName="w-full"
+                popoverAlign="left"
+                trigger={
+                  <Button variant="primary" size="lg" fullWidth>
+                    Request Full History (Carfax)
+                  </Button>
+                }
+              />
             </div>
             <div className="bg-white rounded-lg p-4 flex flex-col gap-4 w-full">
               <div className="flex items-center justify-between gap-4">
@@ -245,6 +407,8 @@ export default function VehiclePage() {
                 <input
                   className="h-[52px] border-0 rounded-[14px] bg-surface py-4 px-6 text-base leading-5 text-muted placeholder:text-muted"
                   placeholder="Email"
+                  value={alertEmail}
+                  onChange={(event) => setAlertEmail(event.target.value)}
                 />
                 <div className="flex items-center gap-6">
                   <span className="text-base leading-5 font-normal text-foreground">
@@ -280,6 +444,7 @@ export default function VehiclePage() {
                 size="lg"
                 fullWidth
                 className="gap-2.5"
+                onClick={handleSetAlert}
               >
                 <Image
                   src="/figma/icons/icon-notification-bell.svg"
@@ -323,13 +488,20 @@ export default function VehiclePage() {
                     <span className="text-base leading-5 font-bold text-foreground inline-flex items-center gap-1">
                       {item.value}
                       {item.label === "Lot Number" || item.label === "VIN" ? (
-                        <Image
-                          src="/figma/icons/icon-copy.svg"
-                          alt=""
-                          width={24}
-                          height={24}
-                          className="w-6 h-6"
-                        />
+                        <button
+                          type="button"
+                          className="border-0 bg-transparent p-0 inline-flex items-center justify-center cursor-pointer"
+                          onClick={() => handleCopy(item.value)}
+                          aria-label={`Copy ${item.label}`}
+                        >
+                          <Image
+                            src="/figma/icons/icon-copy.svg"
+                            alt=""
+                            width={24}
+                            height={24}
+                            className="w-6 h-6"
+                          />
+                        </button>
                       ) : null}
                     </span>
                   </div>
@@ -398,18 +570,22 @@ export default function VehiclePage() {
             <div className="flex items-center gap-4 w-full">
               <button
                 type="button"
-                className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer"
+                className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer transition-colors hover:shadow-hover active:bg-surface"
+                onClick={handleShare}
+                aria-label="Share"
               >
                 <Image
                   src="/figma/icons/icon-share.svg"
                   alt=""
-                  width={24}
-                  height={24}
+                  width={28}
+                  height={28}
                 />
               </button>
               <button
                 type="button"
-                className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer"
+                className="w-[52px] h-[52px] rounded-lg bg-white border-0 inline-flex items-center justify-center p-3.5 cursor-pointer transition-colors hover:shadow-hover active:bg-surface"
+                onClick={handleFavorite}
+                aria-label="Add to favorites"
               >
                 <Image
                   src="/figma/icons/icon-heart.svg"
@@ -418,27 +594,143 @@ export default function VehiclePage() {
                   height={24}
                 />
               </button>
-              <button
-                type="button"
-                className="flex-1 bg-white border-0 rounded-lg py-4 px-12 text-sm leading-4 font-bold text-foreground cursor-pointer"
-              >
-                Ask Manager
-              </button>
+              <RequestInfoPopover
+                title="Ask Manager"
+                description="Fill out the form to request information about this vehicle:"
+                submitLabel="Send Request"
+                linkValue={shareUrl}
+                wrapperClassName="w-full"
+                popoverClassName="w-full"
+                trigger={
+                  <button
+                    type="button"
+                    className="w-full bg-white border-0 rounded-lg py-4 px-12 text-sm leading-4 font-bold text-foreground cursor-pointer transition-colors hover:shadow-hover active:bg-surface"
+                  >
+                    Ask Manager
+                  </button>
+                }
+              />
             </div>
+
+            {isShareOpen ? (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+                <div
+                  ref={shareDialogRef}
+                  className="w-full max-w-[560px] rounded-[14px] bg-white p-6 shadow-card-soft"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="m-0 text-xl leading-6 font-bold text-foreground">
+                      Share
+                    </h3>
+                    <button
+                      type="button"
+                      className="h-10 w-10 rounded-[10px] border-0 bg-surface text-xl leading-none cursor-pointer transition-colors hover:shadow-hover active:bg-white"
+                      onClick={() => setIsShareOpen(false)}
+                      aria-label="Close"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="mt-5 flex flex-col gap-4">
+                    <div className="rounded-[14px] border border-surface bg-white p-3">
+                      <p className="m-0 text-sm font-semibold text-foreground">
+                        1982 Chevrolet Corvette
+                      </p>
+                      <p className="m-0 text-sm text-muted">
+                        {shareUrl || "https://fadder.com/vehicle"}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <input
+                        value={shareUrl}
+                        readOnly
+                        className="h-11 flex-1 rounded-[14px] border border-surface px-3 text-sm text-foreground outline-none"
+                      />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="rounded-[14px]"
+                        onClick={handleCopyShareLink}
+                      >
+                        Copy link
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 pt-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="rounded-[14px] flex flex-col gap-2 py-3"
+                        onClick={() => handleShareAction("whatsapp")}
+                      >
+                        <Image
+                          src="/figma/icons/icon-whatsapp.svg"
+                          alt=""
+                          width={22}
+                          height={22}
+                          className="h-5 w-5"
+                        />
+                        <span>WhatsApp</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="rounded-[14px] flex flex-col gap-2 py-3"
+                        onClick={() => handleShareAction("x")}
+                      >
+                        <Image
+                          src="/figma/icons/icon-x.svg"
+                          alt=""
+                          width={22}
+                          height={22}
+                          className="h-5 w-5"
+                        />
+                        <span>X</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="rounded-[14px] flex flex-col gap-2 py-3"
+                        onClick={() => handleShareAction("gmail")}
+                      >
+                        <Image
+                          src="/figma/icons/icon-gmail.svg"
+                          alt=""
+                          width={22}
+                          height={22}
+                          className="h-5 w-5"
+                        />
+                        <span>Gmail</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
 
             <div className="bg-white rounded-lg p-4 flex flex-col gap-4 items-center w-full">
               <div className="w-full flex justify-between items-center gap-2.5">
                 <span className="text-xl leading-6 font-bold text-foreground">
                   Time left
                 </span>
-                <span className="text-base leading-5 font-bold text-error">
-                  1 d 21 h 23 min 00 sec
-                </span>
+                <div className="flex items-center gap-2">
+                <span className="rounded-[8px] border border-surface bg-primary text-white rounded-[8px] py-1 px-2 text-xs leading-[14px] bg-copart text-nowrap">
+                    {timeZoneLabel}
+                  </span>
+                
+                  <span className="text-base leading-5 font-bold text-error">
+                    {timeLeftLabel}
+                  </span>
+                  </div>
               </div>
               <Button
                 variant="secondary"
                 size="md"
                 className="w-[278px] gap-2.5"
+                onClick={handleAddToCalendar}
               >
                 <Image
                   src="/figma/icons/icon-reminder.svg"
@@ -466,7 +758,20 @@ export default function VehiclePage() {
                 <div className="flex items-center justify-between gap-3 py-3.5 px-4 rounded-[14px] bg-white shadow-input">
                   <button
                     type="button"
-                    className="border-0 bg-transparent p-0 cursor-pointer"
+                    className={`border-0 bg-transparent p-0 transition-colors ${
+                      bidAmount === 0
+                        ? "cursor-not-allowed opacity-40"
+                        : "cursor-pointer hover:opacity-80 active:opacity-60"
+                    }`}
+                    onClick={() =>
+                      setBidAmount((prev) => {
+                        const next = Math.max(0, prev - 100);
+                        setBidInput(formatBid(next));
+                        return next;
+                      })
+                    }
+                    disabled={bidAmount === 0}
+                    aria-label="Decrease bid by $100"
                   >
                     <Image
                       src="/figma/icons/icon-minus.svg"
@@ -475,12 +780,34 @@ export default function VehiclePage() {
                       height={24}
                     />
                   </button>
-                  <span className="text-xl leading-6 font-bold text-foreground">
-                    $525
-                  </span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={bidInput}
+                    onChange={(event) => {
+                      const next = event.target.value.replace(/[^\d]/g, "");
+                      setBidInput(next);
+                      setBidAmount(Math.max(0, Number(next) || 0));
+                    }}
+                    onFocus={() =>
+                      setBidInput(bidAmount ? String(bidAmount) : "")
+                    }
+                    onBlur={() => setBidInput(formatBid(bidAmount))}
+                    className="w-24 bg-transparent text-center text-xl leading-6 font-bold text-foreground border-0 outline-none"
+                    aria-label="Bid amount"
+                  />
                   <button
                     type="button"
-                    className="border-0 bg-transparent p-0 cursor-pointer"
+                    className="border-0 bg-transparent p-0 cursor-pointer transition-colors hover:opacity-80 active:opacity-60"
+                    onClick={() =>
+                      setBidAmount((prev) => {
+                        const next = prev + 100;
+                        setBidInput(formatBid(next));
+                        return next;
+                      })
+                    }
+                    aria-label="Increase bid by $100"
                   >
                     <Image
                       src="/figma/icons/icon-plus.svg"

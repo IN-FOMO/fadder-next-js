@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { Breadcrumbs } from "../_components/Breadcrumbs";
 import { Button } from "../_components/Button";
 import { Pagination } from "../_components/Pagination";
@@ -271,7 +272,10 @@ const defaultCollapsedState = Object.fromEntries(
 ) as Record<string, boolean>;
 
 export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("q") ?? "";
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(queryParam);
   const [quickState, setQuickState] = useState(
     () =>
       Object.fromEntries(
@@ -321,6 +325,77 @@ export default function SearchPage() {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [yearRange, setYearRange] = useState({ min: 1900, max: 2025 });
 
+  useEffect(() => {
+    setSearchQuery(queryParam);
+  }, [queryParam]);
+
+  useEffect(() => {
+    const normalized = queryParam.trim().toLowerCase();
+    if (!normalized) return;
+
+    setQuickState(
+      Object.fromEntries(
+        quickFilters.map((item) => [
+          item.label,
+          item.label.toLowerCase().includes(normalized),
+        ]),
+      ) as Record<string, boolean>,
+    );
+
+    if (normalized.includes("copart")) {
+      setAuctionState({ All: false, Copart: true, IAAI: false });
+    } else if (normalized.includes("iaai")) {
+      setAuctionState({ All: false, Copart: false, IAAI: true });
+    } else if (normalized.includes("all")) {
+      setAuctionState({ All: true, Copart: false, IAAI: false });
+    }
+
+    if (normalized.includes("active")) {
+      setLotStatusState({ Active: true, Sold: false, Upcoming: false });
+    } else if (normalized.includes("sold")) {
+      setLotStatusState({ Active: false, Sold: true, Upcoming: false });
+    } else if (normalized.includes("upcoming")) {
+      setLotStatusState({ Active: false, Sold: false, Upcoming: true });
+    }
+
+    setConditionState(
+      Object.fromEntries(
+        damageTypeItems.map((item) => [
+          item.label,
+          item.label.toLowerCase().includes(normalized),
+        ]),
+      ) as Record<string, boolean>,
+    );
+
+    setExpandedState((prev) =>
+      Object.fromEntries(
+        expandableFilters.map((section) => {
+          const prevSection = prev[section.title];
+          if (!section.items) {
+            return [section.title, prevSection];
+          }
+          return [
+            section.title,
+            {
+              ...prevSection,
+              items: section.items.map((item) => ({
+                ...item,
+                checked: item.label.toLowerCase().includes(normalized),
+              })),
+            },
+          ];
+        }),
+      ) as Record<
+        string,
+        {
+          search: string;
+          items: { label: string; count: string; checked: boolean }[];
+          input: string;
+        }
+      >,
+    );
+  }, [queryParam]);
+
   const activeTags = useMemo(
     () =>
       damageTypeItems
@@ -328,6 +403,25 @@ export default function SearchPage() {
         .filter((tag) => conditionState[tag]),
     [conditionState],
   );
+
+  const filteredCards = useMemo(() => {
+    const normalized = searchQuery.trim().toLowerCase();
+    if (!normalized) return vehicleCards;
+    return vehicleCards.filter((card) =>
+      [
+        card.title,
+        card.auction,
+        card.engine,
+        card.transmission,
+        card.fuel,
+        card.drive,
+        card.odometer,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(normalized),
+    );
+  }, [searchQuery]);
 
   const resetAll = () => {
     setQuickState(
@@ -1029,12 +1123,12 @@ export default function SearchPage() {
         <section className="w-[1320px] flex flex-col gap-4">
           <div className="flex items-center justify-between gap-4">
             <div className="bg-white rounded-r-2xl py-4 pl-[30px] pr-3.5 text-base font-bold leading-5">
-              Results 22,328
+              Results {filteredCards.length}
             </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5"
+                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5 "
               >
                 <span>20 cards</span>
                 <Image
@@ -1046,7 +1140,7 @@ export default function SearchPage() {
               </button>
               <button
                 type="button"
-                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5"
+                className="flex items-center justify-between gap-3 py-3.5 px-4 bg-white rounded-2xl border-0 w-[130px] text-base font-bold cursor-pointer leading-5 text-nowrap"
               >
                 <span>Sort by</span>
                 <Image
@@ -1056,17 +1150,7 @@ export default function SearchPage() {
                   height={24}
                 />
               </button>
-              <button
-                type="button"
-                className="flex items-center justify-center p-3.5 bg-white rounded-2xl border-0 cursor-pointer"
-              >
-                <Image
-                  src="/figma/icons/icon-share-small.svg"
-                  alt=""
-                  width={14}
-                  height={14}
-                />
-              </button>
+              
             </div>
           </div>
 
@@ -1095,7 +1179,7 @@ export default function SearchPage() {
           </div>
 
           <div className="flex flex-wrap gap-4 w-[1320px]">
-            {vehicleCards.map((card, index) => (
+            {filteredCards.map((card, index) => (
               <VehicleCard
                 key={`${card.title}-${index}`}
                 card={card}

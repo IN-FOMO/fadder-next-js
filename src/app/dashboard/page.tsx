@@ -279,9 +279,9 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory">
-            {recentlyViewedCards.map((card) => (
+            {recentlyViewedCards.map((card, index) => (
               <div
-                key={`${card.title}-${card.image}`}
+                key={`${card.title}-${card.image}-${index}`}
                 className="snap-start shrink-0"
               >
                 <VehicleCard card={card} imageBadge="Active" />

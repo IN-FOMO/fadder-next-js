@@ -172,6 +172,7 @@ const popularMakes: MakeItem[] = [
     count: "1,268",
     icon: "/figma/brands/brand-chrysler.svg",
   },
+  { name: "Dodge", count: "1,268", icon: "/figma/brands/brand-dodge.svg" },
   { name: "Ferrari", count: "1,268", icon: "/figma/brands/brand-ferrari.svg" },
   { name: "Fiat", count: "1,268", icon: "/figma/brands/brand-fiat.svg" },
   { name: "Ford", count: "1,268", icon: "/figma/brands/brand-ford.svg" },

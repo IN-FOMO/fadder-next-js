@@ -31,12 +31,12 @@ export function PopularMakesSection({ makes }: PopularMakesSectionProps) {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center items-center gap-3 self-stretch max-w-[1704px] mx-auto">
+      <div className="grid place-items-center grid-cols-[repeat(13,minmax(0,1fr))] gap-3 self-stretch max-w-[1704px] mx-auto justify-center place-items-center content-centergrid grid-cols-[repeat(13,minmax(0,1fr))] gap-3 max-w-[1704px] mx-auto justify-items-center items-centergrid grid-cols-[repeat(13,minmax(0,1fr))] gap-3 self-stretch max-w-[1704px] mx-auto justify-items-center items-center">
         {makes.map((make) => (
           <Link
             key={make.name}
             href={`/search?make=${makeSlug(make.name)}`}
-            className="bg-white rounded-[16px] w-[120px] h-[120px] p-3 flex flex-col items-center gap-2 text-center hover:bg-surface hover:shadow-hover transition-shadow no-underline text-inherit"
+            className="bg-white rounded-[16px] w-[120px] h-[120px] p-3 flex flex-col items-center justify-center gap-1 text-center hover:bg-surface hover:shadow-hover transition-shadow no-underline text-inherit"
           >
             <Image
               src={make.icon}
@@ -47,9 +47,6 @@ export function PopularMakesSection({ makes }: PopularMakesSectionProps) {
             />
             <span className="text-[14px] leading-[16px] font-normal text-dark">
               {make.name}
-            </span>
-            <span className="text-[14px] leading-[16px] text-muted">
-              {make.count}
             </span>
           </Link>
         ))}

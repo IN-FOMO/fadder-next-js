@@ -82,6 +82,14 @@ select:focus {
   outline-offset: 2px;
 }
 
+.no-focus-ring,
+.no-focus-ring:focus,
+.no-focus-ring:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
 summary::-webkit-details-marker {
   display: none;
 }

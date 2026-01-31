@@ -32,6 +32,7 @@ const specLabel = "text-muted font-normal shrink-0";
 const specValue = "font-bold leading-4 text-dark ml-auto text-right";
 
 export function VehicleCard({ card, className, imageBadge: _imageBadge }: VehicleCardProps) {
+  const timeZoneLabel = "(GMT-5)";
   const badgeClass = card.auction === "IAAI" ? "bg-iaai" : "bg-copart";
   const router = useRouter();
   const images = useMemo(() => {
@@ -162,9 +163,14 @@ export function VehicleCard({ card, className, imageBadge: _imageBadge }: Vehicl
           </div>
           <div className="flex flex-col gap-2 self-stretch w-full">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-success text-sm leading-4">
-                {card.timer}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-success text-sm leading-4">
+                  {card.timer}
+                </span>
+                <span className="rounded-[8px] border border-surface bg-primary text-white rounded-[8px] py-1 px-2 text-xs leading-[14px] bg-copart text-nowrap">
+                  {timeZoneLabel}
+                </span>
+              </div>
               <span
                 className={`text-white rounded-[8px] py-1 px-2 text-xs leading-[14px] ${badgeClass}`}
               >
