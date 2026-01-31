@@ -6,7 +6,10 @@ import toast from "react-hot-toast";
 import { Button } from "./Button";
 
 type RequestInfoPopoverProps = {
-  trigger: ReactElement;
+  trigger: ReactElement<{
+    onClick?: (event: React.MouseEvent) => void;
+    "aria-expanded"?: boolean;
+  }>;
   title: string;
   description: string;
   submitLabel?: string;
